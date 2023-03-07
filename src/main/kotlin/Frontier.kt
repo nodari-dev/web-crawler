@@ -1,12 +1,19 @@
-class Frontier(urls: Array<String>) {
+import dao.FrontierDao
+
+class Frontier: FrontierDao {
     // provide: 3 types of q to store different urls
 
-    fun putUrl(queue: Int, url: String){
-        println("$queue, $url")
+    // set 6 queues
+    // max items -> 10 per queue
+
+    private val frontier: MutableList<String> = mutableListOf()
+
+    override fun putURLs(urls: Array<String>) {
+        frontier += urls.distinct()
     }
 
-    fun getUrl(queue: Int){
-        println(queue)
+    override fun getURLs(): MutableList<String> {
+        return frontier
     }
 
     fun prioritizeUrl(url: String){
