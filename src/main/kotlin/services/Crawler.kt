@@ -1,32 +1,22 @@
 package services
 
+import Frontier
 import PagesDataStore
 import dao.CrawlerDao
 
-class Crawler(seedUrls: Array<String>) {
+class Crawler() {
     // 1. fetch data
-    // 2. Check the identity of page by PageDataStore
-    // 3. first time -> create signature
-    private val pagesStore = PagesDataStore()
-
-    init{
-        // check url before fetching
-
-        seedUrls.forEach { url ->
-            if(!pagesStore.wasCrawled(url)){
-                pagesStore.putUrl(url)
-//                getUrls(URL(url).readText())
-            }
-         }
-        pagesStore.checkStore()
-    }
 
     private fun crawlPage(){
         // open connection and set timeout
         // get specific data to make analytics
     }
 
-    fun parseURLs(page: String): List<String> {
+    fun start(){
+        Frontier().getURLs().forEach{item -> println("123") }
+    }
+
+    fun getURLs(page: String): List<String> {
         val urls = mutableListOf<String>()
         val regex = "<a(?:[^>]*)href=(['\\\"])((http).+?)\\1".toRegex()
         regex.findAll(page).forEach { match -> match.groups[2]?.value?.let { urls.add(it) } }

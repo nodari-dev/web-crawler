@@ -1,6 +1,8 @@
 package dao
 
+import dto.PageInfo
+
 interface FrontierDao {
-    fun putURLs(urls: Array<String>)
-    fun getURLs(): MutableList<String>
+    fun putURLs(urls: MutableList<PageInfo>)
+    fun getURLs(): MutableList<PageInfo>
 }
