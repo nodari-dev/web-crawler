@@ -1,3 +1,5 @@
+package services
+
 class PagesDataStore {
     private val store: MutableList<String> = mutableListOf()
 

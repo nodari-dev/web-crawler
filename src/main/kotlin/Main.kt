@@ -13,8 +13,8 @@ fun main() {
     seedUrls.forEach { url -> nodes.add(PageInfo(url)) }
 
     if(seedUrls.isNotEmpty()){
-
-        Crawler().start()
+        val crawler: Crawler = Crawler(seedUrls)
+        crawler.start()
     } else{
         println("No seed urls provided")
     }

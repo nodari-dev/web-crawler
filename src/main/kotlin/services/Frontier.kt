@@ -1,5 +1,6 @@
+package services
+
 import dao.FrontierDao
-import dto.Page
 import dto.PageInfo
 
 class Frontier: FrontierDao {
@@ -15,7 +16,11 @@ class Frontier: FrontierDao {
     // max items -> 10 per queue
 
 
-    override fun putURLs(urls: MutableList<PageInfo>) {
+    override fun putURL(url: PageInfo) {
+        frontier += url
+    }
+
+    override fun putListOfURLs(urls: MutableList<PageInfo>) {
         frontier += urls
     }
 
@@ -36,10 +41,12 @@ class Frontier: FrontierDao {
 //        pagesStore.checkStore()
 //    }
 //
+
     fun prioritizeUrl(url: String){
         // check politeness
         // get HEAD -> check last update from PageDataStore
         // check the duplicity from PageDataStore
-        //
+
+        // such check should be also be made for recrawling page
     }
 }
