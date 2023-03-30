@@ -1,14 +1,16 @@
-import services.Crawler
-
 fun main() {
     val seedUrls: List<String> = listOf(
-        "https://cs.wikipedia.org/wiki/Hlavn%C3%AD_strana",
+        "https://cs.wikipedia.org/",
     ).distinct()
 
-    if(seedUrls.isNotEmpty()){
-        val crawler: Crawler = Crawler(seedUrls)
-        crawler.start()
-    } else{
-        println("No seed urls provided")
-    }
+    val v0 = Vertex(seedUrls[0])
+    val bfs = BreathFirstSearch(v0)
+
+    bfs.traverse()
+
+//    if(seedUrls.isNotEmpty()){
+//        val crawler = Crawler<>(seedUrls)
+//    } else{
+//        println("No seed urls provided")
+//    }
 }
