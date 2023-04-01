@@ -1,6 +1,6 @@
 fun main() {
     val seedUrls: List<String> = listOf(
-        "https://cs.wikipedia.org/",
+        "https://ecospace.org.ua/",
     ).distinct()
 
     val v0 = Vertex(seedUrls[0])

@@ -7,6 +7,7 @@ import java.net.URL
 
 class BreathFirstSearch(startVertex: Vertex) {
     private val startVertex: Vertex = startVertex
+    private var number = 0
 
     fun traverse(){
         val queue: MutableList<Vertex> = mutableListOf()
@@ -21,8 +22,9 @@ class BreathFirstSearch(startVertex: Vertex) {
                 if(!current.isVisited() && !storage.contains(current.hashCode())){
                     storage.add(current.hashCode())
                     current.setVisited()
+                    number += 1
 
-                    println("Current " + current.getData())
+                    println("$number Current " + current.getData())
 
                     val html = parseHtml(current)
                     if (html != null) {
@@ -32,7 +34,8 @@ class BreathFirstSearch(startVertex: Vertex) {
                               if(!storage.contains(hashCodeUrl)) {
                                   storage.add(hashCodeUrl)
                                   current.setNeighbor(Vertex(childUrl))
-                                  println("Child $childUrl")
+                                  number += 1
+                                  println("$number Child $childUrl")
 
                               }
 
