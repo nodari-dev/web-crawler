@@ -1,8 +1,6 @@
-import dao.Regex.Values.A_TAG
-import dao.Regex.Values.GROUP_INDEX
-import expetions.ParseHTMLException
+import dto.Regex.Values.A_TAG
+import dto.Regex.Values.GROUP_INDEX
 import java.io.IOException
-import java.lang.Exception
 import java.net.URL
 
 class BreathFirstSearch(startVertex: Vertex) {
@@ -24,7 +22,7 @@ class BreathFirstSearch(startVertex: Vertex) {
                     current.setVisited()
                     number += 1
 
-                    println("$number Current " + current.getData())
+                    println("$number Current " + current.getUrl())
 
                     val html = parseHtml(current)
                     if (html != null) {
@@ -50,7 +48,7 @@ class BreathFirstSearch(startVertex: Vertex) {
 
     private fun parseHtml(url: Vertex): String? {
         return try{
-            URL(url.getData()).readText()
+            URL(url.getUrl()).readText()
         } catch (e: IOException){
             println("Could not parse document: $e")
             null

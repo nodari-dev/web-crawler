@@ -1,8 +1,4 @@
 package services
-import Vertex
-import dao.Regex.Values.A_TAG
-import dao.Regex.Values.GROUP_INDEX
-import java.net.URL
 
 class Crawler<T>(urls: List<T>) {
     private val seedUrls = urls

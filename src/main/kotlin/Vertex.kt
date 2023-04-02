@@ -1,7 +1,13 @@
 class Vertex(data: String){
-    private val data: String = data
+    private var url: String = data
     private var visited: Boolean = false
     private val neighbors: MutableList<Vertex> = mutableListOf()
+
+    init{
+        if(!url.endsWith("/")){
+            url += "/"
+        }
+    }
 
     fun setVisited(){
         visited = true
@@ -23,7 +29,7 @@ class Vertex(data: String){
         return visited
     }
 
-    fun getData(): String{
-        return data
+    fun getUrl(): String{
+        return url
     }
 }
