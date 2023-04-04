@@ -8,4 +8,8 @@ class UrlHashDataStore {
     fun includes(urlHash: Int): Boolean{
         return storage.contains(urlHash)
     }
+
+    fun testGetAll(){
+        storage.forEach{item -> println(item)}
+    }
 }

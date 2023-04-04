@@ -17,7 +17,9 @@ class BreathFirstSearch(startVertex: Vertex) {
 
         while(queue.isNotEmpty()){
             val current: Vertex? = queue.removeFirstOrNull()
+            if(number == 30){break}
             if (current != null) {
+
                 val hashCurrent = current.hashCode()
 
                 if(!current.isVisited() && !urlHashStorage.includes(hashCurrent)){
@@ -38,6 +40,7 @@ class BreathFirstSearch(startVertex: Vertex) {
                                   number += 1
                                   println("$number Child $childUrl")
                               }
+                              if(number == 30) return
                         }
                     }
                     queue.addAll(current.getNeighbors())
