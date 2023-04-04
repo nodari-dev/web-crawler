@@ -5,19 +5,17 @@ import java.net.URL
 
 class BreathFirstSearch(startVertex: Vertex) {
     private val startVertex: Vertex = startVertex
+    private val fetcher = Fetcher()
     private var number = 0
 
     private val urlHashStorage = UrlHashDataStore()
 
     fun traverse(){
         val queue: MutableList<Vertex> = mutableListOf()
-
-
         queue.add(startVertex)
 
         while(queue.isNotEmpty()){
             val current: Vertex? = queue.removeFirstOrNull()
-            if(number == 30){break}
             if (current != null) {
 
                 val hashCurrent = current.hashCode()
@@ -29,18 +27,21 @@ class BreathFirstSearch(startVertex: Vertex) {
 
                     println("$number Current " + current.getUrl())
 
-                    val html = parseHtml(current)
+                    val html = fetcher.getHTML(current)
+
+
                     if (html != null) {
                           A_TAG.findAll(html.toString()).forEach{ match ->
-                            val childUrl = match.groups[GROUP_INDEX]!!.value
-                              val hashCodeUrl = childUrl.hashCode()
+                            val childVertex = Vertex(match.groups[GROUP_INDEX]!!.value)
+                              val hashCodeUrl = childVertex.getUrl().hashCode()
                               if(!urlHashStorage.includes(hashCodeUrl)) {
                                   urlHashStorage.add(hashCodeUrl)
-                                  current.setNeighbor(Vertex(childUrl))
+                                  current.setNeighbor(Vertex(childVertex.getUrl()))
                                   number += 1
-                                  println("$number Child $childUrl")
+                                  print("$number ")
+                                  println(childVertex.getUrl())
                               }
-                              if(number == 30) return
+//                              if(number == 30) return
                         }
                     }
                     queue.addAll(current.getNeighbors())
@@ -48,14 +49,4 @@ class BreathFirstSearch(startVertex: Vertex) {
             }
         }
     }
-
-    private fun parseHtml(url: Vertex): String? {
-        return try{
-            URL(url.getUrl()).readText()
-        } catch (e: IOException){
-            println("Could not parse document: $e")
-            null
-        }
-    }
-
 }
