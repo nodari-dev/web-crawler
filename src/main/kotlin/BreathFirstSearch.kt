@@ -6,6 +6,7 @@ import java.net.URL
 class BreathFirstSearch(startVertex: Vertex) {
     private val startVertex: Vertex = startVertex
     private val fetcher = Fetcher()
+    private val parser = Parser()
     private var number = 0
 
     private val urlHashStorage = UrlHashDataStore()
@@ -31,18 +32,18 @@ class BreathFirstSearch(startVertex: Vertex) {
 
 
                     if (html != null) {
-                          A_TAG.findAll(html.toString()).forEach{ match ->
-                            val childVertex = Vertex(match.groups[GROUP_INDEX]!!.value)
-                              val hashCodeUrl = childVertex.getUrl().hashCode()
-                              if(!urlHashStorage.includes(hashCodeUrl)) {
-                                  urlHashStorage.add(hashCodeUrl)
-                                  current.setNeighbor(Vertex(childVertex.getUrl()))
-                                  number += 1
-                                  print("$number ")
-                                  println(childVertex.getUrl())
-                              }
+                        parser.getAllChildLinks(html).forEach { childVertex ->
+                            val hashCodeUrl = childVertex.getUrl().hashCode()
+                            if (!urlHashStorage.includes(hashCodeUrl)) {
+                                urlHashStorage.add(hashCodeUrl)
+                                current.setNeighbor(Vertex(childVertex.getUrl()))
+                                number += 1
+                                print("$number ")
+                                println(childVertex.getUrl())
+                            }
 //                              if(number == 30) return
                         }
+
                     }
                     queue.addAll(current.getNeighbors())
                 }
