@@ -1,3 +1,5 @@
+package services
+
 class UrlHashDataStore {
     private val storage: MutableList<Int> = mutableListOf()
 

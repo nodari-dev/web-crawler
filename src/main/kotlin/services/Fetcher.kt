@@ -1,3 +1,6 @@
+package services
+
+import Vertex
 import java.io.IOException
 import java.net.URL
 
@@ -9,5 +12,9 @@ class Fetcher {
             println("Could not parse document: $e")
             null
         }
+    }
+
+    fun getHEAD(){
+        // to get data (last updated, etc...)
     }
 }

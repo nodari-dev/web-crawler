@@ -1,3 +1,6 @@
+package services
+
+import Vertex
 import dto.Regex.Values.A_TAG
 import dto.Regex.Values.GROUP_INDEX
 
