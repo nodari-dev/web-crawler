@@ -1,5 +1,5 @@
 import services.Fetcher
-import services.Parser
+import parser.Parser
 import services.UrlHashDataStore
 
 class BreathFirstSearch(startVertex: Vertex) {
@@ -28,7 +28,6 @@ class BreathFirstSearch(startVertex: Vertex) {
                     println("$number Current " + current.getUrl())
 
                     val html = fetcher.getHTML(current)
-
 
                     if (html != null) {
                         parser.getAllChildLinks(html).forEach { childVertex ->

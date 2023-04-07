@@ -1,16 +1,18 @@
 import com.zaxxer.hikari.HikariDataSource
 import java.nio.ByteBuffer
 import java.sql.DriverManager
+import java.util.LinkedList
+import java.util.Queue
 
 fun main() {
-    val seedUrls: List<String> = listOf(
-        "https://ecospace.org.ua/",
-    ).distinct()
-
-    val v0 = Vertex(seedUrls[0])
-    val bfs = BreathFirstSearch(v0)
-
-    bfs.traverse()
+//    val seedUrls: List<String> = listOf(
+//        "https://ecospace.org.ua/",
+//    ).distinct()
+//
+//    val v0 = Vertex(seedUrls[0])
+//    val bfs = BreathFirstSearch(v0)
+//
+//    bfs.traverse()
 
 //    val dataSource = HikariDataSource()
 //    dataSource.jdbcUrl = "jdbc:postgresql://localhost:5432/test"

@@ -1,0 +1,4 @@
+package crawler
+
+class Crawler {
+}
