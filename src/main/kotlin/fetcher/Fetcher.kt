@@ -1,4 +1,4 @@
-package services
+package fetcher
 
 import Vertex
 import java.io.IOException

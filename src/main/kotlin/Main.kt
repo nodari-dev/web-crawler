@@ -1,10 +1,16 @@
 import com.zaxxer.hikari.HikariDataSource
+import crawler.Crawler
+import frontier.BackQueue
+import frontier.FrontQueue
+import frontier.FrontierQueue
 import java.nio.ByteBuffer
 import java.sql.DriverManager
 import java.util.LinkedList
 import java.util.Queue
 
 fun main() {
+    val crawler = Crawler().initialize(1, Thread())
+
 //    val seedUrls: List<String> = listOf(
 //        "https://ecospace.org.ua/",
 //    ).distinct()
@@ -50,64 +56,22 @@ fun main() {
 //    }
 
 
-    class FrontQ (priorityId: Int, queue: Queue<String>){
-        val q = queue
 
-        fun getList(): Queue<String>{
-            return q
-        }
 
-        fun add(url: String){
-            q.add(url)
-        }
-
-        fun remove(): String{
-            return q.poll()
-        }
-    }
-
-    class BackQ (host: String, queue: Queue<String>){
-        val q = queue
-        val h = host
-
-        fun getHost(): String{
-            return this.h
-        }
-
-        fun getList(): Queue<String>{
-            return q
-        }
-
-        fun add(url: String){
-            q.add(url)
-        }
-
-        fun remove(): String{
-            return q.poll()
-        }
-    }
-
-    val q1: FrontQ = FrontQ(1, LinkedList<String>(mutableListOf("https://host.com", "https://google.com", "https://google.com/test")))
-    val q3: FrontQ = FrontQ(2,  LinkedList<String>(mutableListOf("https://google.com/123", "https://host.com/main", "https://host.com/test")))
-    val q2: BackQ = BackQ("https://host.com", LinkedList<String>(mutableListOf()))
-
-    val allFrontQ: MutableList<FrontQ> = mutableListOf(q1, q3)
-    val allBackQ: MutableList<BackQ> = mutableListOf(q2)
-
-//    val front: MutableList<Queue<String>> = mutableListOf(q1, q3)
-//    val back: MutableList<Queue<String>> = mutableListOf(q2)
-
-    allFrontQ.forEach{queue ->
-        while (queue.getList().isNotEmpty()){
-            val nextUrl = queue.remove()
-//            println("Front: $front")
-//            println("Back: $back")
-            if(nextUrl.contains(allBackQ[0].getHost())){
-                allBackQ[0].add(nextUrl)
-            }
-//            println("Front: $front")
-            println(allBackQ[0].getList())
-//            println(allBackQ[0].getHost())
-        }
-    }
+//    val q1: FrontQueue = FrontQueue(1, LinkedList<String>(mutableListOf("https://host.com", "https://google.com", "https://google.com/test")))
+//    val q3: FrontQueue = FrontQueue(2,  LinkedList<String>(mutableListOf("https://google.com/123", "https://host.com/main", "https://host.com/test")))
+//    val q2: BackQueue = BackQueue("https://host.com", LinkedList<String>(mutableListOf()))
+//
+//    val allFrontQ: MutableList<FrontQueue> = mutableListOf(q1, q3)
+//    val allBackQ: MutableList<BackQueue> = mutableListOf(q2)
+//
+//    allFrontQ.forEach{queue ->
+//        while (queue.getUrls().isNotEmpty()){
+//            val nextUrl = queue.remove()
+//            if(nextUrl.contains(allBackQ[0].getHost())){
+//                allBackQ[0].add(nextUrl)
+//            }
+//            println(allBackQ[0].getUrls())
+//        }
+//    }
 }

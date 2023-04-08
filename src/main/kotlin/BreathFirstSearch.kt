@@ -1,6 +1,5 @@
-import services.Fetcher
+import fetcher.Fetcher
 import parser.Parser
-import services.UrlHashDataStore
 
 class BreathFirstSearch(startVertex: Vertex) {
     private val startVertex: Vertex = startVertex

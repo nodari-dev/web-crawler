@@ -1,6 +1,6 @@
-package services
+class
 
-class UrlHashDataStore {
+UrlHashDataStore {
     private val storage: MutableList<Int> = mutableListOf()
 
     fun add(urlHash: Int){
