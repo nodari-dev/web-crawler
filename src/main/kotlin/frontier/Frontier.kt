@@ -1,7 +1,6 @@
 package frontier
 
-import java.util.*
-import java.util.Queue
+import com.zaxxer.hikari.HikariDataSource
 
 class Frontier {
     // 1. Each queue must have MAX number of urls
@@ -16,6 +15,35 @@ class Frontier {
     //
     //
     //
+
+    private val queuesUtils = QueuesUtils()
+
+    fun addUrls(urls: List<String>){
+        println("Added ${urls.size} urls")
+
+
+        val dataSource = HikariDataSource()
+
+        dataSource.jdbcUrl = "jdbc:postgresql://localhost:5432/test"
+
+        dataSource.username = "postgres"
+        dataSource.password = "root"
+
+        val connection = dataSource.connection
+
+        queuesUtils.executeFrontQMutation(connection, 12, urls)
+
+//        val frontq = queuesUtils.getFrontQueues(connection)
+//        if(frontq != null){
+//            while (frontq.next()){
+//                val id = frontq.getInt("id")
+//                val name = frontq.getString("name")
+//
+//                println("$id, $name")
+//            }
+//        }
+
+    }
 
     init {
 //        val q1: Queue<String> = LinkedList<String>(mutableListOf("1", "2", "3"))

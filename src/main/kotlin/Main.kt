@@ -1,16 +1,9 @@
-import com.zaxxer.hikari.HikariDataSource
 import crawler.Crawler
-import frontier.BackQueue
-import frontier.FrontQueue
-import frontier.FrontierQueue
-import java.nio.ByteBuffer
-import java.sql.DriverManager
-import java.util.LinkedList
-import java.util.Queue
 
 fun main() {
-    val crawler = Crawler().initialize(1, Thread())
-
+    val crawler = Crawler()
+    crawler.initialize(1, Thread())
+    crawler.start()
 //    val seedUrls: List<String> = listOf(
 //        "https://ecospace.org.ua/",
 //    ).distinct()
@@ -54,9 +47,6 @@ fun main() {
 //    } else{
 //        println("No seed urls provided")
 //    }
-
-
-
 
 //    val q1: FrontQueue = FrontQueue(1, LinkedList<String>(mutableListOf("https://host.com", "https://google.com", "https://google.com/test")))
 //    val q3: FrontQueue = FrontQueue(2,  LinkedList<String>(mutableListOf("https://google.com/123", "https://host.com/main", "https://host.com/test")))
