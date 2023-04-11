@@ -4,29 +4,17 @@ import fetcher.Fetcher
 import frontier.Frontier
 import parser.Parser
 
-class Crawler {
+class Crawler(
+    private val id: Int,
+    private val thread: Thread,
+    private val config: Configuration,
+    private val frontier: Frontier,
+    private val fetcher: Fetcher,
+    private val parser: Parser,
+) {
 
-    private var crawlerId: Int? = null
-    private lateinit var crawlerThread: Thread
-
-    private val fetcher = Fetcher()
-    private val parser = Parser()
-    private val frontier = Frontier()
-
-    fun initialize(id: Int, thread: Thread){
-        crawlerId = id
-        crawlerThread = thread
-    }
-
-    fun start(){
-        println("Started Crawler $crawlerId")
-        val urls = listOf<String>(
-            "https://ecospace.org.ua",
-            "https://sometext.org.ua",
-            "https://somt.org.ua",
-            "https://somtasdasd.org.ua"
-        )
-
-        frontier.addUrls(urls)
+    fun start() {
+        thread.run { println("Thread ${thread.id}") }
+        println("Started Crawler $id")
     }
 }

@@ -1,8 +1,12 @@
 package frontier
 
+import WebURL
 import com.zaxxer.hikari.HikariDataSource
+import services.DBConnector
+import java.sql.Connection
+import java.util.*
 
-class Frontier {
+class Frontier() {
     // 1. Each queue must have MAX number of urls
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
@@ -17,21 +21,22 @@ class Frontier {
     //
 
     private val queuesUtils = QueuesUtils()
+    private val connection = DBConnector().init()
 
-    fun addUrls(urls: List<String>){
+    fun addUrls(urls: List<WebURL>) {
         println("Added ${urls.size} urls")
 
 
-        val dataSource = HikariDataSource()
-
-        dataSource.jdbcUrl = "jdbc:postgresql://localhost:5432/test"
-
-        dataSource.username = "postgres"
-        dataSource.password = "root"
-
-        val connection = dataSource.connection
-
-        queuesUtils.executeFrontQMutation(connection, 12, urls)
+//        queuesUtils.executeFrontQMutation(connection, 12, urls)
+//
+//        val test: Queue<Int> = PriorityQueue<Int>()
+//        test.offer(10)
+//        test.offer(1)
+//        test.offer(5)
+//
+//        while (test.isNotEmpty()){
+//            println(test.poll())
+//        }
 
 //        val frontq = queuesUtils.getFrontQueues(connection)
 //        if(frontq != null){
