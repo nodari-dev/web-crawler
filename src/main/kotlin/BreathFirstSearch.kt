@@ -21,7 +21,7 @@ class BreathFirstSearch(
                 val hashCurrent = current.getUrl().hashCode()
 
                 if (!current.isVisited() && !urlHashDataStore.includes(hashCurrent)) {
-                    urlHashDataStore.add(hashCurrent)
+                    urlHashDataStore.add(hashCurrent, current.getUrl())
                     current.setVisited()
                     number += 1
 
