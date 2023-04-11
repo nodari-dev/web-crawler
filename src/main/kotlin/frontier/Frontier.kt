@@ -6,7 +6,7 @@ import services.DBConnector
 import java.sql.Connection
 import java.util.*
 
-class Frontier() {
+class Frontier {
     // 1. Each queue must have MAX number of urls
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
