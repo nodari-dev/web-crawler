@@ -14,7 +14,7 @@ class BreathFirstSearch(
         val queue: MutableList<Vertex> = mutableListOf()
         queue.add(startVertex)
 
-        while (queue.isNotEmpty() && number != 50) {
+        while (queue.isNotEmpty()) {
             val current: Vertex? = queue.removeFirstOrNull()
             if (current != null) {
 
@@ -33,14 +33,13 @@ class BreathFirstSearch(
                         parser.getAllChildLinks(html).forEach { childVertex ->
                             val hashCodeUrl = childVertex.getUrl().hashCode()
                             if (!urlHashDataStore.includes(hashCodeUrl)) {
-                                urlHashDataStore.add(hashCodeUrl)
                                 current.setNeighbor(Vertex(childVertex.getUrl()))
                                 number += 1
                                 print("$number ")
                                 println(childVertex.getUrl())
                             }
+                            if(number == 50) return
                         }
-
                     }
                     queue.addAll(current.getNeighbors())
                 }
