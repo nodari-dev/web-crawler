@@ -1,44 +1,44 @@
 import fetcher.Fetcher
 import parser.Parser
 
-class BreathFirstSearch(startVertex: Vertex) {
-    private val startVertex: Vertex = startVertex
+class BreathFirstSearch(
+    private val startVertex: Vertex,
+    private val urlHashDataStore: UrlHashDataStore
+) {
     private val fetcher = Fetcher()
     private val parser = Parser()
     private var number = 0
 
-    private val urlHashStorage = UrlHashDataStore()
 
-    fun traverse(){
+    fun traverse() {
         val queue: MutableList<Vertex> = mutableListOf()
         queue.add(startVertex)
 
-        while(queue.isNotEmpty()){
+        while (queue.isNotEmpty() && number != 50) {
             val current: Vertex? = queue.removeFirstOrNull()
             if (current != null) {
 
-                val hashCurrent = current.hashCode()
+                val hashCurrent = current.getUrl().hashCode()
 
-                if(!current.isVisited() && !urlHashStorage.includes(hashCurrent)){
-                    urlHashStorage.add(hashCurrent)
+                if (!current.isVisited() && !urlHashDataStore.includes(hashCurrent)) {
+                    urlHashDataStore.add(hashCurrent)
                     current.setVisited()
                     number += 1
 
-                    println("$number Current " + current.getUrl())
+                    println("${Thread.currentThread()} $number Current " + current.getUrl())
 
                     val html = fetcher.getHTML(current)
 
                     if (html != null) {
                         parser.getAllChildLinks(html).forEach { childVertex ->
                             val hashCodeUrl = childVertex.getUrl().hashCode()
-                            if (!urlHashStorage.includes(hashCodeUrl)) {
-                                urlHashStorage.add(hashCodeUrl)
+                            if (!urlHashDataStore.includes(hashCodeUrl)) {
+                                urlHashDataStore.add(hashCodeUrl)
                                 current.setNeighbor(Vertex(childVertex.getUrl()))
                                 number += 1
                                 print("$number ")
                                 println(childVertex.getUrl())
                             }
-//                              if(number == 30) return
                         }
 
                     }
