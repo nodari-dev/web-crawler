@@ -1,5 +1,7 @@
 import fetcher.Fetcher
+import frontier.QueuesUtils
 import parser.Parser
+import services.DBConnector
 
 class BreathFirstSearch(
     private val startVertex: Vertex,
@@ -9,6 +11,9 @@ class BreathFirstSearch(
     private val parser = Parser()
     private var number = 0
 
+    private val queuesUtils = QueuesUtils()
+
+    private val dbConnector = DBConnector().init()
 
     fun traverse() {
         val queue: MutableList<Vertex> = mutableListOf()
@@ -31,6 +36,9 @@ class BreathFirstSearch(
 
                     if (html != null) {
                         parser.getAllChildLinks(html).forEach { childVertex ->
+                            if(dbConnector != null){
+                                queuesUtils.executeFrontQMutation(dbConnector, 1, listOf(childVertex.getUrl()))
+                            }
                             val hashCodeUrl = childVertex.getUrl().hashCode()
                             if (!urlHashDataStore.includes(hashCodeUrl)) {
                                 current.setNeighbor(Vertex(childVertex.getUrl()))
@@ -38,7 +46,7 @@ class BreathFirstSearch(
                                 print("$number ")
                                 println(childVertex.getUrl())
                             }
-                            if(number == 50) return
+                            if(number == 10000000) return
                         }
                     }
                     queue.addAll(current.getNeighbors())
