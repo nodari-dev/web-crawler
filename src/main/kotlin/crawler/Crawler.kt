@@ -19,7 +19,7 @@ class Crawler(
     fun start() {
         println("Started Crawler $id ${Thread.currentThread()}")
         val vertex = Vertex("https://magecloud.agency")
-        val bfs = BreathFirstSearch(vertex, urlHashStorage)
+        val bfs = BreathFirstSearch(vertex, urlHashStorage, fetcher)
         bfs.traverse()
     }
 }

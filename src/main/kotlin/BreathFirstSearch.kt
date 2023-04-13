@@ -5,9 +5,9 @@ import services.DBConnector
 
 class BreathFirstSearch(
     private val startVertex: Vertex,
-    private val urlHashDataStore: UrlHashDataStore
+    private val urlHashDataStore: UrlHashDataStore,
+    private val fetcher: Fetcher
 ) {
-    private val fetcher = Fetcher()
     private val parser = Parser()
     private var number = 0
 

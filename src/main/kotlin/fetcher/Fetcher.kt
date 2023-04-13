@@ -1,26 +1,25 @@
 package fetcher
 
 import Vertex
+import crawler.Configuration
 import java.io.IOException
 import java.net.URL
+import java.util.*
 
-class Fetcher {
+class Fetcher(private val config: Configuration) {
+
     fun getHTML(urlVertex: Vertex): String? {
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                TODO("ADD TIMEOUT FROM CONFIGURATION")
-//            }
-//        }, 2000)
-        return try{
+        Thread.sleep(config.timeBetweenFetching)
 
+        return try {
             URL(urlVertex.getUrl()).readText()
-        } catch (e: IOException){
+        } catch (e: IOException) {
             println("Could not parse document: $e")
             null
         }
     }
 
-    fun getHEAD(){
+    fun getHEAD() {
         // to get data (last updated, etc...)
     }
 }

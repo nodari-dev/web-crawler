@@ -4,7 +4,7 @@ import crawler.CrawlersController
 fun main() {
     val config = Configuration(
         1,
-        1,
+        1000,
         "frontq",
         "backq",
         "visited",

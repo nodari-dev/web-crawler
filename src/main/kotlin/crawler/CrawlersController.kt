@@ -9,7 +9,7 @@ import parser.Parser
 class CrawlersController(private val config: Configuration) {
 
     private val frontier = Frontier()
-    private val fetcher = Fetcher()
+    private val fetcher = Fetcher(config)
     private val parser = Parser()
     private val urlHashStorage = UrlHashDataStore()
 
