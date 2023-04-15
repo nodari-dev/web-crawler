@@ -10,10 +10,10 @@ class DBConnector {
 
         dataSource.jdbcUrl = "jdbc:postgresql://localhost:5432/test"
 
-        dataSource.username = "test"
-        dataSource.password = "test"
-//        dataSource.username = "postgres"
-//        dataSource.password = "root"
+//        dataSource.username = "test"
+//        dataSource.password = "test"
+        dataSource.username = "postgres"
+        dataSource.password = "root"
         return try {
             dataSource.connection
         } catch (e: SQLException) {

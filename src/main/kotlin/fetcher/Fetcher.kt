@@ -4,7 +4,6 @@ import Vertex
 import crawler.Configuration
 import java.io.IOException
 import java.net.URL
-import java.util.*
 
 class Fetcher(private val config: Configuration) {
 

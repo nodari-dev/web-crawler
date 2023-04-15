@@ -3,7 +3,7 @@ import frontier.QueuesUtils
 import parser.Parser
 import services.DBConnector
 
-class BreathFirstSearch(
+class BreadthFirstSearch(
     private val startVertex: Vertex,
     private val urlHashDataStore: UrlHashDataStore,
     private val fetcher: Fetcher
@@ -46,7 +46,7 @@ class BreathFirstSearch(
                                 print("$number ")
                                 println(childVertex.getUrl())
                             }
-                            if(number == 10000000) return
+                            if(number == 100) return
                         }
                     }
                     queue.addAll(current.getNeighbors())

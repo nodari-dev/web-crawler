@@ -6,6 +6,7 @@ class UrlHashDataStore {
     private val connection = DBConnector().init()
     private val mutex = Object()
 
+    // developer is too lazy to create new name for a method
     fun add(urlHash: Int, url: String){
         synchronized(mutex){
             if(connection != null){
@@ -22,6 +23,7 @@ class UrlHashDataStore {
         }
     }
 
+    // same as above
     fun includes(urlHash: Int): Boolean{
         synchronized(mutex){
             if(connection != null){

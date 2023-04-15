@@ -5,5 +5,5 @@ data class Configuration(
     val timeBetweenFetching: Long,
     val frontQueueTable: String,
     val backQueueTable: String,
-    val visitedUrlsTable: String
+    val visitedUrlsTable: String,
 )

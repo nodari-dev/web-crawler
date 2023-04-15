@@ -16,9 +16,12 @@ class Frontier {
 
     // after fetch -> put all found urls to frontier
     // frontier will handle all urls
+    // frontier works on separated thread
     //
     //
-    //
+
+    // IMPORTANT
+    // scheduler -> shared resource which contains all backq
 
     private val queuesUtils = QueuesUtils()
     private val connection = DBConnector().init()

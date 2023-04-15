@@ -8,13 +8,13 @@ import parser.Parser
 
 class CrawlersController(private val config: Configuration) {
 
-    private val frontier = Frontier()
     private val fetcher = Fetcher(config)
     private val parser = Parser()
+    private val frontier = Frontier()
     private val urlHashStorage = UrlHashDataStore()
 
-    fun addSeeds(seeds: List<WebURL>) {
-        frontier.addUrls(seeds)
+    fun addSeeds(urls: List<WebURL>){
+        frontier.addUrls(urls)
     }
 
     fun start() {
@@ -23,7 +23,6 @@ class CrawlersController(private val config: Configuration) {
                 Crawler(
                     id,
                     config,
-                    frontier,
                     fetcher,
                     parser,
                     urlHashStorage
