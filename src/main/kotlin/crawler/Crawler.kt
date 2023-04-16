@@ -2,9 +2,8 @@ package crawler
 
 import BreadthFirstSearch
 import UrlHashDataStore
-import Vertex
+import Node
 import fetcher.Fetcher
-import frontier.Frontier
 import parser.Parser
 
 
@@ -14,12 +13,12 @@ class Crawler(
     private val fetcher: Fetcher,
     private val parser: Parser,
     private val urlHashStorage: UrlHashDataStore
-) {
+): Thread() {
 
-    fun start() {
-        println("Started Crawler $id ${Thread.currentThread()}")
-        val vertex = Vertex("https://ecospace.org.ua")
-        val bfs = BreadthFirstSearch(vertex, urlHashStorage, fetcher)
+    override fun run() {
+        println("Started Crawler $id on thread ${currentThread().id}")
+        val node = Node("https://ecospace.org.ua")
+        val bfs = BreadthFirstSearch(node, urlHashStorage, fetcher)
         bfs.traverse()
     }
 }

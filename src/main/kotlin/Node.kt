@@ -1,7 +1,7 @@
-class Vertex(data: String){
+class Node(data: String){
     private var url: String = data
     private var visited: Boolean = false
-    private val neighbors: MutableList<Vertex> = mutableListOf()
+    private val neighbors: MutableList<Node> = mutableListOf()
 
     init{
         if(!url.endsWith("/")){
@@ -13,15 +13,15 @@ class Vertex(data: String){
         visited = true
     }
 
-    fun getNeighbors(): List<Vertex> {
+    fun getNeighbors(): List<Node> {
         return neighbors
     }
 
-    fun setNeighbors(newNeighbors: List<Vertex>){
+    fun setNeighbors(newNeighbors: List<Node>){
         neighbors.addAll(newNeighbors)
     }
 
-    fun setNeighbor(newNeighbor: Vertex){
+    fun setNeighbor(newNeighbor: Node){
         neighbors.add(newNeighbor)
     }
 

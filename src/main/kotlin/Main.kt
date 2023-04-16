@@ -1,6 +1,6 @@
 import crawler.Configuration
 import crawler.CrawlersController
-import frontier.Frontier
+import dto.WebURL
 
 fun main() {
     val config = Configuration(

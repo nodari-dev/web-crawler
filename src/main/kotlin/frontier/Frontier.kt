@@ -1,10 +1,7 @@
 package frontier
 
-import WebURL
-import com.zaxxer.hikari.HikariDataSource
+import dto.WebURL
 import services.DBConnector
-import java.sql.Connection
-import java.util.*
 
 class Frontier {
     // 1. Each queue must have MAX number of urls
@@ -25,9 +22,18 @@ class Frontier {
 
     private val queuesUtils = QueuesUtils()
     private val connection = DBConnector().init()
+    private val scheduler = Scheduler()
+    private val mutex = Object()
+
+    fun getUrl(): String{
+        synchronized(mutex){
+            return ""
+        }
+    }
 
     fun addUrls(urls: List<WebURL>) {
         println("Added ${urls.size} urls")
+    }
 
 
 //        queuesUtils.executeFrontQMutation(connection, 12, urls)
@@ -51,9 +57,9 @@ class Frontier {
 //            }
 //        }
 
-    }
+//    }
 
-    init {
+//    init {
 //        val q1: Queue<String> = LinkedList<String>(mutableListOf("1", "2", "3"))
 //        val q2: Queue<String> = LinkedList<String>(mutableListOf())
 //
@@ -69,5 +75,5 @@ class Frontier {
 //                println("Back: $back")
 //            }
 //        }
-    }
+//    }
 }

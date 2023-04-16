@@ -11,7 +11,7 @@ class QueuesUtils {
         val urlsString = urls.joinToString(",")
         if (connection != null) {
             try {
-                val mutation = connection.prepareStatement(("INSERT INTO frontq(id,urls) VALUES(?,?)"))
+                val mutation = connection.prepareStatement(("INSERT INTO frontq(id,value) VALUES(?,?)"))
                 mutation.setInt(1, id)
                 mutation.setString(2, urlsString)
                 mutation.executeUpdate()

@@ -4,7 +4,7 @@ import parser.Parser
 import services.DBConnector
 
 class BreadthFirstSearch(
-    private val startVertex: Vertex,
+    private val startNode: Node,
     private val urlHashDataStore: UrlHashDataStore,
     private val fetcher: Fetcher
 ) {
@@ -16,11 +16,11 @@ class BreadthFirstSearch(
     private val dbConnector = DBConnector().init()
 
     fun traverse() {
-        val queue: MutableList<Vertex> = mutableListOf()
-        queue.add(startVertex)
+        val queue: MutableList<Node> = mutableListOf()
+        queue.add(startNode)
 
         while (queue.isNotEmpty()) {
-            val current: Vertex? = queue.removeFirstOrNull()
+            val current: Node? = queue.removeFirstOrNull()
             if (current != null) {
 
                 val hashCurrent = current.getUrl().hashCode()
@@ -30,7 +30,7 @@ class BreadthFirstSearch(
                     current.setVisited()
                     number += 1
 
-                    println("${Thread.currentThread()} $number Current " + current.getUrl())
+                    println("Thread: ${Thread.currentThread().id} $number Current " + current.getUrl())
 
                     val html = fetcher.getHTML(current)
 
@@ -41,7 +41,7 @@ class BreadthFirstSearch(
                             }
                             val hashCodeUrl = childVertex.getUrl().hashCode()
                             if (!urlHashDataStore.includes(hashCodeUrl)) {
-                                current.setNeighbor(Vertex(childVertex.getUrl()))
+                                current.setNeighbor(Node(childVertex.getUrl()))
                                 number += 1
                                 print("$number ")
                                 println(childVertex.getUrl())

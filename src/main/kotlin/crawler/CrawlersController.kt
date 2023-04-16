@@ -1,7 +1,7 @@
 package crawler
 
 import UrlHashDataStore
-import WebURL
+import dto.WebURL
 import fetcher.Fetcher
 import frontier.Frontier
 import parser.Parser
@@ -19,16 +19,14 @@ class CrawlersController(private val config: Configuration) {
 
     fun start() {
         for (id: Int in 1..config.numberOfCrawlers) {
-            Thread {
-                Crawler(
-                    id,
-                    config,
-                    fetcher,
-                    parser,
-                    urlHashStorage
-                ).start()
-            }.start()
-
+            val crawler = Crawler(
+                id,
+                config,
+                fetcher,
+                parser,
+                urlHashStorage
+            )
+            crawler.start()
         }
     }
 }
