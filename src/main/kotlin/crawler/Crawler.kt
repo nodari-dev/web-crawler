@@ -4,6 +4,7 @@ import BreadthFirstSearch
 import UrlHashDataStore
 import Node
 import fetcher.Fetcher
+import frontier.Frontier
 import parser.Parser
 
 
@@ -12,6 +13,7 @@ class Crawler(
     private val config: Configuration,
     private val fetcher: Fetcher,
     private val parser: Parser,
+    private val frontier: Frontier,
     private val urlHashStorage: UrlHashDataStore
 ): Thread() {
 

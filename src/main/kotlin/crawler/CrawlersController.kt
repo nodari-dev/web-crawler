@@ -18,7 +18,6 @@ class CrawlersController(private val config: Configuration) {
     }
 
     fun startCrawling() {
-        frontier.start()
 
         for (id: Int in 1..config.numberOfCrawlers) {
             Crawler(
@@ -26,6 +25,7 @@ class CrawlersController(private val config: Configuration) {
                 config,
                 fetcher,
                 parser,
+                frontier,
                 urlHashStorage
             ).start()
         }
