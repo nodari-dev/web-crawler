@@ -17,16 +17,17 @@ class CrawlersController(private val config: Configuration) {
         frontier.addUrls(urls)
     }
 
-    fun start() {
+    fun startCrawling() {
+        frontier.start()
+
         for (id: Int in 1..config.numberOfCrawlers) {
-            val crawler = Crawler(
+            Crawler(
                 id,
                 config,
                 fetcher,
                 parser,
                 urlHashStorage
-            )
-            crawler.start()
+            ).start()
         }
     }
 }

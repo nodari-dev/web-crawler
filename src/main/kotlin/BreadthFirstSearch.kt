@@ -35,18 +35,21 @@ class BreadthFirstSearch(
                     val html = fetcher.getHTML(current)
 
                     if (html != null) {
-                        parser.getAllChildLinks(html).forEach { childVertex ->
-                            if(dbConnector != null){
-                                queuesUtils.executeFrontQMutation(dbConnector, 1, listOf(childVertex.getUrl()))
+                        val childLinks = parser.getAllChildLinks(html)
+                        if(childLinks.isNotEmpty()){
+                            parser.getAllChildLinks(html).forEach { childVertex ->
+                                if(dbConnector != null){
+                                    queuesUtils.executeFrontQMutation(dbConnector, 1, listOf(childVertex.getUrl()))
+                                }
+                                val hashCodeUrl = childVertex.getUrl().hashCode()
+                                if (!urlHashDataStore.includes(hashCodeUrl)) {
+                                    current.setNeighbor(Node(childVertex.getUrl()))
+                                    number += 1
+                                    print("$number ")
+                                    println(childVertex.getUrl())
+                                }
+                                if(number == 100) return
                             }
-                            val hashCodeUrl = childVertex.getUrl().hashCode()
-                            if (!urlHashDataStore.includes(hashCodeUrl)) {
-                                current.setNeighbor(Node(childVertex.getUrl()))
-                                number += 1
-                                print("$number ")
-                                println(childVertex.getUrl())
-                            }
-                            if(number == 100) return
                         }
                     }
                     queue.addAll(current.getNeighbors())
