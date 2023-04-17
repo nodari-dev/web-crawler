@@ -1,5 +1,0 @@
-package frontier
-
-class Scheduler {
-
-}

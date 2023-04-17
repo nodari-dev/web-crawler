@@ -1,10 +1,7 @@
 package crawler
 
-import UrlHashDataStore
 import dto.WebURL
-import fetcher.Fetcher
 import frontier.Frontier
-import parser.Parser
 
 class CrawlersController() {
     private val frontier = Frontier

@@ -11,7 +11,7 @@ class BreadthFirstSearch(
     private val queuesUtils = QueuesUtils()
     private val dbConnector = DBConnector().init()
 
-    private val urlHashDataStore = UrlHashDataStore
+    private val urlHashDataStore = URLHashStorage
 
     fun traverse() {
         var number = 0
