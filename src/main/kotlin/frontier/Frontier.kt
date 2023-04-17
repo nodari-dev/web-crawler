@@ -3,7 +3,7 @@ package frontier
 import dto.WebURL
 import services.DBConnector
 
-class Frontier {
+object Frontier {
     // 1. Each queue must have MAX number of urls
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
@@ -19,17 +19,13 @@ class Frontier {
 
     // IMPORTANT
     // scheduler -> shared resource which contains all backq
-
-    private val queuesUtils = QueuesUtils()
-    private val connection = DBConnector().init()
-    private val scheduler = Scheduler()
     private val mutex = Object()
 
     private val storage = mutableListOf<WebURL>()
 
-    fun getUrl(): String{
+    fun getUrl(): String?{
         synchronized(mutex){
-            return storage.removeLast().url
+            return if(storage.isNotEmpty()) storage.removeLast().url else null
         }
     }
 

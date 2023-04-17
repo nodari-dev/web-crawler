@@ -1,7 +1,7 @@
 import services.DBConnector
 import java.sql.SQLException
 
-class UrlHashDataStore {
+object UrlHashDataStore {
 //    private val storage: MutableList<Int> = mutableListOf()
     private val connection = DBConnector().init()
     private val mutex = Object()

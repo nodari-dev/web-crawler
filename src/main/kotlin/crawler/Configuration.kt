@@ -1,9 +1,9 @@
 package crawler
 
-data class Configuration(
-    val numberOfCrawlers: Int,
-    val timeBetweenFetching: Long,
-    val frontQueueTable: String,
-    val backQueueTable: String,
-    val visitedUrlsTable: String,
-)
+object Configuration{
+    const val numberOfCrawlers: Int = 2
+    const val timeBetweenFetching: Long = 1000
+    const val frontQueueTable: String = "frontq"
+    const val backQueueTable: String = "backq"
+    const val visitedUrlsTable: String = "visited"
+}

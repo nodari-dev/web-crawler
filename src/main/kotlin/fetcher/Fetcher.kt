@@ -5,7 +5,9 @@ import crawler.Configuration
 import java.io.IOException
 import java.net.URL
 
-class Fetcher(private val config: Configuration) {
+class Fetcher {
+
+    private val config = Configuration
 
     fun getHTML(urlNode: Node): String? {
         Thread.sleep(config.timeBetweenFetching)

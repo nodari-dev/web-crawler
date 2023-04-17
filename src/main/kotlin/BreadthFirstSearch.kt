@@ -5,17 +5,16 @@ import services.DBConnector
 
 class BreadthFirstSearch(
     private val startNode: Node,
-    private val urlHashDataStore: UrlHashDataStore,
-    private val fetcher: Fetcher
 ) {
     private val parser = Parser()
-    private var number = 0
-
+    private val fetcher = Fetcher()
     private val queuesUtils = QueuesUtils()
-
     private val dbConnector = DBConnector().init()
 
+    private val urlHashDataStore = UrlHashDataStore
+
     fun traverse() {
+        var number = 0
         val queue: MutableList<Node> = mutableListOf()
         queue.add(startNode)
 
@@ -48,7 +47,7 @@ class BreadthFirstSearch(
                                     print("$number ")
                                     println(childVertex.getUrl())
                                 }
-                                if(number == 100) return
+                                if(number == 1000) return
                             }
                         }
                     }
