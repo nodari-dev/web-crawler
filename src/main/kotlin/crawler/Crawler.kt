@@ -11,6 +11,7 @@ class Crawler(
 
     override fun run() {
         println("Started Crawler $id on thread ${currentThread().id}")
+
         val url = frontier.getUrl()
         if(url != null){
             val node = Node(url)

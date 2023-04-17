@@ -4,6 +4,10 @@ import dto.WebURL
 import services.DBConnector
 
 object Frontier {
+
+    // IObservable
+
+
     // 1. Each queue must have MAX number of urls
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
@@ -14,22 +18,22 @@ object Frontier {
     // after fetch -> put all found urls to frontier
     // frontier will handle all urls
     // frontier works on separated thread
-    //
-    //
+
+
 
     // IMPORTANT
     // scheduler -> shared resource which contains all backq
     private val mutex = Object()
 
-    private val storage = mutableListOf<WebURL>()
+    private val storage = mutableListOf<String>()
 
     fun getUrl(): String?{
         synchronized(mutex){
-            return if(storage.isNotEmpty()) storage.removeLast().url else null
+            return if(storage.isNotEmpty()) storage.removeLast() else null
         }
     }
 
-    fun addUrls(urls: List<WebURL>) {
+    fun addUrls(urls: List<String>) {
         synchronized(mutex){
             println("Added ${urls.size} urls")
             urls.forEach{url ->

@@ -30,7 +30,7 @@ class BreadthFirstSearch(
                     current.setVisited()
                     number += 1
 
-                    println("Thread: ${Thread.currentThread().id} $number Current " + current.getUrl())
+                    println("Thread: ${Thread.currentThread().id} $number Current ${current.getUrl()}")
 
                     val html = fetcher.getHTML(current)
 
@@ -45,8 +45,7 @@ class BreadthFirstSearch(
                                 if (!urlHashDataStore.includes(hashCodeUrl)) {
                                     current.setNeighbor(Node(childVertex.getUrl()))
                                     number += 1
-                                    print("$number ")
-                                    println(childVertex.getUrl())
+                                    print("$number ${childVertex.getUrl()}")
                                 }
                                 if(number == 1000) return
                             }
