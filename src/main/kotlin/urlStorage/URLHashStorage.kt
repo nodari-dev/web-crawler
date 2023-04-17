@@ -1,7 +1,8 @@
+package urlStorage
+
 import exceptions.URLHashStorageQueryException
 import services.DBConnector
 import java.sql.SQLException
-import kotlin.math.E
 
 object URLHashStorage {
 

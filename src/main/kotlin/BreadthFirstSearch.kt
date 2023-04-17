@@ -2,6 +2,7 @@ import fetcher.Fetcher
 import frontier.QueuesUtils
 import parser.Parser
 import services.DBConnector
+import urlStorage.URLHashStorage
 
 class BreadthFirstSearch(
     private val startNode: Node,
