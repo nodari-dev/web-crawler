@@ -19,7 +19,7 @@ class Crawler(
 
     override fun run() {
         println("Started Crawler $id on thread ${currentThread().id}")
-        val node = Node("")
+        val node = Node(frontier.getUrl())
         val bfs = BreadthFirstSearch(node, urlHashStorage, fetcher)
         bfs.traverse()
     }
