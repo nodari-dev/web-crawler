@@ -1,112 +1,126 @@
-import crawler.Configuration
-import crawler.CrawlersController
-import org.omg.CORBA.Object
-import kotlin.math.sign
+open class Crawler: Thread() {
+    private var busy = false
 
-class Signal<T> {
-
-    class Connection{
-        private var open: Boolean = true
-
-        fun isOpened():Boolean{
-            return open
-        }
-
-        fun disable(){
-            open = false
-        }
-
-        fun enable(){
-            open = true
-        }
+    fun isBusy(): Boolean{
+        return busy
     }
 
-    lateinit var connection: Connection
-
-    val callbacks = mutableMapOf<Connection, (T) -> Unit>()
-
-    fun emit(newValue: T) {
-        for(cb in callbacks) {
-            if(cb.key.isOpened()){
-                cb.value(newValue)
-            }
-
-        }
+    fun disable(){
+        busy = true
     }
 
-    fun connect(callback: (newValue: T) -> Unit) : Connection {
-        connection = Connection()
-        callbacks[connection] = callback
-        return connection
+    fun enable(){
+        busy = false
     }
 
-    fun disconnect(connection : Connection) {
-        callbacks.remove(connection)
+    override fun run(){}
+
+    open fun update(){}
+
+    open fun setSubject(sub: Subject?){}
+
+    fun addUrlToFrontier(url: String){
+        Frontier.addNewUrl(url)
     }
 }
 
-object Frontier: Thread() {
-    val backQInserted = Signal<String>()
-    private val storage = mutableListOf<String>()
+interface Subject {
+    //methods to register and unregister crawler
+    fun register(obj: Crawler?)
+    fun unregister(obj: Crawler?)
 
+    //method to notify crawlers of change
+    fun notifyCrawlers()
+
+    //method to get updates from subject
+    fun getUpdate(obj: Crawler?): Any?
+}
+
+object Frontier : Subject {
+    private val observers: MutableList<Crawler?>
+
+    private val urls: MutableList<String> = mutableListOf("url-0-")
+    private var queues: MutableList<String> = mutableListOf()
+
+    private var changed = false
     private val mutex = Object()
 
-    fun onUrlAdded(url: String){
-        synchronized(mutex){
-            storage.add(url)
-            if(url in storage){
-                println("Frontier: new url was added: $url")
+    init {
+        observers = ArrayList()
+    }
+
+    fun addNewUrl(url: String){
+        urls.add(url)
+        urls.forEach{item -> println("Frontier has new url $item")}
+        createQueue("-NEW Q with $url-")
+    }
+
+    override fun register(obj: Crawler?) {
+        if (obj == null) throw NullPointerException("Null Observer")
+        synchronized(mutex) {
+            if (!observers.contains(obj)) {
+                observers.add(obj)
             }
         }
     }
 
-    fun createBackQ(){
-        synchronized(mutex){
-            if(storage.isNotEmpty()){
-                println("Frontier: new backQ with ${storage.first()}")
-                backQInserted.emit(storage.removeFirst())
-            }
-
+    override fun unregister(obj: Crawler?) {
+        synchronized(mutex) {
+            observers.remove(obj)
         }
     }
-    override fun run(){
-        while (true){
-            createBackQ()
+
+    override fun notifyCrawlers() {
+        var observersLocal: List<Crawler?>? = null
+        //synchronization is used to make sure any observer registered after message is received is not notified
+        synchronized(mutex) {
+            if (!changed) return
+            observersLocal = ArrayList(observers)
+            changed = false
         }
+        for (obj in observersLocal!!) {
+            obj!!.update()
+        }
+    }
+
+    override fun getUpdate(obj: Crawler?): Any? {
+        return queues.removeFirstOrNull()
+    }
+
+    //method to post message to the topic
+    fun createQueue(queue: String) {
+        println("Created a queue: $queue")
+        queues.add(queue)
+        changed = true
+        notifyCrawlers()
     }
 }
 
-class Crawler(private val id: Int): Thread() {
-    val backQStorage = mutableListOf<String>()
-    val urlAdded = Signal<String>()
-
-    fun onBackQInserted(newBackQ : String) {
-        if(backQStorage.isEmpty()){
-            println("Crawler is working with: $newBackQ")
-            backQStorage.add(newBackQ)
+class FrontierSubscriber(private val name: String) : Crawler() {
+    private var topic: Subject? = null
+    override fun update() {
+        if(!isBusy()){
+            val msg = topic!!.getUpdate(this) as String?
+            if (msg == null) {
+                println("$name noting to work on")
+                disable()
+            } else println("$name started working on $msg")
         }
     }
 
-    fun sendUrlToFrontier(url: String){
-        println("Crawler sent url $url")
-        urlAdded.emit(url)
-    }
-
-    override fun run(){
-        sendUrlToFrontier("www.host.com/${currentThread().id}")
-        println("Started Crawler $id on thread ${currentThread().id}")
+    override fun setSubject(sub: Subject?) {
+        topic = sub
     }
 }
 
 fun main() {
     val frontier = Frontier
-    frontier.start()
-
-    for (id: Int in 1..2) {
-        val crawler = Crawler(id)
-        frontier.backQInserted.connect(crawler::onBackQInserted)
-        crawler.urlAdded.connect(frontier::onUrlAdded)
-        crawler.start()
+    for(i in 1..3){
+        val crawler: Crawler = FrontierSubscriber("crawler${i}")
+        frontier.register(crawler)
+        crawler.setSubject(frontier)
+        crawler.addUrlToFrontier("url-$i")
+        crawler.update()
     }
 
 //    val seeds: List<String> = listOf(
