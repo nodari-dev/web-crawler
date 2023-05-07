@@ -1,134 +1,75 @@
-open class Crawler: Thread() {
-    private var busy = false
 
-    fun isBusy(): Boolean{
-        return busy
-    }
-
-    fun disable(){
-        busy = true
-    }
-
-    fun enable(){
-        busy = false
-    }
-
-    override fun run(){}
-
-    open fun update(){}
-
-    open fun setSubject(sub: Subject?){}
-
-    fun addUrlToFrontier(url: String){
-        Frontier.addNewUrl(url)
-    }
-}
-
-interface Subject {
-    //methods to register and unregister crawler
-    fun register(obj: Crawler?)
-    fun unregister(obj: Crawler?)
-
-    //method to notify crawlers of change
-    fun notifyCrawlers()
-
-    //method to get updates from subject
-    fun getUpdate(obj: Crawler?): Any?
-}
-
-object Frontier : Subject {
-    private val observers: MutableList<Crawler?>
-
-    private val urls: MutableList<String> = mutableListOf("url-0-")
-    private var queues: MutableList<String> = mutableListOf()
-
-    private var changed = false
+class Frontier {
+    private val strings = mutableListOf<String>("host0.com", "host1.com", "host2.com",)
     private val mutex = Object()
 
-    init {
-        observers = ArrayList()
+    fun add(string: String) {
+        // add new url to frontier
+        synchronized(mutex){
+            strings.add(string)
+            mutex.notifyAll()
+        }
     }
 
-    fun addNewUrl(url: String){
-        urls.add(url)
-        urls.forEach{item -> println("Frontier has new url $item")}
-        createQueue("-NEW Q with $url-")
-    }
-
-    override fun register(obj: Crawler?) {
-        if (obj == null) throw NullPointerException("Null Observer")
-        synchronized(mutex) {
-            if (!observers.contains(obj)) {
-                observers.add(obj)
+    private fun removeString(): String? {
+        // add remove url from frontier and return
+        synchronized(mutex){
+            if (strings.isEmpty()) {
+                return null
             }
+            return strings.removeFirst()
         }
     }
 
-    override fun unregister(obj: Crawler?) {
+    //    fun getString(host: String): String? {
+    fun getString(): String? {
         synchronized(mutex) {
-            observers.remove(obj)
+            while (strings.isEmpty()) {
+                mutex.wait()
+            }
+            val value = removeString()
+            // Might be used if crawler will use specific host
+//            if(value != null && value.contains(host)){
+//                return value
+//            }
+            if(value != null){
+                return value
+            }
+            return null
         }
-    }
-
-    override fun notifyCrawlers() {
-        var observersLocal: List<Crawler?>? = null
-        //synchronization is used to make sure any observer registered after message is received is not notified
-        synchronized(mutex) {
-            if (!changed) return
-            observersLocal = ArrayList(observers)
-            changed = false
-        }
-        for (obj in observersLocal!!) {
-            obj!!.update()
-        }
-    }
-
-    override fun getUpdate(obj: Crawler?): Any? {
-        return queues.removeFirstOrNull()
-    }
-
-    //method to post message to the topic
-    fun createQueue(queue: String) {
-        println("Created a queue: $queue")
-        queues.add(queue)
-        changed = true
-        notifyCrawlers()
     }
 }
 
-class FrontierSubscriber(private val name: String) : Crawler() {
-    private var topic: Subject? = null
-    override fun update() {
-        if(!isBusy()){
-            val msg = topic!!.getUpdate(this) as String?
-            if (msg == null) {
-                println("$name noting to work on")
-                disable()
-            } else println("$name started working on $msg")
-        }
-    }
+class Crawler(private val id: Int, private val frontier: Frontier): Thread(){
+    //    private val host = "host$id.com"
+    override fun run() {
+        while (true) {
+//            val string = frontier.getString(host) ?: break
+            val string = frontier.getString() ?: break
 
-    override fun setSubject(sub: Subject?) {
-        topic = sub
+            println("C: $id got string: $string")
+            sleep(1000)
+
+            // imitation sending new urls to frontier
+            val modifiedString = "$string/abc"
+            frontier.add(modifiedString)
+        }
     }
 }
 
 fun main() {
-    val frontier = Frontier
-    for(i in 1..3){
-        val crawler: Crawler = FrontierSubscriber("crawler${i}")
-        frontier.register(crawler)
-        crawler.setSubject(frontier)
-        crawler.addUrlToFrontier("url-$i")
-        crawler.update()
+    val frontier = Frontier()
+    val threads = mutableListOf<Thread>()
+
+    for(i in 0..1){
+        val crawler = Crawler(i, frontier)
+        threads.add(crawler)
+        crawler.start()
     }
 
-//    val seeds: List<String> = listOf(
-//        "https://ecospace.org.ua",
-//        "https://magecloud.agency"
-//    )
-//
-//    val controller = CrawlersController()
-//    controller.addSeeds(seeds)
-//    controller.startCrawling()
+    threads.forEach { thread ->
+        thread.join()
+    }
+
+    println("All threads finished")
 }

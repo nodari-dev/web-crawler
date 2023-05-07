@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation("org.postgresql:postgresql:42.5.4")
     implementation ("com.zaxxer:HikariCP:5.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
     testImplementation(kotlin("test"))
 }
 
