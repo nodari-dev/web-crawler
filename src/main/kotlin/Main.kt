@@ -58,18 +58,27 @@ class Crawler(private val id: Int, private val frontier: Frontier): Thread(){
 }
 
 fun main() {
-    val frontier = Frontier()
-    val threads = mutableListOf<Thread>()
+//    val frontier = Frontier()
+//    val threads = mutableListOf<Thread>()
+//
+//    for(i in 0..1){
+//        val crawler = Crawler(i, frontier)
+//        threads.add(crawler)
+//        crawler.start()
+//    }
+//
+//    threads.forEach { thread ->
+//        thread.join()
+//    }
+//
+//    println("All threads finished")
 
-    for(i in 0..1){
-        val crawler = Crawler(i, frontier)
-        threads.add(crawler)
-        crawler.start()
-    }
+    val tree = BTS()
+    tree.add(20)
+    tree.add(2)
+    tree.add(3)
+    tree.add(202)
+    tree.add(52)
 
-    threads.forEach { thread ->
-        thread.join()
-    }
-
-    println("All threads finished")
+    tree.show()
 }
