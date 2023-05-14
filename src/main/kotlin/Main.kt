@@ -74,11 +74,18 @@ fun main() {
 //    println("All threads finished")
 
     val tree = BTS()
-    tree.add(20)
-    tree.add(2)
+    val root = tree.add(20)
     tree.add(3)
-    tree.add(202)
-    tree.add(52)
+    tree.add(3)
+    tree.add(3)
 
     tree.show()
+
+    val list = mutableListOf<Int>()
+
+    tree.inorder(root, list)
+
+    list.forEach{
+        item -> println(item)
+    }
 }

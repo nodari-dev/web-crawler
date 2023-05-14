@@ -13,13 +13,29 @@ class BTS{
             current.left = addRecursive(current.left, value)
         } else if (value > current.value) {
             current.right = addRecursive(current.right, value)
+        } else{
+            // still add value if it already exist
+            current.right = addRecursive(current.right, value)
         }
 
         return current
     }
 
-    fun add(value: Int){
+    fun add(value: Int): Vertex{
         root = addRecursive(root, value)
+        return root as Vertex
+    }
+
+    fun inorder(node: Vertex?, list: MutableList<Int>){
+
+        if(node == null){
+            return;
+        }
+
+        inorder(node.left, list)
+        list.add(node.value)
+        inorder(node.right, list)
+
     }
 
     fun show(){
