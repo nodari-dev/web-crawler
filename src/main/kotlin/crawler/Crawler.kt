@@ -1,6 +1,6 @@
 package crawler
 
-import BreadthFirstSearch
+import SingleHostCrawl
 import Node
 import frontier.Frontier
 
@@ -15,7 +15,7 @@ class Crawler(
         val url = frontier.getUrl()
         if(url != null){
             val node = Node(url)
-            val bfs = BreadthFirstSearch(node)
+            val bfs = SingleHostCrawl(node)
             bfs.traverse()
         } else{
             // this stupid developer will update it and provide better connection

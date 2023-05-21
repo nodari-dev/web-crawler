@@ -1,37 +1,26 @@
 
 class Frontier {
-    private val strings = mutableListOf<String>("host0.com", "host1.com", "host2.com",)
+    private val urls = mutableListOf<String>("host0.com", "host1.com", "host2.com",)
     private val mutex = Object()
 
-    fun add(string: String) {
-        // add new url to frontier
+    fun add(value: String) {
         synchronized(mutex){
-            strings.add(string)
+            urls.add(value)
             mutex.notifyAll()
         }
     }
 
     private fun removeString(): String? {
-        // add remove url from frontier and return
-        synchronized(mutex){
-            if (strings.isEmpty()) {
-                return null
-            }
-            return strings.removeFirst()
-        }
+        return urls.removeFirstOrNull()
     }
 
-    //    fun getString(host: String): String? {
     fun getString(): String? {
         synchronized(mutex) {
-            while (strings.isEmpty()) {
+            while (urls.isEmpty()) {
                 mutex.wait()
             }
             val value = removeString()
-            // Might be used if crawler will use specific host
-//            if(value != null && value.contains(host)){
-//                return value
-//            }
+    
             if(value != null){
                 return value
             }
@@ -41,51 +30,36 @@ class Frontier {
 }
 
 class Crawler(private val id: Int, private val frontier: Frontier): Thread(){
-    //    private val host = "host$id.com"
     override fun run() {
         while (true) {
-//            val string = frontier.getString(host) ?: break
-            val string = frontier.getString() ?: break
+            val url = frontier.getString()
+            if(url != null){
 
-            println("C: $id got string: $string")
-            sleep(1000)
+                println("C: $id got string: $url")
+                sleep(1000)
 
-            // imitation sending new urls to frontier
-            val modifiedString = "$string/abc"
-            frontier.add(modifiedString)
+                // imitation sending new urls to frontier
+                val modifiedString = "$url/abc"
+                frontier.add(modifiedString)
+            }
         }
     }
 }
 
 fun main() {
-//    val frontier = Frontier()
-//    val threads = mutableListOf<Thread>()
-//
-//    for(i in 0..1){
-//        val crawler = Crawler(i, frontier)
-//        threads.add(crawler)
-//        crawler.start()
-//    }
-//
-//    threads.forEach { thread ->
-//        thread.join()
-//    }
-//
-//    println("All threads finished")
+    val frontier = Frontier()
+    val threads = mutableListOf<Thread>()
 
-    val tree = BTS()
-    val root = tree.add(20)
-    tree.add(3)
-    tree.add(3)
-    tree.add(3)
-
-    tree.show()
-
-    val list = mutableListOf<Int>()
-
-    tree.inorder(root, list)
-
-    list.forEach{
-        item -> println(item)
+    for(i in 0..1){
+        val crawler = Crawler(i, frontier)
+        threads.add(crawler)
+        crawler.start()
     }
+
+    threads.forEach { thread ->
+        thread.join()
+    }
+
+    println("All threads finished")
+
 }

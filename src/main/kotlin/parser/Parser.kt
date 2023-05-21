@@ -1,15 +1,15 @@
 package parser
 
-import Node
+import Page
 import dto.Regex.Values.A_TAG
 import dto.Regex.Values.GROUP_INDEX
 
 class Parser {
-    fun getAllChildLinks(html: String): MutableList<Node> {
-        val childUrls = mutableListOf<Node>()
+    fun getAllChildLinks(html: String): MutableList<Page> {
+        val childUrls = mutableListOf<Page>()
 
         A_TAG.findAll(html).forEach { match ->
-            childUrls.add(Node(match.groups[GROUP_INDEX]!!.value))
+            childUrls.add(Page(match.groups[GROUP_INDEX]!!.value))
         }
 
         return childUrls
