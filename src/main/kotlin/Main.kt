@@ -1,6 +1,6 @@
 
 class Frontier {
-    private val urls = mutableListOf<String>("host0.com", "host1.com", "host2.com",)
+    private val urls = mutableListOf("host0.com", "host1.com", "host2.com",)
     private val mutex = Object()
 
     fun add(value: String) {
@@ -47,19 +47,23 @@ class Crawler(private val id: Int, private val frontier: Frontier): Thread(){
 }
 
 fun main() {
-    val frontier = Frontier()
-    val threads = mutableListOf<Thread>()
+//    val frontier = Frontier()
+//    val threads = mutableListOf<Thread>()
+//
+//    for(i in 0..1){
+//        val crawler = Crawler(i, frontier)
+//        threads.add(crawler)
+//        crawler.start()
+//    }
+//
+//    threads.forEach { thread ->
+//        thread.join()
+//    }
+//
+//    println("All threads finished")
 
-    for(i in 0..1){
-        val crawler = Crawler(i, frontier)
-        threads.add(crawler)
-        crawler.start()
-    }
+    val test = SingleHostCrawl(Page("https://www.ecospace.org.ua"))
 
-    threads.forEach { thread ->
-        thread.join()
-    }
-
-    println("All threads finished")
+    test.start()
 
 }

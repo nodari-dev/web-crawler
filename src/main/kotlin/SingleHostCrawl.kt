@@ -1,67 +1,57 @@
 import fetcher.Fetcher
-import frontier.QueuesUtils
 import parser.Parser
-import services.DBConnector
 import urlStorage.URLHashStorage
 
 data class Counter(var value: Int)
 
 class SingleHostCrawl(
-    private val startPage: Page,
+    startPage: Page,
 ) {
     private val parser = Parser()
     private val fetcher = Fetcher()
-    private val queuesUtils = QueuesUtils()
-    private val dbConnector = DBConnector().init()
 
-    private val urlHashDataStore = URLHashStorage
+    private val urlHashDataStore = URLHashStorage()
     private val counter = Counter(0)
 
-    fun start() {
-        val queue: MutableList<Page> = mutableListOf()
-        queue.add(startPage)
+    private val queue: MutableList<Page> = mutableListOf(startPage)
 
+    fun start() {
         while (queue.isNotEmpty()) {
             val page: Page? = queue.removeFirstOrNull()
-            if (page != null) {
-
-                val hash = page.url.hashCode()
-
-                if (isPageValid(page, hash)) {
-                    urlHashDataStore.add(hash, page.url)
-                    page.visited = true
-                    counter.value += 1
-
-                    println("Thread: ${Thread.currentThread().id} ${counter.value} Current ${page.url}")
-
-                    val html = fetcher.getHTML(page)
-
-                    if (html != null) {
-                        val childLinks = parser.getChildLinks(html)
-                        if (childLinks.isNotEmpty()) {
-                            processChildUrls(html, page, counter)
-                        }
-                    }
-                    queue.addAll(page.neighbors)
-                }
+            if (isPageValid(page)) {
+                processUrl(page!!)
             }
         }
     }
 
-    private fun isPageValid(page: Page, hash: Int): Boolean {
-        return !page.visited && !urlHashDataStore.includes(hash)
+    private fun isPageValid(page: Page?): Boolean {
+        return page != null && !page.visited && !urlHashDataStore.storage.contains(page.hash)
     }
 
-    private fun processChildUrls(html: String, page: Page, counter: Counter) {
-        parser.getChildLinks(html).forEach { childPage ->
-            if (dbConnector != null) {
-                queuesUtils.executeFrontQMutation(dbConnector, 1, listOf(childPage.url))
-            }
-            val hashCodeUrl = childPage.hashCode()
-            if (!urlHashDataStore.includes(hashCodeUrl)) {
-                page.neighbors.add(Page(childPage.url))
-                counter.value += 1
-                print("${counter.value} ${childPage.url}")
+    private fun processUrl(page: Page) {
+        urlHashDataStore.storage.add(page.hash)
+        page.visited = true
+        counter.value++
+
+        println("Fetched: ${page.url}")
+        println(page.hash)
+
+        val html = fetcher.getHTML(page.url)
+        if (html != null) {
+            page.html = html
+            processChildUrls(page)
+        }
+
+        queue.addAll(page.neighbors)
+    }
+
+    private fun processChildUrls(page: Page) {
+        val urls = parser.getUrls(page.html!!)
+        urls.forEach { url ->
+            if (!urlHashDataStore.storage.contains(url.hashCode())) {
+                page.neighbors.add(Page(url))
+                counter.value++
+                println("Found: $url")
             }
             if (counter.value == 1000) return
         }

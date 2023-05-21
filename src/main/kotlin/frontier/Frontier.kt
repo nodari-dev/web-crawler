@@ -4,7 +4,24 @@ import dto.WebURL
 import services.DBConnector
 
 object Frontier {
+    private val mutex = Object()
 
+    private val storage = mutableListOf<String>()
+
+    fun getUrl(): String?{
+        synchronized(mutex){
+            return storage.removeLastOrNull()
+        }
+    }
+
+    fun addUrls(urls: List<String>) {
+        synchronized(mutex){
+            println("Added ${urls.size} urls")
+            urls.forEach{url ->
+                storage.add(url)
+            }
+        }
+    }
     // IObservable
 
 
