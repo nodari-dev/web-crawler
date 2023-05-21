@@ -1,28 +1,6 @@
 package frontier
 
-object Frontier {
-    private val mutex = Object()
-
-    private val storage = mutableListOf<String>()
-
-    fun getUrl(): String?{
-        synchronized(mutex){
-            return storage.removeLastOrNull()
-        }
-    }
-
-    fun addUrls(urls: List<String>) {
-        synchronized(mutex){
-            println("Added ${urls.size} urls")
-            urls.forEach{url ->
-                storage.add(url)
-            }
-        }
-    }
-    // IObservable
-
-
-    // 1. Each queue must have MAX number of urls
+class Frontier {
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
     // 4. If url has unrecognisible host -> create new queue with NEW HOST NAME
@@ -33,4 +11,31 @@ object Frontier {
     // frontier will handle all urls
     // frontier works on separated thread
 
+    private val urls = mutableListOf("host0.com", "host1.com", "host2.com",)
+    private val mutex = Object()
+
+    fun add(value: String) {
+        synchronized(mutex){
+            urls.add(value)
+            mutex.notifyAll()
+        }
+    }
+
+    private fun removeString(): String? {
+        return urls.removeFirstOrNull()
+    }
+
+    fun getString(): String? {
+        synchronized(mutex) {
+            while (urls.isEmpty()) {
+                mutex.wait()
+            }
+            val value = removeString()
+
+            if(value != null){
+                return value
+            }
+            return null
+        }
+    }
 }
