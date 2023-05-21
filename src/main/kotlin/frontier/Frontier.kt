@@ -21,21 +21,12 @@ class Frontier {
         }
     }
 
-    private fun removeString(): String? {
-        return urls.removeFirstOrNull()
-    }
-
     fun getString(): String? {
         synchronized(mutex) {
             while (urls.isEmpty()) {
                 mutex.wait()
             }
-            val value = removeString()
-
-            if(value != null){
-                return value
-            }
-            return null
+            return urls.removeFirstOrNull()
         }
     }
 }
