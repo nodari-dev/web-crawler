@@ -1,8 +1,5 @@
 package frontier
 
-import dto.WebURL
-import services.DBConnector
-
 object Frontier {
     private val mutex = Object()
 

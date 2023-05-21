@@ -25,12 +25,11 @@ class SingleHostCrawl(
     }
 
     private fun isPageValid(page: Page?): Boolean {
-        return page != null && !page.visited && !urlHashDataStore.storage.contains(page.hash)
+        return page != null && !urlHashDataStore.storage.contains(page.hash)
     }
 
     private fun processUrl(page: Page) {
         urlHashDataStore.storage.add(page.hash)
-        page.visited = true
         counter.value++
 
         println("Fetched: ${page.url}")
