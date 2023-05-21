@@ -5,7 +5,7 @@ import dto.Regex.Values.A_TAG
 import dto.Regex.Values.GROUP_INDEX
 
 class Parser {
-    fun getAllChildLinks(html: String): MutableList<Page> {
+    fun getChildLinks(html: String): MutableList<Page> {
         val childUrls = mutableListOf<Page>()
 
         A_TAG.findAll(html).forEach { match ->
