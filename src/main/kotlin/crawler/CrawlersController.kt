@@ -3,19 +3,19 @@ package crawler
 import frontier.Frontier
 
 class CrawlersController() {
-    private val frontier = Frontier
-    private val config = Configuration
+    private val frontier = Frontier()
+    private val threads = mutableListOf<Thread>()
 
-    fun addSeeds(urls: List<String>){
-        frontier.addUrls(urls)
-    }
+    fun start(){
+        for(i in 0..1){
+            val crawler = Crawler(i, frontier)
+            threads.add(crawler)
+            crawler.start()
+        }
 
-    fun startCrawling() {
-
-        for (id: Int in 1..config.numberOfCrawlers) {
-//            frontier.backQInserted.connect(crawler::onBackQInserted)
-//            crawler.urlAdded.connect(frontier::onUrlAdded)
-            Crawler(id).start()
+        threads.forEach { thread ->
+            thread.join()
         }
     }
+
 }
