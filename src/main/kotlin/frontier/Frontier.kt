@@ -9,7 +9,6 @@ class Frontier {
 
     // after fetch -> put all found urls to frontier
     // frontier will handle all urls
-    // frontier works on separated thread
 
     private val urls = mutableListOf("host0.com", "host1.com", "host2.com",)
     private val mutex = Object()

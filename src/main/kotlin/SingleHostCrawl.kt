@@ -35,7 +35,7 @@ class SingleHostCrawl(
         println("Fetched: ${page.url}")
         println(page.hash)
 
-        val html = fetcher.getHTML(page.url)
+        val html = fetcher.getPageContent(page.url)
         if (html != null) {
             page.html = html
             processChildUrls(page)

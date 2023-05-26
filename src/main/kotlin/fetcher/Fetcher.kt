@@ -1,26 +1,42 @@
 package fetcher
 
 import crawler.Configuration
+import org.jsoup.Connection
+import org.jsoup.Jsoup
+
 import java.io.IOException
-import java.net.URL
+import org.jsoup.HttpStatusException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
 
 class Fetcher {
 
-    private val config = Configuration
+    fun getPageContent(url: String): String? {
+        var content: String? = null
 
-    fun getHTML(url: String): String? {
-        println("url to fetch $url")
-        Thread.sleep(config.timeBetweenFetching)
+        try {
+            val connection = Jsoup.connect(url)
+            connection.userAgent("Mozilla")
+            connection.timeout(Configuration.timeBetweenFetching)
+            content = toOneLineHTML(connection.get().toString())
 
-        return try {
-            URL(url).readText()
-        } catch (e: IOException) {
-            println("Could not parse document: $e")
-            null
+        } catch (exception: HttpStatusException) {
+            println(exception.statusCode)
+        } catch (exception: UnknownHostException) {
+            println(exception.message)
+        } catch (exception: IllegalArgumentException) {
+            println(exception.message)
+        } catch (exception: SocketTimeoutException) {
+            println(exception.message)
+        } catch (exception: IOException) {
+            println(exception.message)
         }
+
+        return content
     }
 
-    fun getHEAD() {
-        // to get data (last updated, etc...)
+    private fun toOneLineHTML(content: String): String{
+        return content.replace("\n" , "")
     }
 }

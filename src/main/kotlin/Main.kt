@@ -1,13 +1,15 @@
 import crawler.CrawlersController
+import fetcher.Fetcher
 
 fun main() {
-
-
-//    val test = SingleHostCrawl(Page("https://ecospace.org.ua"))
-//
+//    val test = SingleHostCrawl(Page("http://example.com/"))
 //    test.start()
 
-    val controller = CrawlersController()
-    controller.start()
+    // http://example.com/
+//    val controller = CrawlersController()
+//    controller.start()
+
+    val fetcher = Fetcher()
+    println(fetcher.getPageContent("http://example.com/"))
 
 }
