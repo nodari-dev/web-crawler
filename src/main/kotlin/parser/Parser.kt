@@ -2,9 +2,15 @@ package parser
 
 import parser.RegexPatterns.A_TAG
 import parser.RegexPatterns.GROUP_INDEX
+import parser.RegexPatterns.UNSUPPORTED_FILETYPES
 
-class Parser {
-    fun getUrls(html: String): MutableList<String> {
+object Parser {
+    fun getFilteredUrls(html: String): List<String> {
+        println(getAllHrefValues(html))
+        return getAllHrefValues(html).filter { url -> url.matches(UNSUPPORTED_FILETYPES) }
+    }
+
+    private fun getAllHrefValues(html: String): MutableList<String>{
         val childUrls = mutableListOf<String>()
 
         A_TAG.findAll(html).forEach { match ->
@@ -12,9 +18,5 @@ class Parser {
         }
 
         return childUrls
-    }
-
-    fun getAllText(html: String): String{
-        return "SOME TEXT"
     }
 }

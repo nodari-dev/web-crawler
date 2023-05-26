@@ -7,7 +7,6 @@ data class Counter(var value: Int)
 class SingleHostCrawl(
     startPage: Page,
 ) {
-    private val parser = Parser()
     private val fetcher = Fetcher()
 
     private val urlHashDataStore = URLHashStorage()
@@ -45,7 +44,7 @@ class SingleHostCrawl(
     }
 
     private fun processChildUrls(page: Page) {
-        val urls = parser.getUrls(page.html!!)
+        val urls = Parser.getFilteredUrls(page.html!!)
         urls.forEach { url ->
             if (!urlHashDataStore.storage.contains(url.hashCode())) {
                 page.neighbors.add(Page(url))
