@@ -1,7 +1,7 @@
 package fetcher
 
-import crawler.Configuration
-import org.jsoup.Connection
+import crawler.Configuration.TIME_BETWEEN_FETCHING
+import crawler.Configuration.CONNECTION_TIMEOUT
 import org.jsoup.Jsoup
 
 import java.io.IOException
@@ -13,12 +13,13 @@ import java.net.UnknownHostException
 class Fetcher {
 
     fun getPageContent(url: String): String? {
+        Thread.sleep(TIME_BETWEEN_FETCHING)
+        
         var content: String? = null
-
         try {
             val connection = Jsoup.connect(url)
             connection.userAgent("Mozilla")
-            connection.timeout(Configuration.timeBetweenFetching)
+            connection.timeout(CONNECTION_TIMEOUT)
             content = toOneLineHTML(connection.get().toString())
 
         } catch (exception: HttpStatusException) {
