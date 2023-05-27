@@ -2,6 +2,7 @@ package fetcher
 
 import crawler.Configuration.TIME_BETWEEN_FETCHING
 import crawler.Configuration.CONNECTION_TIMEOUT
+import interfaces.IFetcher
 import org.jsoup.Jsoup
 
 import java.io.IOException
@@ -10,9 +11,9 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 
-class Fetcher {
+class Fetcher: IFetcher {
 
-    fun getPageContent(url: String): String? {
+    override fun getPageContent(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)
         
         var content: String? = null

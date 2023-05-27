@@ -1,11 +1,12 @@
 package parser
 
+import interfaces.IParser
 import parser.RegexPatterns.A_TAG
 import parser.RegexPatterns.GROUP_INDEX
 import parser.RegexPatterns.UNSUPPORTED_FILETYPES
 
-object Parser {
-    fun getFilteredURLs(html: String): List<String> {
+object Parser: IParser {
+    override fun getFilteredURLs(html: String): List<String> {
         return parseAllHrefValues(html).filter { url -> !UNSUPPORTED_FILETYPES.matches(url) }
     }
 

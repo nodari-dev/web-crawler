@@ -1,6 +1,8 @@
 package frontier
 
-class Frontier {
+import interfaces.IFrontier
+
+class Frontier: IFrontier {
     // 2. Each back-queue must have NAME AS A HOST NAME
     // 3. Each back-queue contains ONLY URLS with the same host
     // 4. If url has unrecognisible host -> create new queue with NEW HOST NAME
@@ -16,14 +18,14 @@ class Frontier {
     private val urls = mutableListOf("host0.com", "host1.com", "host2.com")
     private val mutex = Object()
 
-    fun add(value: String) {
+    override fun add(value: String) {
         synchronized(mutex){
             urls.add(value)
             mutex.notifyAll()
         }
     }
 
-    fun getString(): String? {
+    override fun getString(): String? {
         synchronized(mutex) {
             while (urls.isEmpty()) {
                 mutex.wait()
