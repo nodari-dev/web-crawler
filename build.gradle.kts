@@ -15,7 +15,7 @@ plugins {
     kotlin("jvm") version "1.7.21"
     application
     id("org.flywaydb.flyway") version "9.11.0"
-    id("nu.studer.jooq") version "6.0.1"
+//    id("nu.studer.jooq") version "6.0.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
@@ -27,8 +27,8 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.16.1")
     implementation("org.flywaydb:flyway-core:9.11.0")
     implementation("org.postgresql:postgresql:$postgresVersion")
-    jooqGenerator("org.postgresql:postgresql:$postgresVersion")
-    api("org.jooq:jooq:$jooqVersion")
+//    jooqGenerator("org.postgresql:postgresql:$postgresVersion")
+//    api("org.jooq:jooq:$jooqVersion")
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     testImplementation(kotlin("test"))

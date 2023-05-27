@@ -44,7 +44,7 @@ class SingleHostCrawl(
     }
 
     private fun processChildUrls(page: Page) {
-        val urls = Parser.getFilteredUrls(page.html!!)
+        val urls = Parser.getFilteredURLs(page.html!!)
         urls.forEach { url ->
             if (!urlHashDataStore.storage.contains(url.hashCode())) {
                 page.neighbors.add(Page(url))

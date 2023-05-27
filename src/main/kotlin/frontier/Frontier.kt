@@ -9,8 +9,11 @@ class Frontier {
 
     // after fetch -> put all found urls to frontier
     // frontier will handle all urls
+    // save frontqs and backqs to text file (or update existing)
 
-    private val urls = mutableListOf("host0.com", "host1.com", "host2.com",)
+    // Number of BackQueues = NUMBER_OF_CRAWLERS -> create connection by host
+
+    private val urls = mutableListOf("host0.com", "host1.com", "host2.com")
     private val mutex = Object()
 
     fun add(value: String) {

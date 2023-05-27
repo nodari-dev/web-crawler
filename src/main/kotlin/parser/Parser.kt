@@ -5,12 +5,11 @@ import parser.RegexPatterns.GROUP_INDEX
 import parser.RegexPatterns.UNSUPPORTED_FILETYPES
 
 object Parser {
-    fun getFilteredUrls(html: String): List<String> {
-        println(getAllHrefValues(html))
-        return getAllHrefValues(html).filter { url -> url.matches(UNSUPPORTED_FILETYPES) }
+    fun getFilteredURLs(html: String): List<String> {
+        return parseAllHrefValues(html).filter { url -> !UNSUPPORTED_FILETYPES.matches(url) }
     }
 
-    private fun getAllHrefValues(html: String): MutableList<String>{
+    private fun parseAllHrefValues(html: String): MutableList<String>{
         val childUrls = mutableListOf<String>()
 
         A_TAG.findAll(html).forEach { match ->
