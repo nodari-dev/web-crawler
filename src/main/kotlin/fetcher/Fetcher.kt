@@ -10,7 +10,6 @@ import org.jsoup.HttpStatusException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-
 class Fetcher: IFetcher {
 
     override fun getPageContent(url: String): String? {
