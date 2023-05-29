@@ -1,8 +1,8 @@
 package fetcher
 
 import crawler.Configuration.TIME_BETWEEN_FETCHING
-import crawler.Configuration.CONNECTION_TIMEOUT
 import interfaces.IFetcher
+import org.jsoup.Connection.Response
 import org.jsoup.Jsoup
 
 import java.io.IOException
@@ -10,18 +10,22 @@ import org.jsoup.HttpStatusException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class Fetcher: IFetcher {
+object Fetcher : IFetcher {
 
     override fun getPageContent(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)
-        
-        var content: String? = null
-        try {
-            val connection = Jsoup.connect(url)
-            connection.userAgent("Mozilla")
-            connection.timeout(CONNECTION_TIMEOUT)
-            content = toOneLineHTML(connection.get().toString())
+        return parseDocument(url)
+    }
 
+    private fun parseDocument(url: String): String? {
+        val response = getResponse(url)
+        return response?.let { toOneLineHTML(response.parse().toString()) }
+    }
+
+    private fun getResponse(url: String): Response? {
+        var response: Response? = null
+        try {
+            response = Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: HttpStatusException) {
             println(exception.statusCode)
         } catch (exception: UnknownHostException) {
@@ -33,11 +37,10 @@ class Fetcher: IFetcher {
         } catch (exception: IOException) {
             println(exception.message)
         }
-
-        return content
+        return response
     }
 
-    private fun toOneLineHTML(content: String): String{
-        return content.replace("\n" , "")
+    private fun toOneLineHTML(content: String): String {
+        return content.replace("\n", "")
     }
 }

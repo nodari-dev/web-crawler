@@ -1,4 +1,5 @@
 
+import fetcher.Fetcher
 import parser.Parser
 
 fun main() {
@@ -9,6 +10,6 @@ fun main() {
 //    val controller = CrawlersController()
 //    controller.start()
 
-//    val fetcher = Fetcher()
-//    println(fetcher.getPageContent("http://example.com/"))
+    val fetcher = Fetcher
+    println(fetcher.getPageContent("http://test.xyz/"))
 }

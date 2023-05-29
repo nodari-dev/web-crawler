@@ -7,7 +7,7 @@ data class Counter(var value: Int)
 class SingleHostCrawl(
     startPage: Page,
 ) {
-    private val fetcher = Fetcher()
+    private val fetcher = Fetcher
 
     private val urlHashDataStore = URLHashStorage()
     private val counter = Counter(0)
