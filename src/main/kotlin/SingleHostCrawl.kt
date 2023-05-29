@@ -1,6 +1,6 @@
 import fetcher.Fetcher
 import parser.Parser
-import urlStorage.URLHashStorage
+import URLHashStorage.URLHashStorage
 
 data class Counter(var value: Int)
 
