@@ -24,6 +24,7 @@ object Fetcher : IFetcher {
 
     private fun getResponse(url: String): Response? {
         var response: Response? = null
+        // MULTIPLE CATCH
         try {
             response = Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: HttpStatusException) {
