@@ -9,8 +9,5 @@ data class Page(
         if (!url.endsWith("/")) {
             url += "/"
         }
-        if(url.contains("www.")){
-            url = url.replace("www.", "")
-        }
     }
 }

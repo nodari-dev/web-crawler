@@ -3,10 +3,9 @@ package fetcher
 import crawler.Configuration.TIME_BETWEEN_FETCHING
 import interfaces.IFetcher
 import org.jsoup.Connection.Response
-import org.jsoup.Jsoup
-
-import java.io.IOException
 import org.jsoup.HttpStatusException
+import org.jsoup.Jsoup
+import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -24,20 +23,20 @@ object Fetcher : IFetcher {
 
     private fun getResponse(url: String): Response? {
         var response: Response? = null
-        // MULTIPLE CATCH
         try {
             response = Jsoup.connect(url).followRedirects(true).execute()
-        } catch (exception: HttpStatusException) {
-            println(exception.statusCode)
-        } catch (exception: UnknownHostException) {
-            println(exception.message)
-        } catch (exception: IllegalArgumentException) {
-            println(exception.message)
-        } catch (exception: SocketTimeoutException) {
-            println(exception.message)
-        } catch (exception: IOException) {
-            println(exception.message)
+        } catch (exception: Exception) {
+            when (exception) {
+                is HttpStatusException,
+                is UnknownHostException,
+                is IllegalArgumentException,
+                is SocketTimeoutException,
+                is IOException -> {
+                    println(exception.message)
+                }
+            }
         }
+
         return response
     }
 
