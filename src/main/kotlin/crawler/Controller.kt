@@ -2,9 +2,9 @@ package crawler
 
 import crawler.Configuration.NUMBER_OF_CRAWLERS
 import frontier.Frontier
-import interfaces.ICrawlersController
+import interfaces.IController
 
-class CrawlersController(): ICrawlersController {
+class Controller(): IController {
     private val frontier = Frontier()
     private val threads = mutableListOf<Thread>()
 
@@ -19,5 +19,4 @@ class CrawlersController(): ICrawlersController {
             thread.join()
         }
     }
-
 }
