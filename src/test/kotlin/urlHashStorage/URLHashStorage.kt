@@ -1,4 +1,4 @@
-package URLHashStorage
+package urlHashStorage
 
 import org.junit.jupiter.api.Test
 
