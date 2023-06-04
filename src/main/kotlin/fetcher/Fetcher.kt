@@ -32,7 +32,7 @@ object Fetcher : IFetcher {
                 is IllegalArgumentException,
                 is SocketTimeoutException,
                 is IOException -> {
-                    println(exception.message)
+                    throw Exception("Fetching or $url failed")
                 }
             }
         }

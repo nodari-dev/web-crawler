@@ -1,38 +1,40 @@
 import fetcher.Fetcher
 import parser.Parser
 import URLHashStorage.URLHashStorage
+import dto.Page
 
 data class Counter(var value: Int)
 
 class SingleHostCrawl(
     startPage: Page,
+    private val maxNumberOfURLs: Int = 50,
 ) {
     private val fetcher = Fetcher
 
-    private val urlHashDataStore = URLHashStorage()
+    private val uhs = URLHashStorage()
     private val counter = Counter(0)
 
     private val queue: MutableList<Page> = mutableListOf(startPage)
 
     fun start() {
-        while (queue.isNotEmpty()) {
+        while (queue.isNotEmpty() && proceedCrawling()) {
             val page: Page? = queue.removeFirstOrNull()
-            if (isPageValid(page)) {
-                processUrl(page!!)
+            if (page != null && isURLValid(page.url)) {
+                processPage(page)
             }
         }
     }
 
-    private fun isPageValid(page: Page?): Boolean {
-        return page != null && !urlHashDataStore.storage.contains(page.hash)
+    private fun isURLValid(url: String): Boolean {
+        return !urlHashDataStore.storage.contains(url.hashCode())
     }
 
-    private fun processUrl(page: Page) {
+    private fun processPage(page: Page) {
         urlHashDataStore.storage.add(page.hash)
         counter.value++
 
-        println("Fetched: ${page.url}")
-        println(page.hash)
+        println("#${counter.value} Fetched: ${page.url}")
+        println(page.url.hashCode())
 
         val html = fetcher.getPageContent(page.url)
         if (html != null) {
@@ -46,12 +48,16 @@ class SingleHostCrawl(
     private fun processChildUrls(page: Page) {
         val urls = Parser.getFilteredURLs(page.html!!)
         urls.forEach { url ->
-            if (!urlHashDataStore.storage.contains(url.hashCode())) {
+            if (!isURLValid(url)) {
                 page.neighbors.add(Page(url))
                 counter.value++
-                println("Found: $url")
+                println("#${counter.value} Found: $url")
             }
-            if (counter.value == 1000) return
+            if (!proceedCrawling()) return
         }
+    }
+
+    private fun proceedCrawling(): Boolean{
+        return counter.value != maxNumberOfURLs
     }
 }

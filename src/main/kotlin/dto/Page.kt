@@ -1,3 +1,5 @@
+package dto
+
 data class Page(
     var url: String,
     val hash: Int = url.hashCode(),
