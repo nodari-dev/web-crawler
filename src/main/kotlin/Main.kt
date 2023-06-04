@@ -1,15 +1,7 @@
-
-import fetcher.Fetcher
-import parser.Parser
+import crawler.terminalCrawler.TerminalCrawler
+import dto.Page
 
 fun main() {
-//    val test = SingleHostCrawl(Page("http://example.com/"))
-//    test.start()
-
-//    http://example.com/
-//    val controller = CrawlersController()
-//    controller.start()
-
-    val fetcher = Fetcher
-    println(fetcher.getPageContent("http://test.xyz/"))
+    val test = TerminalCrawler(Page("https://ecospace.org.ua"))
+    test.start()
 }
