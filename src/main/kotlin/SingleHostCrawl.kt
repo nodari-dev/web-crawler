@@ -11,7 +11,7 @@ class SingleHostCrawl(
 ) {
     private val fetcher = Fetcher
 
-    private val uhs = URLHashStorage()
+    private val urlHashDataStore = URLHashStorage()
     private val counter = Counter(0)
 
     private val queue: MutableList<Page> = mutableListOf(startPage)
