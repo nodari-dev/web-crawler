@@ -1,9 +1,8 @@
 package crawler
 
 import frontier.Frontier
-import interfaces.ICrawler
 
-class Crawler(private val id: Int, private val frontier: Frontier): ICrawler, Thread(){
+class Crawler(private val id: Int, private val frontier: Frontier): Thread(){
     // imitation of locking to specific host
     private val host = "host$id.com"
 
