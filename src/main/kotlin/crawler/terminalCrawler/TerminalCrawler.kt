@@ -1,12 +1,12 @@
 package crawler.terminalCrawler
 
 import crawler.counter.Counter
-import crawler.crawlerLogger.CrawlerLogger
+import dto.Page
 import fetcher.Fetcher
+import interfaces.ITerminalCrawler
+import mu.KotlinLogging
 import parser.Parser
 import urlHashStorage.URLHashStorage
-import dto.Page
-import interfaces.ITerminalCrawler
 import java.net.URL
 
 class TerminalCrawler(
@@ -19,6 +19,7 @@ class TerminalCrawler(
 
     private val queue: MutableList<Page> = mutableListOf(startPage)
     private val primaryHost: String = URL(startPage.url).host
+    private val logger = KotlinLogging.logger("TerminalCrawler")
 
     override fun start() {
         while (canProceedCrawling()) {
@@ -45,7 +46,8 @@ class TerminalCrawler(
     private fun processPage(page: Page) {
         storage.values.add(page.hash)
         counter.value++
-        CrawlerLogger.fetched(counter, page.url)
+
+        logger.info { "#${counter.value} Processed: ${page.url}" }
 
         val html = Fetcher.getPageContent(page.url)
         if (html != null) {
@@ -62,7 +64,7 @@ class TerminalCrawler(
             if (isURLValid(url)) {
                 val neighbor = Page(url)
                 page.neighbors.add(neighbor)
-                CrawlerLogger.found(counter, url)
+                logger.info {"#${counter.value} Found: $url"}
             }
         }
     }
