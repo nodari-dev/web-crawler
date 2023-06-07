@@ -22,9 +22,8 @@ object Fetcher : IFetcher {
     }
 
     private fun getResponse(url: String): Response? {
-        var response: Response? = null
-        try {
-            response = Jsoup.connect(url).followRedirects(true).execute()
+        return try {
+           Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: Exception) {
             when (exception) {
                 is HttpStatusException,
@@ -32,12 +31,13 @@ object Fetcher : IFetcher {
                 is IllegalArgumentException,
                 is SocketTimeoutException,
                 is IOException -> {
+                    // TODO: UPDATE IO TO CUSTOM EXCEPTON
                     throw Exception("Fetching or $url failed")
                 }
+
+                else -> {null}
             }
         }
-
-        return response
     }
 
     private fun toOneLineHTML(content: String): String {
