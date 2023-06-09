@@ -24,8 +24,10 @@ class TerminalCrawler(
     override fun start() {
         while (canProceedCrawling()) {
             val page: Page? = queue.removeFirstOrNull()
-            if (page != null && isURLValid(page.url)) {
-                processPage(page)
+            page?.let {
+                if (isURLValid(page.url)) {
+                    processPage(page)
+                }
             }
         }
     }
@@ -46,25 +48,23 @@ class TerminalCrawler(
     private fun processPage(page: Page) {
         storage.values.add(page.hash)
         counter.value++
-
         logger.info { "#${counter.value} Processed: ${page.url}" }
-
         val html = Fetcher.getPageContent(page.url)
-        if (html != null) {
+        html?.let {
             page.html = html
-            processChildUrls(page)
+            processChildURLs(page)
         }
 
         queue.addAll(page.neighbors)
     }
 
-    private fun processChildUrls(page: Page) {
+    private fun processChildURLs(page: Page) {
         val urls = Parser.getFilteredURLs(page.html!!)
         urls.forEach { url ->
             if (isURLValid(url)) {
                 val neighbor = Page(url)
                 page.neighbors.add(neighbor)
-                logger.info {"#${counter.value} Found: $url"}
+                logger.info { "#${counter.value} Found: $url" }
             }
         }
     }
