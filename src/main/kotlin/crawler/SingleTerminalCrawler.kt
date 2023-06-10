@@ -1,6 +1,5 @@
-package crawler.terminalCrawler
+package crawler
 
-import crawler.counter.Counter
 import dto.Page
 import fetcher.Fetcher
 import interfaces.ITerminalCrawler
@@ -9,10 +8,10 @@ import parser.Parser
 import urlHashStorage.URLHashStorage
 import java.net.URL
 
-class TerminalCrawler(
+class SingleTerminalCrawler(
     override val startPage: Page,
-    override val maxURLsToFetch: Int = 2,
-    override val fetchOnlyProvidedHost: Boolean = false
+    override val maxURLsToFetch: Int = 100,
+    override val fetchOnlyProvidedHost: Boolean = true
 ) : ITerminalCrawler {
     private val storage = URLHashStorage()
     private val counter = Counter(0)
@@ -64,7 +63,7 @@ class TerminalCrawler(
             if (isURLValid(url)) {
                 val neighbor = Page(url)
                 page.neighbors.add(neighbor)
-                logger.info { "#${counter.value} Found: $url" }
+                logger.info { "Found: $url" }
             }
         }
     }

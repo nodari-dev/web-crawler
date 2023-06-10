@@ -1,3 +1,3 @@
-package crawler.counter
+package crawler
 
 data class Counter(var value: Int)
