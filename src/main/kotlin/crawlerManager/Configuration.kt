@@ -1,4 +1,4 @@
-package crawler
+package crawlerManager
 
 object Configuration{
     const val NUMBER_OF_CRAWLERS: Int = 2

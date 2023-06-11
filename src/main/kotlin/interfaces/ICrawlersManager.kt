@@ -2,7 +2,7 @@ package interfaces
 
 import dto.CrawlerTypes
 
-interface IController {
+interface ICrawlersManager {
     val crawlerType: CrawlerTypes
     fun start()
 }

@@ -1,6 +1,6 @@
 package fetcher
 
-import crawler.Configuration.TIME_BETWEEN_FETCHING
+import crawlerManager.Configuration.TIME_BETWEEN_FETCHING
 import interfaces.IFetcher
 import mu.KotlinLogging
 import org.jsoup.Connection.Response

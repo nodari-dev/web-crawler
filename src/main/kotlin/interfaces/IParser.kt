@@ -1,6 +1,8 @@
 package interfaces
 
 interface IParser {
-    fun getFilteredURLs(html: String): List<String>
-    fun getMetaKeywords(html: String): MutableList<String>
+    fun getURLs(html: String): List<String>
+    fun getMetaKeywords(html: String): List<String>
+    fun getMetaRobotsFollow(html: String): String?
+    fun getImageAlt(html: String): List<String>
 }

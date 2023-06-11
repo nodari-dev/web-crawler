@@ -1,4 +1,4 @@
-package crawler
+package dataAnalyzer
 
 import interfaces.IDataAnalyzer
 

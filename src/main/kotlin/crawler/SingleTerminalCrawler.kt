@@ -4,7 +4,7 @@ import dto.Page
 import fetcher.Fetcher
 import interfaces.ITerminalCrawler
 import mu.KotlinLogging
-import parser.Parser
+import dataAnalyzer.parser.Parser
 import urlHashStorage.URLHashStorage
 import java.net.URL
 
@@ -58,7 +58,7 @@ class SingleTerminalCrawler(
     }
 
     private fun processChildURLs(page: Page) {
-        val urls = Parser.getFilteredURLs(page.html!!)
+        val urls = Parser.getURLs(page.html!!)
         urls.forEach { url ->
             if (isURLValid(url)) {
                 val neighbor = Page(url)

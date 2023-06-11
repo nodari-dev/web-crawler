@@ -1,7 +1,7 @@
-import crawler.terminalCrawler.TerminalCrawler
+import crawler.SingleTerminalCrawler
 import dto.Page
 
 fun main() {
-    val test = TerminalCrawler(Page("https://ecospace.org.ua"))
+    val test = SingleTerminalCrawler(Page("https://ecospace.org.ua"))
     test.start()
 }

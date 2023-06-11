@@ -1,13 +1,14 @@
-package crawler
+package crawlerManager
 
-import crawler.Configuration.NUMBER_OF_CRAWLERS
+import crawler.Crawler
+import crawlerManager.Configuration.NUMBER_OF_CRAWLERS
 import dto.CrawlerTypes
 import frontier.Frontier
-import interfaces.IController
+import interfaces.ICrawlersManager
 
-class Controller(
+class CrawlersManager(
     override val crawlerType: CrawlerTypes
-): IController {
+): ICrawlersManager {
     private val frontier = Frontier()
     private val threads = mutableListOf<Thread>()
 
