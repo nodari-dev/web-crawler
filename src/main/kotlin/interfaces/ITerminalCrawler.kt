@@ -1,10 +1,15 @@
 package interfaces
 
-import dto.Page
+
+import crawler.Counter
+import frontier.Frontier
+import urlHashStorage.URLHashStorage
 
 interface ITerminalCrawler {
-    val startPage: Page
-    val maxURLsToFetch: Int
-    val fetchOnlyProvidedHost: Boolean
+    val id: Int
+    val frontier: Frontier
+    val urlHashStorage: URLHashStorage
+    val counter: Counter
+    fun updateStorage(hash: Int)
     fun start()
 }

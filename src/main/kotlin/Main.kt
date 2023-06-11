@@ -1,7 +1,9 @@
-import crawler.SingleTerminalCrawler
-import dto.Page
+import crawlersManager.CrawlersManager
+import dto.CrawlerModes
 
 fun main() {
-    val test = SingleTerminalCrawler(Page("https://ecospace.org.ua"))
-    test.start()
+    val manager = CrawlersManager(CrawlerModes.TERMINAL_CRAWLER)
+    manager.addSeed("https://ecospace.org.ua")
+//    manager.addSeed("https://test.org.ua")
+    manager.startCrawling()
 }

@@ -1,8 +1,9 @@
 package interfaces
 
-import dto.CrawlerTypes
+import dto.CrawlerModes
 
 interface ICrawlersManager {
-    val crawlerType: CrawlerTypes
-    fun start()
+    val crawlerMode: CrawlerModes
+    fun addSeed(seed: String)
+    fun startCrawling()
 }

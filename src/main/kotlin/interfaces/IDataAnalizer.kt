@@ -1,6 +1,8 @@
 package interfaces
 
+import dto.Page
+
 interface IDataAnalyzer {
     fun getURLStats(url: String): String
-    fun getHTMLStats(html: String): String
+    fun getPageStats(page: Page): String
 }

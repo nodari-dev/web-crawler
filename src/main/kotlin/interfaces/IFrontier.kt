@@ -1,6 +1,8 @@
 package interfaces
 
+import dto.CrawlerModes
+
 interface IFrontier {
-    fun add(value: String): Unit
-    fun getString(): String?
+    fun addURL(value: String)
+    fun getURL(): String?
 }

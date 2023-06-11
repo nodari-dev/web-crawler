@@ -1,5 +1,6 @@
 package dataAnalyzer
 
+import dto.Page
 import interfaces.IDataAnalyzer
 
 class DataAnalyzer: IDataAnalyzer {
@@ -9,7 +10,8 @@ class DataAnalyzer: IDataAnalyzer {
         return ""
     }
 
-    override fun getHTMLStats(html: String): String{
+    override fun getPageStats(page: Page): String{
+        println()
         return ""
     }
 }

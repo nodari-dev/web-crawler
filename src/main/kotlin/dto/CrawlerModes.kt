@@ -1,5 +1,5 @@
 package dto
 
-enum class CrawlerTypes {
+enum class CrawlerModes {
     CRAWLER, TERMINAL_CRAWLER
 }

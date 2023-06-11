@@ -1,5 +1,6 @@
 package frontier
 
+import dto.CrawlerModes
 import interfaces.IFrontier
 
 class Frontier: IFrontier {
@@ -15,17 +16,17 @@ class Frontier: IFrontier {
 
     // Number of BackQueues = NUMBER_OF_CRAWLERS -> create connection by host
 
-    private val urls = mutableListOf("host0.com", "host1.com", "host2.com")
+    private val urls = mutableListOf<String>()
     private val mutex = Object()
 
-    override fun add(value: String) {
+    override fun addURL(value: String) {
         synchronized(mutex){
             urls.add(value)
             mutex.notifyAll()
         }
     }
 
-    override fun getString(): String? {
+    override fun getURL(): String? {
         synchronized(mutex) {
             while (urls.isEmpty()) {
                 mutex.wait()
