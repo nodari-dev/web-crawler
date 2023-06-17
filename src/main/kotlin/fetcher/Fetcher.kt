@@ -10,7 +10,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-object Fetcher : IFetcher {
+class Fetcher : IFetcher {
     private val logger = KotlinLogging.logger("Fetcher")
 
     override fun getPageContent(url: String): String? {

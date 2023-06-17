@@ -2,7 +2,7 @@ package urlHashStorage
 
 import interfaces.IURLHashStorage
 
-class URLHashStorage(): IURLHashStorage{
+object URLHashStorage: IURLHashStorage{
     private val mutex = Object()
     private val values: MutableList<Int> = mutableListOf()
 

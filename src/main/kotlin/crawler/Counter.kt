@@ -1,16 +1,18 @@
 package crawler
 
-class Counter(){
+import interfaces.ICounter
+
+object Counter: ICounter {
     private val mutex = Object()
     private var value = 0
 
-    fun increment(){
+    override fun increment(){
         synchronized(mutex){
             value++
         }
     }
 
-    fun show(): Int{
+    override fun show(): Int{
         synchronized(mutex){
             return value
         }

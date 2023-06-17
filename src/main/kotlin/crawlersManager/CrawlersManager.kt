@@ -1,24 +1,19 @@
 package crawlersManager
 
-import crawler.Counter
-import crawler.Crawler
 import crawler.TerminalCrawler
 import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
 import dto.CrawlerModes
+import dto.Page
 import frontier.Frontier
 import interfaces.ICrawlersManager
-import urlHashStorage.URLHashStorage
 
 class CrawlersManager(
     override val crawlerMode: CrawlerModes
 ): ICrawlersManager {
-    private val frontier = Frontier()
     private val threads = mutableListOf<Thread>()
-    private val hashStorage = URLHashStorage()
-    private val counter = Counter()
 
    override fun addSeed(seed: String){
-        frontier.addURL(seed)
+        Frontier.addURL(Page(seed).url)
     }
 
     override fun startCrawling(){
@@ -29,10 +24,9 @@ class CrawlersManager(
     }
 
     private fun startTerminalVersion(){
-        println("---TERMINAL CRAWLER STARTED---")
         println(Illustrations.TerminalCrawler)
         for(i in 1..NUMBER_OF_CRAWLERS){
-            val crawler = TerminalCrawler(i, frontier, hashStorage, counter)
+            val crawler = TerminalCrawler(i)
             threads.add(crawler)
             crawler.start()
         }
