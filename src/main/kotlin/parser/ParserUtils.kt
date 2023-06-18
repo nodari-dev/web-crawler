@@ -1,4 +1,4 @@
-package dataAnalyzer.parser
+package parser
 
 import interfaces.IParserUtils
 

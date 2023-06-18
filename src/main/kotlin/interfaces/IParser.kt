@@ -1,8 +1,11 @@
 package interfaces
 
 interface IParser {
-    fun getURLs(html: String): List<String>
-    fun getMetaKeywords(html: String): List<String>
-    fun getMetaRobotsFollow(html: String): String?
-    fun getImageAlt(html: String): List<String>
+    fun getURLs(document: String): List<String>
+    fun getMetaKeywords(document: String): List<String>
+    fun getImagesAlt(document: String): List<String>
+    fun getRobotsDisallowed(document: String): List<String>
+    fun getMetaRobotsFollow(document: String): String?
+    fun getMainURL(document: String): String
+
 }

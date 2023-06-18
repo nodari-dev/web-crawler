@@ -1,4 +1,4 @@
-package dataAnalyzer
+package analyzer
 
 import dto.Page
 import interfaces.IDataAnalyzer

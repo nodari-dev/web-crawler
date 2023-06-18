@@ -1,6 +1,6 @@
 package crawler
 
-import dataAnalyzer.parser.Parser
+import parser.Parser
 import dto.Page
 import fetcher.Fetcher
 import frontier.Frontier
