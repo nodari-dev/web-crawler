@@ -23,6 +23,10 @@ class CrawlersManager(
         }
     }
 
+    fun killAllCrawlers(){
+
+    }
+
     private fun startTerminalVersion(){
         println(Illustrations.TerminalCrawler)
         for(i in 1..NUMBER_OF_CRAWLERS){

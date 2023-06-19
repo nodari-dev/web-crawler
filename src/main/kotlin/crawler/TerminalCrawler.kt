@@ -17,22 +17,18 @@ class TerminalCrawler(
 
     private val counter = Counter
     private val utils = Utils
+    private val frontier = Frontier
     val logger = KotlinLogging.logger("Crawler:${id}")
     var primaryHost: String? = null
 
     override fun run() {
         while (true) {
-            if(crawlerUtils.canProceedCrawling()){
-                val url = Frontier.getURL()
-                url?.let{
-                    counter.increment()
-                    setPrimaryURL(url)
-                    processPage(utils.formatURL(url))
-                }
-            } else{
-                crawlerUtils.killCrawler()
+            val url = frontier.getURL()
+            url?.let{
+                counter.increment()
+                setPrimaryURL(url)
+                processPage(utils.formatURL(url))
             }
-
         }
     }
 
@@ -61,6 +57,6 @@ class TerminalCrawler(
     }
 
     private fun send(url: String) {
-        Frontier.addURL(url)
+        frontier.addURL(url)
     }
 }

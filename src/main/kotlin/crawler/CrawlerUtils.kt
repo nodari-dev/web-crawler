@@ -23,7 +23,7 @@ class CrawlerUtils(override val crawler: TerminalCrawler) : ICrawlerUtils {
     }
 
     override fun killCrawler() {
-        crawler.logger.info("I'm dead")
+        crawler.logger.info("I'm dead+")
         crawler.interrupt()
     }
 }
