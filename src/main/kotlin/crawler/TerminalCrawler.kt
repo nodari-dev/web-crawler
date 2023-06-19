@@ -1,38 +1,49 @@
 package crawler
 
 import parser.Parser
-import dto.Page
 import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ITerminalCrawler
 import mu.KotlinLogging
 import urlHashStorage.URLHashStorage
+import utils.Utils
 import java.net.URL
 
 class TerminalCrawler(
     override val id: Int,
 ) : ITerminalCrawler, Thread() {
-    private val crawlerUtils = CrawlerUtils(this)
-    private val logger = KotlinLogging.logger("Crawler:${id}")
     private val fetcher = Fetcher()
+    private val crawlerUtils = CrawlerUtils(this)
+
+    private val counter = Counter
+    private val utils = Utils
+    val logger = KotlinLogging.logger("Crawler:${id}")
     var primaryHost: String? = null
 
     override fun run() {
         while (true) {
-            val url = Frontier.getURL()
-            url?.let{
-                primaryHost = URL(url).host
-                Counter.increment()
-                val page = Page(url)
-                processPage(page)
+            if(crawlerUtils.canProceedCrawling()){
+                val url = Frontier.getURL()
+                url?.let{
+                    counter.increment()
+                    setPrimaryURL(url)
+                    processPage(utils.formatURL(url))
+                }
+            } else{
+                crawlerUtils.killCrawler()
             }
+
         }
     }
 
-    private fun processPage(page: Page){
-        logger.info ("#${Counter.show()} Fetched: ${page.url}")
-        URLHashStorage.add(page.url.hashCode())
-        val html = fetcher.getPageContent(page.url)
+    private fun setPrimaryURL(url: String){
+        primaryHost = URL(url).host
+    }
+
+    private fun processPage(url: String){
+        logger.info ("#${counter.value} Fetched: $url")
+        URLHashStorage.add(url.hashCode())
+        val html = fetcher.getPageContent(url)
 
         html?.let{
             processChildURLs(html)
@@ -41,9 +52,10 @@ class TerminalCrawler(
 
     private fun processChildURLs(html: String) {
         val urls = Parser.getURLs(html)
-        urls.forEach { url ->
-            if (crawlerUtils.canProcessURL(Page(url).url)) {
-                send(Page(url).url)
+        urls.forEach { childURL ->
+            val formattedURL = utils.formatURL(childURL)
+            if (crawlerUtils.canProcessURL(formattedURL)) {
+                send(formattedURL)
             }
         }
     }
@@ -51,5 +63,4 @@ class TerminalCrawler(
     private fun send(url: String) {
         Frontier.addURL(url)
     }
-
 }

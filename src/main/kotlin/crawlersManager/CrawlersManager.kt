@@ -3,9 +3,9 @@ package crawlersManager
 import crawler.TerminalCrawler
 import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
 import dto.CrawlerModes
-import dto.Page
 import frontier.Frontier
 import interfaces.ICrawlersManager
+import utils.Utils
 
 class CrawlersManager(
     override val crawlerMode: CrawlerModes
@@ -13,7 +13,7 @@ class CrawlersManager(
     private val threads = mutableListOf<Thread>()
 
    override fun addSeed(seed: String){
-        Frontier.addURL(Page(seed).url)
+        Frontier.addURL(Utils.formatURL(seed))
     }
 
     override fun startCrawling(){

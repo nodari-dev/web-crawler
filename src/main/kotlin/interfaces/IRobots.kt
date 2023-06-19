@@ -1,5 +1,5 @@
 package interfaces
 
 interface IRobots {
-    fun getDisallowedURLs(): List<String>
+    fun getDisallowedURLs(url: String): List<String>
 }
