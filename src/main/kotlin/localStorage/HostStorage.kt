@@ -1,18 +1,19 @@
-package hostsStorage
+package localStorage
 
 import dto.Host
+import interfaces.IHostsStorage
 
-object HostsStorage {
+object HostsStorage: IHostsStorage {
     private val mutex = Object()
     private val storage: MutableList<Host> = mutableListOf()
 
-    fun add(hostURL: String, bannedURLs: List<String>){
+    override fun add(hostURL: String, bannedURLs: List<String>){
         synchronized(mutex){
             storage.add(Host(hostURL, bannedURLs))
         }
     }
 
-    fun get(url: String): Host?{
+    override fun get(url: String): Host?{
         var result: Host? = null
 
         for (host in storage){

@@ -4,6 +4,7 @@ import fetcher.Fetcher
 import interfaces.IRobots
 import parser.robotsParser.RobotsParser
 import parser.urlParser.URLParser
+import java.net.URL
 
 class Robots : IRobots {
     private val fetcher = Fetcher()
@@ -21,6 +22,6 @@ class Robots : IRobots {
     }
 
     private fun getRobotsURL(url: String): String {
-        return urlParser.getHostname(url) + "robots.txt"
+        return URL(url).host + "/robots.txt"
     }
 }

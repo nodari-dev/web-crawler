@@ -1,4 +1,4 @@
-package urlHashStorage
+package localStorage
 
 import interfaces.IURLHashStorage
 

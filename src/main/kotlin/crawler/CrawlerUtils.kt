@@ -2,32 +2,31 @@ package crawler
 
 import crawlersManager.Configuration.CRAWLING_LIMIT
 import crawlersManager.Configuration.SINGLE_HOST_CRAWL
-import hostsStorage.HostsStorage
+import localStorage.HostsStorage
 import interfaces.ICrawlerUtils
 import parser.urlParser.URLParser
-import urlHashStorage.URLHashStorage
+import localStorage.URLHashStorage
+import java.net.URL
 
-class CrawlerUtils(override val crawler: TerminalCrawler) : ICrawlerUtils {
+class CrawlerUtils() : ICrawlerUtils {
     private val counter = Counter
-    private val urlParser = URLParser()
 
-    override fun canProcessURL(url: String): Boolean {
+    override fun canProcessURL(url: String, host: String?): Boolean {
         val isValid = !URLHashStorage.alreadyExists(url.hashCode()) && !isURLBanned(url)
         return if (SINGLE_HOST_CRAWL) {
-            isValid && url.contains(crawler.primaryHost!!)
+            isValid && url.contains(host!!)
             } else {
                 isValid
             }
     }
 
     private fun isURLBanned(url: String): Boolean{
-        val bannedURLs = HostsStorage.get(urlParser.getHostname(url))?.bannedURLs
+        val host = URL(url).host
+        val bannedURLs = HostsStorage.get(host)?.bannedURLs
 
-        if(bannedURLs != null) {
-            bannedURLs.forEach { bannedURL ->
-                if (url.contains(bannedURL)) {
-                    return true
-                }
+        bannedURLs?.forEach { bannedURL ->
+            if (url.contains(bannedURL)) {
+                return true
             }
         }
         return false
@@ -35,10 +34,5 @@ class CrawlerUtils(override val crawler: TerminalCrawler) : ICrawlerUtils {
 
     override fun canProceedCrawling(): Boolean {
         return counter.value != CRAWLING_LIMIT
-    }
-
-    override fun killMe() {
-        crawler.logger.info("I'm dead")
-        crawler.interrupt()
     }
 }

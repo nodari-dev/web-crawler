@@ -2,30 +2,31 @@ package crawler
 
 import fetcher.Fetcher
 import frontier.Frontier
-import hostsStorage.HostsStorage
+import localStorage.HostsStorage
 import interfaces.ITerminalCrawler
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
-import urlHashStorage.URLHashStorage
+import localStorage.URLHashStorage
 import utils.Utils
 import java.net.URL
 
 class TerminalCrawler(
     override val id: Int,
+    override val utils: Utils,
+    override val crawlerUtils: CrawlerUtils,
+    override val fetcher: Fetcher,
+    override val robots: Robots,
+    override val urlParser: URLParser,
+    override val frontier: Frontier,
+    override val hostStorage: HostsStorage,
+    override val urlHashStorage: URLHashStorage,
+    override val kotlinLogging: KotlinLogging,
+    override val counter: Counter
 ) : ITerminalCrawler, Thread() {
-    private val fetcher = Fetcher()
-    private val crawlerUtils = CrawlerUtils(this)
-    private val robots = Robots()
-    private val urlParser = URLParser()
 
-    private val counter = Counter
-    private val utils = Utils
-    private val frontier = Frontier
-    private val hostStorage = HostsStorage
-
-    val logger = KotlinLogging.logger("Crawler:${id}")
-    var primaryHost: String? = null
+    private val logger = kotlinLogging.logger("Crawler:${id}")
+    private var primaryHost: String? = null
 
     override fun run() {
         while (true) {
@@ -60,7 +61,7 @@ class TerminalCrawler(
         val urls = urlParser.getURLs(html)
         urls.forEach { childURL ->
             val formattedURL = utils.formatURL(childURL)
-            if (crawlerUtils.canProcessURL(formattedURL)) {
+            if (crawlerUtils.canProcessURL(formattedURL, primaryHost)) {
                 send(formattedURL)
             }
         }

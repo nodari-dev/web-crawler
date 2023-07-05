@@ -1,6 +1,6 @@
 package utils
 
-object Utils{
+class Utils{
     fun formatURL(url: String): String {
         return if(!url.endsWith("/")){
             "$url/"
