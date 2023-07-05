@@ -1,4 +1,4 @@
-package parser
+package parser.robotsParser
 
 object RobotsPatterns {
     val DISALLOW_KEYWORD = Regex("Disallow:\\s(\\/\\S+)")

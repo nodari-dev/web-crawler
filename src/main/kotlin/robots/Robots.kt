@@ -2,14 +2,17 @@ package robots
 
 import fetcher.Fetcher
 import interfaces.IRobots
-import parser.Parser
+import parser.robotsParser.RobotsParser
+import parser.urlParser.URLParser
 
 class Robots : IRobots {
     private val fetcher = Fetcher()
+    private val robotsParser = RobotsParser()
+    private val urlParser = URLParser()
 
     override fun getDisallowedURLs(url: String): List<String> {
         val content = getRobotsTxtContent(url)
-        return content?.let { Parser.getRobotsDisallowed(it) } ?: emptyList()
+        return content?.let { robotsParser.getRobotsDisallowed(it) } ?: emptyList()
     }
 
     private fun getRobotsTxtContent(url: String): String? {
@@ -18,6 +21,6 @@ class Robots : IRobots {
     }
 
     private fun getRobotsURL(url: String): String {
-        return Parser.getMainURL(url) + "robots.txt"
+        return urlParser.getHostname(url) + "robots.txt"
     }
 }

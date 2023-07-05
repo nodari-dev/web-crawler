@@ -2,7 +2,7 @@ package parser
 
 import interfaces.IParserUtils
 
-object ParserUtils: IParserUtils {
+class ParserUtils: IParserUtils {
 
     override fun parseValues(html: String, regex: Regex, groupIndex: Int): List<String>{
         val values = mutableListOf<String>()

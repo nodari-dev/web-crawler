@@ -1,10 +1,12 @@
 package crawler
 
-import parser.Parser
 import fetcher.Fetcher
 import frontier.Frontier
+import hostsStorage.HostsStorage
 import interfaces.ITerminalCrawler
 import mu.KotlinLogging
+import parser.urlParser.URLParser
+import robots.Robots
 import urlHashStorage.URLHashStorage
 import utils.Utils
 import java.net.URL
@@ -14,10 +16,14 @@ class TerminalCrawler(
 ) : ITerminalCrawler, Thread() {
     private val fetcher = Fetcher()
     private val crawlerUtils = CrawlerUtils(this)
+    private val robots = Robots()
+    private val urlParser = URLParser()
 
     private val counter = Counter
     private val utils = Utils
     private val frontier = Frontier
+    private val hostStorage = HostsStorage
+
     val logger = KotlinLogging.logger("Crawler:${id}")
     var primaryHost: String? = null
 
@@ -39,6 +45,10 @@ class TerminalCrawler(
     private fun processPage(url: String){
         logger.info ("#${counter.value} Fetched: $url")
         URLHashStorage.add(url.hashCode())
+
+        val bannedURLs = robots.getDisallowedURLs(url)
+        hostStorage.add(url, bannedURLs)
+
         val html = fetcher.getPageContent(url)
 
         html?.let{
@@ -47,7 +57,7 @@ class TerminalCrawler(
     }
 
     private fun processChildURLs(html: String) {
-        val urls = Parser.getURLs(html)
+        val urls = urlParser.getURLs(html)
         urls.forEach { childURL ->
             val formattedURL = utils.formatURL(childURL)
             if (crawlerUtils.canProcessURL(formattedURL)) {
