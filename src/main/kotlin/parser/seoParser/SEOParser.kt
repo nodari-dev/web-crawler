@@ -12,6 +12,7 @@ class SEOParser: ISEOParser {
     }
 
     override fun getMetaKeywords(document: String): List<String> {
-        return parserUtils.parseValues(document, SEOPatterns.META_KEYWORDS, SEOPatterns.META_KEYWORDS_GROUP_INDEX)
+        val keywords = parserUtils.parseValues(document, SEOPatterns.META_KEYWORDS, SEOPatterns.META_KEYWORDS_GROUP_INDEX)
+        return keywords[0].split(",").map { it.trim() }
     }
 }

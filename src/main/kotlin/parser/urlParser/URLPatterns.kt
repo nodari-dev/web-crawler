@@ -6,5 +6,8 @@ object URLPatterns {
 
     val UNSUPPORTED_FILETYPES =
         Regex("^.+\\.(css|js|bmp|gif|jpe?g|JPE?G|png|tiff?|ico|nef|raw|mid|mp2|mp3|mp4|wav|wma|flv|mpe?g|avi|mov|mpeg|ram|m4v|wmv|rm|smil|pdf|doc|docx|pub|xls|xlsx|vsd|ppt|pptx|swf|zip|rar|gz|bz2|7z|bin|xml|txt|java|c|cpp|exe)\$")
+
+    val MAIN_URL = Regex("https?:\\/\\/[^\\/]+\\/")
+    const val MAIN_URL_GROUP_INDEX = 0
 }
 
