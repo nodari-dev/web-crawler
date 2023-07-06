@@ -40,6 +40,8 @@ class Fetcher : IFetcher {
 
                 else -> {null}
             }
+        } finally {
+            logger.info("downloaded $url")
         }
     }
 

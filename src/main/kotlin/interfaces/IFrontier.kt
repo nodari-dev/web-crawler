@@ -1,8 +1,11 @@
 package interfaces
 
-import dto.CrawlerModes
+import dto.FrontierQueue
 
 interface IFrontier {
-    fun addURL(value: String)
-    fun getURL(): String?
+
+    fun pullURL(host: String): String?
+    fun updateOrCreateQueue(host: String, urls: MutableList<String>)
+    fun getQueue(host: String): FrontierQueue?
+    fun pickFreeQueue(): String?
 }

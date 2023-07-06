@@ -1,6 +1,7 @@
 package frontier
 
 import dto.CrawlerModes
+import dto.FrontierQueue
 import interfaces.IFrontier
 import mu.KotlinLogging
 
@@ -18,25 +19,69 @@ object Frontier: IFrontier {
     // Number of BackQueues = NUMBER_OF_CRAWLERS -> create connection by host
 
     private val urls = mutableListOf<String>()
+    private val queues = mutableListOf<FrontierQueue>()
     private val mutex = Object()
     private val logger = KotlinLogging.logger("Frontier")
 
-    override fun addURL(value: String) {
+    override fun pullURL(host: String): String? {
+        return synchronized(mutex){
+            queues.firstOrNull { it.host == host }?.urls?.removeFirstOrNull()
+        }
+    }
+
+    override fun updateOrCreateQueue(host: String, urls: MutableList<String>) {
         synchronized(mutex){
-            if(!urls.contains(value)){
-                urls.add(value)
-                logger.info ("Got $value")
+            if(isQueueDefined(host)){
+                updateExistingQueue(host, urls)
+            } else{
+                createQueue(host, urls)
             }
             mutex.notifyAll()
         }
     }
 
-    override fun getURL(): String? {
-        synchronized(mutex) {
-            while (urls.isEmpty()) {
-                mutex.wait()
-            }
-            return urls.removeFirstOrNull()
+    private fun isQueueDefined(host: String): Boolean{
+        return synchronized(mutex){
+            queues.any { queue -> queue.host == host }
         }
+    }
+
+    private fun updateExistingQueue(host: String, urls: MutableList<String>) {
+        synchronized(mutex){
+            queues.forEach { queue ->
+                if(queue.host == host){
+                    queue.urls.addAll(urls)
+                    queue.isBlocked = true
+                }
+            }
+        }
+    }
+
+    private fun createQueue(host: String, urls: MutableList<String>) {
+        logger.info ("created queue with host: $host")
+
+        synchronized(mutex){
+            queues.add(FrontierQueue(host, urls))
+            mutex.notifyAll()
+        }
+    }
+
+    override fun getQueue(host: String): FrontierQueue?{
+        return synchronized(mutex){
+            queues.firstOrNull { it.host == host }
+        }
+    }
+
+    override fun pickFreeQueue(): String?{
+        return synchronized(mutex) {
+            queues.find { !it.isBlocked }?.let { queue ->
+                queue.isBlocked = true
+                queue.host
+            }
+        }
+    }
+
+    internal fun clear(){
+        queues.clear()
     }
 }

@@ -3,6 +3,6 @@ import dto.CrawlerModes
 
 fun main() {
     val manager = CrawlersManager()
-    manager.addSeed("https://ecospace.org.ua")
+    manager.addSeed("https://ecospace.org.ua/sea")
     manager.startCrawling()
 }

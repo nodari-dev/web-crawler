@@ -30,7 +30,8 @@ class CrawlersManager : ICrawlersManager {
     private val counter = Counter
 
     override fun addSeed(seed: String) {
-        frontier.addURL(utils.formatURL(seed))
+        val formattedURL = utils.formatURL(seed)
+        frontier.updateOrCreateQueue(urlParser.getMainURL(formattedURL), mutableListOf(formattedURL))
     }
 
     override fun startCrawling() {

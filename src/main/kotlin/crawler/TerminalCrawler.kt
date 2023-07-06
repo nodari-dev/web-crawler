@@ -30,25 +30,39 @@ class TerminalCrawler(
 
     override fun run() {
         while (true) {
-            val url = frontier.getURL()
-            url?.let{
+            if(primaryHost != null){
                 counter.increment()
-                setPrimaryURL(url)
-                processPage(utils.formatURL(url))
+                frontier.pullURL(primaryHost!!)?.let{url ->
+                    processPage(url)
+                }
             }
+            else {
+                val host = frontier.pickFreeQueue()
+                host?.let{
+                    counter.increment()
+                    setPrimaryHost(host)
+
+                    frontier.pullURL(primaryHost!!)?.let{url ->
+                        processPage(url)
+                    }
+                }
+            }
+
         }
     }
 
-    private fun setPrimaryURL(url: String){
-        primaryHost = URL(url).host
+    private fun setPrimaryHost(host: String){
+        primaryHost = host
+        logger.info ("connected to queue with host: $primaryHost")
     }
 
     private fun processPage(url: String){
-        logger.info ("#${counter.value} Fetched: $url")
         URLHashStorage.add(url.hashCode())
 
-        val bannedURLs = robots.getDisallowedURLs(url)
-        hostStorage.add(url, bannedURLs)
+//        if(hostStorage.get(URL(url).host) == null){
+//            val bannedURLs = robots.getDisallowedURLs(url)
+//            hostStorage.add(primaryHost!!, bannedURLs)
+//        }
 
         val html = fetcher.getPageContent(url)
 
@@ -59,15 +73,9 @@ class TerminalCrawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        urls.forEach { childURL ->
-            val formattedURL = utils.formatURL(childURL)
-            if (crawlerUtils.canProcessURL(formattedURL, primaryHost)) {
-                send(formattedURL)
-            }
-        }
-    }
+        urls.filter {  crawlerUtils.isURLValid(utils.formatURL(it), primaryHost!!)}
+        val newUrls = urls.toSet().toMutableList()
+        frontier.updateOrCreateQueue(primaryHost!!, newUrls)
 
-    private fun send(url: String) {
-        frontier.addURL(url)
     }
 }
