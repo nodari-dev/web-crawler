@@ -1,5 +1,6 @@
 package parser.urlParser
 
+import dto.HostWithProtocol
 import interfaces.IURLParser
 import parser.ParserUtils
 
@@ -11,7 +12,7 @@ class URLParser: IURLParser {
         return urls.filter { url -> !URLPatterns.UNSUPPORTED_FILETYPES.matches(url) }
     }
 
-    override fun getMainURL(document: String): String {
-        return parserUtils.parseSingleValue(document, URLPatterns.MAIN_URL, URLPatterns.MAIN_URL_GROUP_INDEX)!!
+    override fun getHostWithProtocol(document: String): HostWithProtocol {
+        return HostWithProtocol(parserUtils.parseSingleValue(document, URLPatterns.HOST_WITH_PROTOCOL, URLPatterns.HOST_WITH_PROTOCOL_GROUP_INDEX)!!)
     }
 }

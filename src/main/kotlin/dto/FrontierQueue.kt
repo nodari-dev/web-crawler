@@ -1,3 +1,7 @@
 package dto
 
-data class FrontierQueue(val host: String, val urls: MutableList<String>, var isBlocked: Boolean = false)
+data class FrontierQueue(
+    val host: HostWithProtocol,
+    val urlRecords: MutableList<URLRecord>,
+    var isBlocked: Boolean = false
+)

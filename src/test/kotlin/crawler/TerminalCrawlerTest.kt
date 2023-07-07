@@ -14,7 +14,6 @@ import utils.Utils
 class TerminalCrawlerTest {
     private lateinit var terminalCrawler: TerminalCrawler
 
-    private val utils = Utils()
     private val crawlerUtils = CrawlerUtils()
     private val fetcher = Fetcher()
     private val robots = Robots()
@@ -30,7 +29,6 @@ class TerminalCrawlerTest {
     fun init() {
         terminalCrawler = TerminalCrawler(
             0,
-            utils,
             crawlerUtils,
             fetcher,
             robots,

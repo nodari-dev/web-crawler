@@ -2,6 +2,8 @@ package frontier
 
 import dto.CrawlerModes
 import dto.FrontierQueue
+import dto.HostWithProtocol
+import dto.URLRecord
 import interfaces.IFrontier
 import mu.KotlinLogging
 
@@ -18,23 +20,22 @@ object Frontier: IFrontier {
 
     // Number of BackQueues = NUMBER_OF_CRAWLERS -> create connection by host
 
-    private val urls = mutableListOf<String>()
     private val queues = mutableListOf<FrontierQueue>()
     private val mutex = Object()
     private val logger = KotlinLogging.logger("Frontier")
 
-    override fun pullURL(host: String): String? {
+    override fun pullURLRecord(host: HostWithProtocol): URLRecord? {
         return synchronized(mutex){
-            queues.firstOrNull { it.host == host }?.urls?.removeFirstOrNull()
+            queues.firstOrNull { it.host == host }?.urlRecords?.removeFirstOrNull().toString()
         }
     }
 
-    override fun updateOrCreateQueue(host: String, urls: MutableList<String>) {
+    override fun updateOrCreateQueue(host: String, urlRecord: URLRecord) {
         synchronized(mutex){
             if(isQueueDefined(host)){
-                updateExistingQueue(host, urls)
+                updateExistingQueue(host, urlRecord)
             } else{
-                createQueue(host, urls)
+                createQueue(host, urlRecord)
             }
             mutex.notifyAll()
         }
@@ -46,22 +47,22 @@ object Frontier: IFrontier {
         }
     }
 
-    private fun updateExistingQueue(host: String, urls: MutableList<String>) {
+    private fun updateExistingQueue(host: String, urlRecord: URLRecord) {
         synchronized(mutex){
             queues.forEach { queue ->
                 if(queue.host == host){
-                    queue.urls.addAll(urls)
+                    queue.urlRecords.add(urlRecord)
                     queue.isBlocked = true
                 }
             }
         }
     }
 
-    private fun createQueue(host: String, urls: MutableList<String>) {
+    private fun createQueue(host: String, urlRecord: URLRecord) {
         logger.info ("created queue with host: $host")
 
         synchronized(mutex){
-            queues.add(FrontierQueue(host, urls))
+            queues.add(FrontierQueue(host, mutableListOf(urlRecord)))
             mutex.notifyAll()
         }
     }

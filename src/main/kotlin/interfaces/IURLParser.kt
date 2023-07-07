@@ -1,6 +1,8 @@
 package interfaces
 
+import dto.HostWithProtocol
+
 interface IURLParser {
     fun getURLs(document: String): List<String>
-    fun getMainURL(document: String): String
+    fun getHostWithProtocol(document: String): HostWithProtocol
 }

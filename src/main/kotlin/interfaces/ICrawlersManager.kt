@@ -1,8 +1,8 @@
 package interfaces
 
-import dto.CrawlerModes
+import dto.URLRecord
 
 interface ICrawlersManager {
-    fun addSeed(seed: String)
+    fun addSeed(seed: URLRecord)
     fun startCrawling()
 }

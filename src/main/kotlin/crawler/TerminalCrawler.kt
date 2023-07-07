@@ -1,5 +1,7 @@
 package crawler
 
+import dto.HostWithProtocol
+import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
 import localStorage.HostsStorage
@@ -8,12 +10,9 @@ import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 import localStorage.URLHashStorage
-import utils.Utils
-import java.net.URL
 
 class TerminalCrawler(
     override val id: Int,
-    override val utils: Utils,
     override val crawlerUtils: CrawlerUtils,
     override val fetcher: Fetcher,
     override val robots: Robots,
@@ -26,13 +25,13 @@ class TerminalCrawler(
 ) : ITerminalCrawler, Thread() {
 
     private val logger = kotlinLogging.logger("Crawler:${id}")
-    private var primaryHost: String? = null
+    private var primaryHost: HostWithProtocol? = null
 
     override fun run() {
         while (true) {
             if(primaryHost != null){
                 counter.increment()
-                frontier.pullURL(primaryHost!!)?.let{url ->
+                frontier.pullURLRecord(primaryHost!!.host)?.let{url ->
                     processPage(url)
                 }
             }
@@ -42,7 +41,7 @@ class TerminalCrawler(
                     counter.increment()
                     setPrimaryHost(host)
 
-                    frontier.pullURL(primaryHost!!)?.let{url ->
+                    frontier.pullURL(primaryHost!!.host)?.let{url ->
                         processPage(url)
                     }
                 }
@@ -52,11 +51,11 @@ class TerminalCrawler(
     }
 
     private fun setPrimaryHost(host: String){
-        primaryHost = host
+        primaryHost = HostWithProtocol(host)
         logger.info ("connected to queue with host: $primaryHost")
     }
 
-    private fun processPage(url: String){
+    private fun processPage(urlRecord: URLRecord){
         URLHashStorage.add(url.hashCode())
 
 //        if(hostStorage.get(URL(url).host) == null){
@@ -73,9 +72,12 @@ class TerminalCrawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        urls.filter {  crawlerUtils.isURLValid(utils.formatURL(it), primaryHost!!)}
-        val newUrls = urls.toSet().toMutableList()
-        frontier.updateOrCreateQueue(primaryHost!!, newUrls)
+        urls.filter {  crawlerUtils.isURLValid(URLRecord(it), primaryHost!!)}
+        val filteredURLs = urls.toSet().toMutableList()
 
+        filteredURLs.forEach{url ->
+            val urlRecord = URLRecord(url)
+            frontier.updateOrCreateQueue(urlParser.getHostWithProtocol(urlRecord.url).host, urlRecord)
+        }
     }
 }

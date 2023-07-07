@@ -6,6 +6,7 @@ import crawler.TerminalCrawler
 import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
 import crawlersManager.Configuration.MODE
 import dto.CrawlerModes
+import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ICrawlersManager
@@ -14,11 +15,9 @@ import localStorage.URLHashStorage
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
-import utils.Utils
 
 class CrawlersManager : ICrawlersManager {
     private val threads = mutableListOf<Thread>()
-    private val utils = Utils()
     private val crawlerUtils = CrawlerUtils()
     private val fetcher = Fetcher()
     private val robots = Robots()
@@ -29,9 +28,9 @@ class CrawlersManager : ICrawlersManager {
     private val kotlinLogging = KotlinLogging
     private val counter = Counter
 
-    override fun addSeed(seed: String) {
-        val formattedURL = utils.formatURL(seed)
-        frontier.updateOrCreateQueue(urlParser.getMainURL(formattedURL), mutableListOf(formattedURL))
+    override fun addSeed(seed: URLRecord) {
+        val url = seed.toString()
+        frontier.updateOrCreateQueue(urlParser.getMainURL(url), mutableListOf(url))
     }
 
     override fun startCrawling() {
@@ -46,7 +45,6 @@ class CrawlersManager : ICrawlersManager {
         for (i in 1..NUMBER_OF_CRAWLERS) {
             val crawler = TerminalCrawler(
                 i,
-                utils,
                 crawlerUtils,
                 fetcher,
                 robots,

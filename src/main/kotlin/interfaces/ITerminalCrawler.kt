@@ -9,11 +9,9 @@ import localStorage.URLHashStorage
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
-import utils.Utils
 
 interface ITerminalCrawler {
     val id: Int
-    val utils: Utils
     val crawlerUtils: CrawlerUtils
     val fetcher: Fetcher
     val robots: Robots

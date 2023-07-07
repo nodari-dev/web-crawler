@@ -1,8 +1,8 @@
 package interfaces
-
-import crawler.TerminalCrawler
+import dto.HostWithProtocol
+import dto.URLRecord
 
 interface ICrawlerUtils {
-    fun isURLValid(url: String, host: String): Boolean
+    fun isURLValid(url: URLRecord, hostWithProtocol: HostWithProtocol): Boolean
     fun canProceedCrawling(): Boolean
 }

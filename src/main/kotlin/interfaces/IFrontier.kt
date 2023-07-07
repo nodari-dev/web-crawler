@@ -1,11 +1,11 @@
 package interfaces
 
 import dto.FrontierQueue
+import dto.URLRecord
 
 interface IFrontier {
-
-    fun pullURL(host: String): String?
-    fun updateOrCreateQueue(host: String, urls: MutableList<String>)
+    fun pullURLRecord(host: String): URLRecord?
+    fun updateOrCreateQueue(host: String, urlRecord: URLRecord)
     fun getQueue(host: String): FrontierQueue?
     fun pickFreeQueue(): String?
 }
