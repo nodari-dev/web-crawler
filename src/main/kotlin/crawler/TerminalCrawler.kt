@@ -71,7 +71,7 @@ class TerminalCrawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        urls.filter {  crawlerUtils.isURLValid(URLRecord(it), primaryHost!!)}
+        urls.filter { crawlerUtils.isURLNew(URLRecord(it))}
         val filteredURLs = urls.toSet().toMutableList()
 
         filteredURLs.forEach{url ->

@@ -8,9 +8,8 @@ import localStorage.URLHashStorage
 class CrawlerUtils : ICrawlerUtils {
     private val counter = Counter
 
-    override fun isURLValid(urlRecord: URLRecord, host: String): Boolean {
-        val isValid = !URLHashStorage.alreadyExists(urlRecord.getUniqueHash())
-        return isValid && urlRecord.url.contains(host)
+    override fun isURLNew(urlRecord: URLRecord): Boolean {
+        return !URLHashStorage.alreadyExists(urlRecord.getUniqueHash())
     }
 
 //    private fun isURLBanned(url: String): Boolean{
