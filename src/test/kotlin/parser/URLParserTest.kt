@@ -24,7 +24,7 @@ class URLParserTest {
         val expectedResult = "https://test.com/"
         val document = "https://test.com/test/"
 
-        val result = urlParser.getMainURL(document)
+        val result = urlParser.getHostWithProtocol(document)
         Assertions.assertEquals(expectedResult, result)
     }
 }

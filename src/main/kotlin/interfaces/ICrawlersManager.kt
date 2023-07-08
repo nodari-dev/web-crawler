@@ -3,6 +3,6 @@ package interfaces
 import dto.URLRecord
 
 interface ICrawlersManager {
-    fun addSeed(seed: URLRecord)
+    fun addSeed(seed: String)
     fun startCrawling()
 }

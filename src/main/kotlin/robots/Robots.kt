@@ -22,7 +22,7 @@ class Robots : IRobots {
     }
 
     private fun getRobotsURL(url: String): String {
-        val host = urlParser.getHostWithProtocol(url).host
+        val host = urlParser.getHostWithProtocol(url)
         return "$host/robots.txt"
     }
 }

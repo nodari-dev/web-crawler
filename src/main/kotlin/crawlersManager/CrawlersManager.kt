@@ -28,9 +28,9 @@ class CrawlersManager : ICrawlersManager {
     private val kotlinLogging = KotlinLogging
     private val counter = Counter
 
-    override fun addSeed(seed: URLRecord) {
-        val url = seed.toString()
-        frontier.updateOrCreateQueue(urlParser.getMainURL(url), mutableListOf(url))
+    override fun addSeed(seed: String) {
+        val host = urlParser.getHostWithProtocol(seed)
+        frontier.updateOrCreateQueue(host, seed)
     }
 
     override fun startCrawling() {

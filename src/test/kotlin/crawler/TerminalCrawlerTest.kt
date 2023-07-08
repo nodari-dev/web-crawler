@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import parser.urlParser.URLParser
 import robots.Robots
-import utils.Utils
 
 class TerminalCrawlerTest {
     private lateinit var terminalCrawler: TerminalCrawler

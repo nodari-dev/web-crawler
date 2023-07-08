@@ -1,8 +1,6 @@
 package frontier
 
-import dto.CrawlerModes
 import dto.FrontierQueue
-import dto.HostWithProtocol
 import dto.URLRecord
 import interfaces.IFrontier
 import mu.KotlinLogging
@@ -24,16 +22,19 @@ object Frontier: IFrontier {
     private val mutex = Object()
     private val logger = KotlinLogging.logger("Frontier")
 
-    override fun pullURLRecord(host: HostWithProtocol): URLRecord? {
+    override fun pullURLRecord(host: String): URLRecord? {
         return synchronized(mutex){
-            queues.firstOrNull { it.host == host }?.urlRecords?.removeFirstOrNull().toString()
+            val result = queues.firstOrNull { it.host == host }?.urlRecords?.removeFirstOrNull()
+            println(result)
+            result
         }
     }
 
-    override fun updateOrCreateQueue(host: String, urlRecord: URLRecord) {
+    override fun updateOrCreateQueue(host: String, url: String) {
         synchronized(mutex){
+            val urlRecord = URLRecord(url)
             if(isQueueDefined(host)){
-                updateExistingQueue(host, urlRecord)
+                updateQueue(host, urlRecord)
             } else{
                 createQueue(host, urlRecord)
             }
@@ -47,12 +48,11 @@ object Frontier: IFrontier {
         }
     }
 
-    private fun updateExistingQueue(host: String, urlRecord: URLRecord) {
+    private fun updateQueue(host: String, urlRecord: URLRecord) {
         synchronized(mutex){
             queues.forEach { queue ->
                 if(queue.host == host){
                     queue.urlRecords.add(urlRecord)
-                    queue.isBlocked = true
                 }
             }
         }
