@@ -69,6 +69,16 @@ class FrontierTest {
         Assertions.assertEquals(frontier.getQueue(host), expectedResult)
     }
 
+    @Test
+    fun `blocks queue for other threads if it was picked` (){
+        frontier.updateOrCreateQueue(host, mockedURL)
+        val result = frontier.pickFreeQueue()
+        val result2 = frontier.pickFreeQueue()
+
+        Assertions.assertEquals(result, host)
+        Assertions.assertEquals(result2, null)
+    }
+
     fun `deletes queue if there is no more urls`(){
 
     }
