@@ -1,7 +1,7 @@
 package crawlersManager
 
 object Illustrations {
-    const val TerminalCrawler = "\n" +
+    const val CrawlerStarted = "\n" +
             "\n" +
             "                     .::.\n" +
             "                  .:'  .:\n" +

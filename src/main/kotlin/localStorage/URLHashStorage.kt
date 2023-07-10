@@ -12,9 +12,23 @@ object URLHashStorage: IURLHashStorage{
         }
     }
 
-    override fun alreadyExists(value: Int): Boolean{
+    override fun alreadyExists(hash: Int): Boolean{
         synchronized(mutex){
-            return values.contains(value)
+            return values.contains(hash)
+        }
+    }
+
+    fun getNewURLs(urls: MutableList<String>): MutableList<String> {
+        synchronized(mutex){
+            val newURLs = mutableListOf<String>()
+            for (i in urls.indices) {
+                if(!urls[i].endsWith("/")){
+                    newURLs.add("${urls[i]}/")
+                } else{
+                    newURLs.add(urls[i])
+                }
+            }
+            return newURLs.toSet().toMutableList()
         }
     }
 }

@@ -66,7 +66,7 @@ class FrontierTest {
         Assertions.assertEquals(host, result)
 
         val expectedResult = FrontierQueue(host, mutableListOf(urlRecords[0]), true)
-        Assertions.assertEquals(frontier.getQueue(host), expectedResult)
+        Assertions.assertEquals(expectedResult, frontier.getQueue(host))
     }
 
     @Test
@@ -75,12 +75,18 @@ class FrontierTest {
         val result = frontier.pickFreeQueue()
         val result2 = frontier.pickFreeQueue()
 
-        Assertions.assertEquals(result, host)
-        Assertions.assertEquals(result2, null)
+        Assertions.assertEquals(host, result)
+        Assertions.assertEquals(null, result2)
     }
 
+    @Test
     fun `deletes queue if there is no more urls`(){
+        frontier.updateOrCreateQueue(host, mockedURL)
+        val host = frontier.pickFreeQueue()!!
+        frontier.pullURLRecord(host)
 
+        Assertions.assertEquals(null, frontier.pullURLRecord(host))
+        Assertions.assertEquals(null, frontier.getQueue(host))
     }
 
 }

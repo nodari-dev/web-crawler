@@ -1,8 +1,9 @@
 import crawlersManager.CrawlersManager
-import dto.CrawlerModes
+import dto.URLRecord
+import frontier.Frontier
 
 fun main() {
     val manager = CrawlersManager()
-    manager.addSeed("https://ecospace.org.ua/sea")
+    manager.addSeed("https://ecospace.org.ua/sea/")
     manager.startCrawling()
 }

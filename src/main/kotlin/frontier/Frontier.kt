@@ -3,36 +3,34 @@ package frontier
 import dto.FrontierQueue
 import dto.URLRecord
 import interfaces.IFrontier
+import localStorage.URLHashStorage
 import mu.KotlinLogging
 
 object Frontier: IFrontier {
-    // 2. Each back-queue must have NAME AS A HOST NAME
-    // 3. Each back-queue contains ONLY URLS with the same host
-    // 4. If url has unrecognisible host -> create new queue with NEW HOST NAME
-    // 5. Frontier works only with NEW URLS
-    // 6. is urls was seen -> it will be refetched later (schedule)
-
-    // after fetch -> put all found urls to frontier
-    // frontier will handle all urls
-    // save frontqs and backqs to text file (or update existing)
-
-    // Number of BackQueues = NUMBER_OF_CRAWLERS -> create connection by host
-
     private val queues = mutableListOf<FrontierQueue>()
     private val mutex = Object()
     private val logger = KotlinLogging.logger("Frontier")
 
     override fun pullURLRecord(host: String): URLRecord? {
         return synchronized(mutex){
-            val result = queues.firstOrNull { it.host == host }?.urlRecords?.removeFirstOrNull()
-            println(result)
-            result
+            val queue = queues.firstOrNull { it.host == host }
+            val urlRecord = queue?.urlRecords?.removeFirstOrNull()
+
+            if(urlRecord == null){
+                deleteQueue(host)
+            }
+            urlRecord
         }
+    }
+
+    private fun deleteQueue(host: String){
+        queues.removeIf{it.host == host}
     }
 
     override fun updateOrCreateQueue(host: String, url: String) {
         synchronized(mutex){
             val urlRecord = URLRecord(url)
+            println("added, $urlRecord")
             if(isQueueDefined(host)){
                 updateQueue(host, urlRecord)
             } else{

@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test
 import parser.urlParser.URLParser
 import robots.Robots
 
-class TerminalCrawlerTest {
-    private lateinit var terminalCrawler: TerminalCrawler
+class CrawlerTest {
+    private lateinit var terminalCrawler: Crawler
 
     private val crawlerUtils = CrawlerUtils()
     private val fetcher = Fetcher()
@@ -26,7 +26,7 @@ class TerminalCrawlerTest {
 
     @BeforeEach
     fun init() {
-        terminalCrawler = TerminalCrawler(
+        terminalCrawler = Crawler(
             0,
             crawlerUtils,
             fetcher,
