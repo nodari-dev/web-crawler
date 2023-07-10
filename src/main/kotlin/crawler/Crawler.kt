@@ -1,5 +1,6 @@
 package crawler
 
+import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
@@ -76,14 +77,25 @@ class Crawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        val uniqueURLs = URLHashStorage.getNewURLs(urls.toMutableList())
+        val uniqueURLs = updateStrings(urls.toMutableList())
 
         uniqueURLs.forEach{url ->
-            if(crawlerUtils.isURLNew(URLRecord(url))){
-                URLHashStorage.add(urls.hashCode())
+            if(crawlerUtils.isURLNew(FormattedURL(url))){
+                URLHashStorage.add(url.hashCode())
                 val host = urlParser.getHostWithProtocol(url)
                 frontier.updateOrCreateQueue(host, url)
             }
         }
+    }
+
+    private fun updateStrings(strings: MutableList<String>): MutableList<String> {
+        val uniqueStrings = mutableSetOf<String>()
+        for (i in 0 until strings.size) {
+            if (!strings[i].endsWith('/')) {
+                strings[i] = strings[i] + '/'
+            }
+            uniqueStrings.add(strings[i])
+        }
+        return uniqueStrings.toMutableList()
     }
 }

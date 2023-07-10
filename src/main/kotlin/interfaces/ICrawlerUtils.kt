@@ -1,7 +1,7 @@
 package interfaces
-import dto.URLRecord
+import dto.FormattedURL
 
 interface ICrawlerUtils {
-    fun isURLNew(urlRecord: URLRecord): Boolean
+    fun isURLNew(formattedURL: FormattedURL): Boolean
     fun canProceedCrawling(): Boolean
 }

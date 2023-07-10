@@ -1,6 +1,7 @@
 package crawler
 
 import crawlersManager.Configuration.CRAWLING_LIMIT
+import dto.FormattedURL
 import dto.URLRecord
 import interfaces.ICrawlerUtils
 import localStorage.URLHashStorage
@@ -8,7 +9,8 @@ import localStorage.URLHashStorage
 class CrawlerUtils : ICrawlerUtils {
     private val counter = Counter
 
-    override fun isURLNew(urlRecord: URLRecord): Boolean {
+    override fun isURLNew(formattedURL: FormattedURL): Boolean {
+        val urlRecord = URLRecord(formattedURL)
         return !URLHashStorage.alreadyExists(urlRecord.getUniqueHash())
     }
 

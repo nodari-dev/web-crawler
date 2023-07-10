@@ -1,18 +1,7 @@
 package dto
 
-data class URLRecord(var url: String, var priorityNumber: Int = 0) {
-
-    init {
-        reformatURL()
-    }
-
-    private fun reformatURL(){
-        if(!url.endsWith("/")){
-            url = "$url/"
-        }
-    }
-
+data class URLRecord(var formattedURL: FormattedURL, var priorityNumber: Int = 0) {
     fun getUniqueHash(): Int{
-        return url.hashCode()
+        return formattedURL.value.hashCode()
     }
 }
