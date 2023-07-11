@@ -6,12 +6,14 @@ import mu.KotlinLogging
 import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
+import crawler.Counter
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class Fetcher : IFetcher {
     private val logger = KotlinLogging.logger("Fetcher")
+    private val counter = Counter
 
     override fun getPageContent(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)
@@ -41,7 +43,7 @@ class Fetcher : IFetcher {
                 else -> {null}
             }
         } finally {
-            logger.info("downloaded $url")
+            logger.info("[${counter.value}] downloaded $url")
         }
     }
 

@@ -30,7 +30,10 @@ class Crawler(
         while (true) {
             if(selectedHost != null){
                 counter.increment()
-                frontier.pullURLRecord(selectedHost!!)?.let{urlRecord ->
+                val urlRecord = frontier.pullURLRecord(selectedHost!!)
+                if(urlRecord == null){
+                    disconnectFromQueue()
+                } else{
                     processPage(urlRecord)
                 }
             }
@@ -43,8 +46,9 @@ class Crawler(
                     frontier.pullURLRecord(selectedHost!!)?.let{urlRecord ->
                         processPage(urlRecord)
                     }
-                } else{
-                    disconnectFromQueue()
+                }
+                else{
+                    this.interrupt()
                 }
             }
         }
@@ -68,7 +72,7 @@ class Crawler(
 //            hostStorage.add(primaryHost!!, bannedURLs)
 //        }
 
-        val html = fetcher.getPageContent(urlRecord.url)
+        val html = fetcher.getPageContent(urlRecord.getURL())
 
         html?.let{
             processChildURLs(html)
@@ -77,25 +81,18 @@ class Crawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        val uniqueURLs = updateStrings(urls.toMutableList())
+        val uniqueFormattedURLs = getUniqueFormattedURLs(urls.toMutableList())
 
-        uniqueURLs.forEach{url ->
-            if(crawlerUtils.isURLNew(FormattedURL(url))){
-                URLHashStorage.add(url.hashCode())
-                val host = urlParser.getHostWithProtocol(url)
-                frontier.updateOrCreateQueue(host, url)
+        uniqueFormattedURLs.forEach{formattedURL ->
+            if(crawlerUtils.isURLNew(formattedURL)){
+                URLHashStorage.add(formattedURL.value.hashCode())
+                val host = urlParser.getHostWithProtocol(formattedURL.value)
+                frontier.updateOrCreateQueue(host, formattedURL.value)
             }
         }
     }
 
-    private fun updateStrings(strings: MutableList<String>): MutableList<String> {
-        val uniqueStrings = mutableSetOf<String>()
-        for (i in 0 until strings.size) {
-            if (!strings[i].endsWith('/')) {
-                strings[i] = strings[i] + '/'
-            }
-            uniqueStrings.add(strings[i])
-        }
-        return uniqueStrings.toMutableList()
+    private fun getUniqueFormattedURLs(urls: List<String>): Set<FormattedURL> {
+        return urls.map { FormattedURL(it) }.toSet()
     }
 }

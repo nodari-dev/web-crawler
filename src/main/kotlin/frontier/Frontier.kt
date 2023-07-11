@@ -1,9 +1,9 @@
 package frontier
 
+import dto.FormattedURL
 import dto.FrontierQueue
 import dto.URLRecord
 import interfaces.IFrontier
-import localStorage.URLHashStorage
 import mu.KotlinLogging
 
 object Frontier: IFrontier {
@@ -24,13 +24,13 @@ object Frontier: IFrontier {
     }
 
     private fun deleteQueue(host: String){
+        logger.info("removed queue with host: $host")
         queues.removeIf{it.host == host}
     }
 
     override fun updateOrCreateQueue(host: String, url: String) {
         synchronized(mutex){
-            val urlRecord = URLRecord(url)
-            println("added, $urlRecord")
+            val urlRecord = URLRecord(FormattedURL(url))
             if(isQueueDefined(host)){
                 updateQueue(host, urlRecord)
             } else{
