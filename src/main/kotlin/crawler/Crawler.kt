@@ -26,30 +26,31 @@ class Crawler(
     private var selectedHost: String? = null
 
     override fun run() {
+        crawl()
+    }
+
+    private fun crawl(){
         while (true) {
             if(selectedHost != null){
-                counter.increment()
-                val urlRecord = frontier.pullURLRecord(selectedHost!!)
-                if(urlRecord == null){
-                    disconnectFromQueue()
-                } else{
-                    processPage(urlRecord)
-                }
+                pullURLFromFrontier()
             }
             else {
                 val host = frontier.pickFreeQueue()
                 if(host != null){
-                    counter.increment()
                     connectToQueueByHost(host)
-
-                    frontier.pullURLRecord(selectedHost!!)?.let{urlRecord ->
-                        processPage(urlRecord)
-                    }
-                }
-                else{
-                    this.interrupt()
+                    pullURLFromFrontier()
                 }
             }
+        }
+    }
+
+    private fun pullURLFromFrontier(){
+        counter.increment()
+        val urlRecord = frontier.pullURLRecord(selectedHost!!)
+        if(urlRecord == null){
+            disconnectFromQueue()
+        } else{
+            processPage(urlRecord)
         }
     }
 
@@ -62,28 +63,12 @@ class Crawler(
         logger.info ("disconnected from queue")
         selectedHost = null
     }
-//
-//    private fun processHost(urlRecord: URLRecord){
-//        val host = urlParser.getHostWithProtocol(urlRecord.getURL())
-//        val url = urlRecord.getURL()
-//        if (!hostStorage.isHostDefined(host)){
-//            val bannedURLs = robots.getDisallowedURLs(host, url)
-//            hostStorage.addHostRecord(host, bannedURLs)
-//        }
-//    }
 
     private fun processPage(urlRecord: URLRecord){
-//        val isNotBanned = hostStorage.isURLBanned(selectedHost!!, urlRecord.getURL())
-//        if(isNotBanned){
-//
-//        }
-
         URLHashStorage.add(urlRecord.getUniqueHash())
-        val html = fetcher.getPageContent(urlRecord.getURL())
 
-        html?.let{
-            processChildURLs(html)
-        }
+        val html = fetcher.getPageContent(urlRecord.getURL())
+        html?.let{ processChildURLs(html) }
     }
 
     private fun processChildURLs(html: String) {
