@@ -1,5 +1,7 @@
 package interfaces
 
+import dto.FormattedURL
+
 interface IRobotsParser {
-    fun getRobotsDisallowed(document: String): List<String>
+    fun getRobotsDisallowed(document: String): List<FormattedURL>
 }

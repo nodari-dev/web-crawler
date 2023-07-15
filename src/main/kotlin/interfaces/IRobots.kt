@@ -1,5 +1,7 @@
 package interfaces
 
+import dto.FormattedURL
+
 interface IRobots {
-    fun getDisallowedURLs(url: String): List<String>
+    fun getDisallowedURLs(host: String, url: String): List<FormattedURL>
 }

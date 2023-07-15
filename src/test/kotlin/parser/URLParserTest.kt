@@ -1,5 +1,6 @@
 package parser
 
+import dto.FormattedURL
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.urlParser.URLParser
@@ -9,22 +10,25 @@ class URLParserTest {
 
     @Test
     fun `returns filtered urls from html`() {
-        val expectedResult = mutableListOf<String>("http://www.host.com", "http://www.host1.com")
+        val url1 = FormattedURL("http://www.host.com")
+        val url2 = FormattedURL("http://www.host1.com")
+        val expectedResult = listOf(url1, url2)
         val html = "<div>" +
                 "<a href='http://www.host.com'>link</a>" +
                 "<a href='http://www.host1.com'>link</a>" +
+                "<a href='http://www.host2.com/file.cpp'>link</a>" +
                 "</div>"
 
         val result = urlParser.getURLs(html)
-        Assertions.assertEquals(result, expectedResult)
+        Assertions.assertEquals(expectedResult, result)
     }
 
     @Test
-    fun `returns main url`() {
-        val expectedResult = "https://test.com/"
-        val document = "https://test.com/test/"
+    fun `returns host with protocol`() {
+        val expectedResult = "https://test.com"
+        val url = "https://test.com/test/"
 
-        val result = urlParser.getHostWithProtocol(document)
+        val result = urlParser.getHostWithProtocol(url)
         Assertions.assertEquals(expectedResult, result)
     }
 }

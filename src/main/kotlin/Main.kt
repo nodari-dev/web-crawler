@@ -4,6 +4,7 @@ import frontier.Frontier
 
 fun main() {
     val manager = CrawlersManager()
-    manager.addSeed("https://ecospace.org.ua/sea/")
+    manager.addSeed("https://ecospace.org.ua")
+    manager.addSeed("https://ecospace.org.ua/wp-admin/")
     manager.startCrawling()
 }

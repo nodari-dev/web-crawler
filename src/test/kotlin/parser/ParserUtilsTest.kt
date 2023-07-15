@@ -1,5 +1,6 @@
 package parser
 
+import dto.FormattedURL
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -37,9 +38,18 @@ class ParserUtilsTest {
         """
 
         val pattern = """<p>(.*?)</p>""".toRegex()
-        val groupIndex = 0
+        val groupIndex = 1
         val expectedResult = "Hello world!"
         val result = parserUtils.parseSingleValue(html, pattern, groupIndex)
+
+        Assertions.assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun `transforms list of string to list of FormattedURLs`(){
+        val list = listOf("url1", "url2")
+        val expectedResult = listOf(FormattedURL(list[0]), FormattedURL(list[1]))
+        val result = parserUtils.transformToFormattedURLs(list)
 
         Assertions.assertEquals(expectedResult, result)
     }

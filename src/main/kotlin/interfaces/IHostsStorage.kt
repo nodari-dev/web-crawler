@@ -1,8 +1,11 @@
 package interfaces
 
-import dto.Host
+import dto.FormattedURL
+import dto.HostRecord
 
 interface IHostsStorage {
-    fun add(hostURL: String, bannedURLs: List<String>)
-    fun get(url: String): Host?
+    fun addHostRecord(host: String, bannedURLs: List<FormattedURL>)
+    fun getHostRecord(host: String): HostRecord?
+    fun isHostDefined(host: String): Boolean
+    fun isURLBanned(host: String, url: String): Boolean
 }

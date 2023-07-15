@@ -1,6 +1,5 @@
 package crawler
 
-import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
@@ -63,15 +62,23 @@ class Crawler(
         logger.info ("disconnected from queue")
         selectedHost = null
     }
+//
+//    private fun processHost(urlRecord: URLRecord){
+//        val host = urlParser.getHostWithProtocol(urlRecord.getURL())
+//        val url = urlRecord.getURL()
+//        if (!hostStorage.isHostDefined(host)){
+//            val bannedURLs = robots.getDisallowedURLs(host, url)
+//            hostStorage.addHostRecord(host, bannedURLs)
+//        }
+//    }
 
     private fun processPage(urlRecord: URLRecord){
-        URLHashStorage.add(urlRecord.getUniqueHash())
-
-//        if(hostStorage.get(URL(url).host) == null){
-//            val bannedURLs = robots.getDisallowedURLs(url)
-//            hostStorage.add(primaryHost!!, bannedURLs)
+//        val isNotBanned = hostStorage.isURLBanned(selectedHost!!, urlRecord.getURL())
+//        if(isNotBanned){
+//
 //        }
 
+        URLHashStorage.add(urlRecord.getUniqueHash())
         val html = fetcher.getPageContent(urlRecord.getURL())
 
         html?.let{
@@ -81,18 +88,14 @@ class Crawler(
 
     private fun processChildURLs(html: String) {
         val urls = urlParser.getURLs(html)
-        val uniqueFormattedURLs = getUniqueFormattedURLs(urls.toMutableList())
+        val uniqueFormattedURLs = urls.toSet()
 
         uniqueFormattedURLs.forEach{formattedURL ->
-            if(crawlerUtils.isURLNew(formattedURL)){
+            val host = urlParser.getHostWithProtocol(formattedURL.value)
+            if(crawlerUtils.isURLValid(host, formattedURL)){
                 URLHashStorage.add(formattedURL.value.hashCode())
-                val host = urlParser.getHostWithProtocol(formattedURL.value)
                 frontier.updateOrCreateQueue(host, formattedURL.value)
             }
         }
-    }
-
-    private fun getUniqueFormattedURLs(urls: List<String>): Set<FormattedURL> {
-        return urls.map { FormattedURL(it) }.toSet()
     }
 }

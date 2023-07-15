@@ -1,28 +1,21 @@
 package robots
 
+import dto.FormattedURL
 import fetcher.Fetcher
 import interfaces.IRobots
 import parser.robotsParser.RobotsParser
-import parser.urlParser.URLParser
-import java.net.URL
 
 class Robots : IRobots {
     private val fetcher = Fetcher()
     private val robotsParser = RobotsParser()
-    private val urlParser = URLParser()
 
-    override fun getDisallowedURLs(url: String): List<String> {
-        val content = getRobotsTxtContent(url)
+    override fun getDisallowedURLs(host: String, url: String): List<FormattedURL> {
+        val content = getRobotsTxtContent(host, url)
         return content?.let { robotsParser.getRobotsDisallowed(it) } ?: emptyList()
     }
 
-    private fun getRobotsTxtContent(url: String): String? {
-        val robotsURL = getRobotsURL(url)
+    private fun getRobotsTxtContent(host: String, url: String): String? {
+        val robotsURL = "$host/robots.txt"
         return fetcher.getPageContent(robotsURL)
-    }
-
-    private fun getRobotsURL(url: String): String {
-        val host = urlParser.getHostWithProtocol(url)
-        return "$host/robots.txt"
     }
 }

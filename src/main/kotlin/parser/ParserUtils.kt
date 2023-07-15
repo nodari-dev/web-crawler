@@ -1,5 +1,6 @@
 package parser
 
+import dto.FormattedURL
 import interfaces.IParserUtils
 
 class ParserUtils: IParserUtils {
@@ -18,4 +19,7 @@ class ParserUtils: IParserUtils {
         return regex.find(html)?.groups?.get(groupIndex)?.value
     }
 
+    override fun transformToFormattedURLs(list: List<String>): List<FormattedURL>{
+        return list.map { element -> FormattedURL(element) }
+    }
 }
