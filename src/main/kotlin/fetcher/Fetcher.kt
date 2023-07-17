@@ -7,6 +7,7 @@ import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import crawler.Counter
+import excections.FetchingFailedException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -27,23 +28,23 @@ class Fetcher : IFetcher {
 
     private fun getResponse(url: String): Response? {
         return try {
-           Jsoup.connect(url).followRedirects(true).execute()
+            logger.info("[${counter.value}] downloaded $url")
+            Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: Exception) {
             when (exception) {
                 is HttpStatusException,
                 is UnknownHostException,
                 is IllegalArgumentException,
                 is SocketTimeoutException,
-                is IOException -> {
-                    // TODO: UPDATE IO TO CUSTOM EXCEPTON
+                is FetchingFailedException -> {
                     logger.error { "Fetching of $url failed" }
                     null
                 }
-
-                else -> {null}
+                else -> {
+                    logger.error { "Something went wrong with $url" }
+                    null
+                }
             }
-        } finally {
-            logger.info("[${counter.value}] downloaded $url")
         }
     }
 

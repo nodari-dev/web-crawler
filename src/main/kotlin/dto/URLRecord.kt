@@ -1,6 +1,6 @@
 package dto
 
-data class URLRecord(private var formattedURL: FormattedURL, var priorityNumber: Int = 0) {
+data class URLRecord(var formattedURL: FormattedURL, var priorityNumber: Int = 0) {
     fun getUniqueHash(): Int{
         return formattedURL.value.hashCode()
     }

@@ -11,7 +11,6 @@ object HostsStorage: IHostsStorage {
     override fun addHostRecord(host: String, bannedURLs: List<FormattedURL>){
         synchronized(mutex){
             val hostRecord = HostRecord(host, bannedURLs)
-            println("added $hostRecord")
             storage.add(hostRecord)
         }
     }
@@ -27,10 +26,10 @@ object HostsStorage: IHostsStorage {
         }
     }
 
-    override fun isURLBanned(host: String, url: String): Boolean{
+    override fun isURLAllowed(host: String, url: String): Boolean{
         synchronized(mutex){
-            val hostRecord = getHostRecord(host)
-            return hostRecord?.bannedURLs?.any { bannedURL -> url.contains(bannedURL.value) } ?: false
+            val hostRecord = getHostRecord(host) ?: return true
+            return hostRecord.bannedURLs.any { bannedURL -> !url.contains(bannedURL.value) }
         }
     }
 

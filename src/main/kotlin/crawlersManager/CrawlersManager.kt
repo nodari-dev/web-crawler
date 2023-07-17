@@ -4,6 +4,7 @@ import crawler.Counter
 import crawler.CrawlerUtils
 import crawler.Crawler
 import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
+import dto.FormattedURL
 import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ICrawlersManager
@@ -20,7 +21,7 @@ class CrawlersManager : ICrawlersManager {
 
     override fun addSeed(seed: String) {
         val host = urlParser.getHostWithProtocol(seed)
-        frontier.updateOrCreateQueue(host, seed)
+        frontier.updateOrCreateQueue(host, FormattedURL(seed))
     }
 
     override fun startCrawling() {

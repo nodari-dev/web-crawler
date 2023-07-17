@@ -28,9 +28,9 @@ object Frontier: IFrontier {
         queues.removeIf{it.host == host}
     }
 
-    override fun updateOrCreateQueue(host: String, url: String) {
+    override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
         synchronized(mutex){
-            val urlRecord = URLRecord(FormattedURL(url))
+            val urlRecord = URLRecord(formattedURL)
             if(isQueueDefined(host)){
                 updateQueue(host, urlRecord)
             } else{

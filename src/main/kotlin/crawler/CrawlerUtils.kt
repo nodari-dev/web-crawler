@@ -10,11 +10,15 @@ import localStorage.URLHashStorage
 class CrawlerUtils : ICrawlerUtils {
     private val counter = Counter
 
-    override fun isURLValid(host: String, formattedURL: FormattedURL): Boolean {
+    override fun canProcessURL(host: String, formattedURL: FormattedURL?): Boolean {
+        if(formattedURL == null){
+            return false
+        }
+
         val urlRecord = URLRecord(formattedURL)
-        val isNew = !URLHashStorage.alreadyExists(urlRecord.getUniqueHash())
-        val isNotBanned = !HostsStorage.isURLBanned(host, formattedURL.value)
-        return isNew && isNotBanned
+        val isNew = URLHashStorage.doesNotExist(urlRecord.getUniqueHash())
+        val isAllowed = HostsStorage.isURLAllowed(host, formattedURL.value)
+        return isNew && isAllowed
     }
 
     override fun canProceedCrawling(): Boolean {

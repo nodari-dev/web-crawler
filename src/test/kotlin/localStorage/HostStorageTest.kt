@@ -44,9 +44,9 @@ class HostStorageTest {
     fun `checks if URL is banned`(){
         hostStorage.addHostRecord(host, bannedURLs)
 
-        val result = hostStorage.isURLBanned(host, bannedURLs[0].value)
-        val resultTwo = hostStorage.isURLBanned(host, "somethingElse")
-        Assertions.assertEquals(true, result)
-        Assertions.assertEquals(false, resultTwo)
+        val result = hostStorage.isURLAllowed(host, bannedURLs[0].value)
+        val resultTwo = hostStorage.isURLAllowed(host, "somethingElse")
+        Assertions.assertEquals(false, result)
+        Assertions.assertEquals(true, resultTwo)
     }
 }

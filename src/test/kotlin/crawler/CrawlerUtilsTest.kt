@@ -23,7 +23,8 @@ class CrawlerUtilsTest {
         urlHashStorage.add(URLRecord(url1).getUniqueHash())
         hostsStorage.addHostRecord(host,bannedURLs)
 
-        Assertions.assertEquals(false, crawlerUtils.isURLValid(host, url1))
-        Assertions.assertEquals(true, crawlerUtils.isURLValid(host, url2))
+        Assertions.assertEquals(false, crawlerUtils.canProcessURL(host, url1))
+        Assertions.assertEquals(true, crawlerUtils.canProcessURL(host, url2))
+        Assertions.assertEquals(false, crawlerUtils.canProcessURL(host, null))
     }
 }

@@ -1,5 +1,6 @@
 package crawler
 
+import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
@@ -31,27 +32,40 @@ class Crawler(
 
     private fun crawl(){
         while (true) {
-            if(selectedHost != null){
-                pullURLFromFrontier()
+            if(selectedHost == null){
+                processNewHost()
             }
             else {
-                val host = frontier.pickFreeQueue()
-                if(host != null){
-                    connectToQueueByHost(host)
-                    pullURLFromFrontier()
-                }
+                processNewFrontierRecord()
             }
         }
     }
 
-    private fun pullURLFromFrontier(){
+    private fun processNewFrontierRecord(){
         counter.increment()
         val urlRecord = frontier.pullURLRecord(selectedHost!!)
         if(urlRecord == null){
             disconnectFromQueue()
-        } else{
-            processPage(urlRecord)
+            return
         }
+
+        if(crawlerUtils.canProcessURL(selectedHost!!, urlRecord.formattedURL)){
+            fetchHTML(urlRecord)
+        }
+    }
+
+    private fun processNewHost(){
+        val host = frontier.pickFreeQueue()
+        if(host != null){
+            connectToQueueByHost(host)
+            processRobotsTxt()
+            processNewFrontierRecord()
+        }
+    }
+
+    private fun processRobotsTxt(){
+        val disallowedURLs = robots.getDisallowedURLs(selectedHost!!)
+        hostStorage.addHostRecord(selectedHost!!, disallowedURLs)
     }
 
     private fun connectToQueueByHost(host: String){
@@ -64,23 +78,27 @@ class Crawler(
         selectedHost = null
     }
 
-    private fun processPage(urlRecord: URLRecord){
+    private fun fetchHTML(urlRecord: URLRecord){
         URLHashStorage.add(urlRecord.getUniqueHash())
 
         val html = fetcher.getPageContent(urlRecord.getURL())
-        html?.let{ processChildURLs(html) }
+        html?.let{
+            val urls = urlParser.getURLs(html)
+            processFoundURLs(urls)
+        }
     }
 
-    private fun processChildURLs(html: String) {
-        val urls = urlParser.getURLs(html)
+    private fun processFoundURLs(urls: List<FormattedURL>) {
         val uniqueFormattedURLs = urls.toSet()
-
         uniqueFormattedURLs.forEach{formattedURL ->
             val host = urlParser.getHostWithProtocol(formattedURL.value)
-            if(crawlerUtils.isURLValid(host, formattedURL)){
-                URLHashStorage.add(formattedURL.value.hashCode())
-                frontier.updateOrCreateQueue(host, formattedURL.value)
+            if(crawlerUtils.canProcessURL(host, formattedURL)){
+                processURL(host, formattedURL)
             }
         }
+    }
+
+    private fun processURL(host: String, formattedURL: FormattedURL){
+        frontier.updateOrCreateQueue(host, formattedURL)
     }
 }

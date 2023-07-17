@@ -9,12 +9,12 @@ class Robots : IRobots {
     private val fetcher = Fetcher()
     private val robotsParser = RobotsParser()
 
-    override fun getDisallowedURLs(host: String, url: String): List<FormattedURL> {
-        val content = getRobotsTxtContent(host, url)
+    override fun getDisallowedURLs(host: String): List<FormattedURL> {
+        val content = getRobotsTxtContent(host)
         return content?.let { robotsParser.getRobotsDisallowed(it) } ?: emptyList()
     }
 
-    private fun getRobotsTxtContent(host: String, url: String): String? {
+    private fun getRobotsTxtContent(host: String): String? {
         val robotsURL = "$host/robots.txt"
         return fetcher.getPageContent(robotsURL)
     }

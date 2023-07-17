@@ -12,9 +12,9 @@ object URLHashStorage: IURLHashStorage{
         }
     }
 
-    override fun alreadyExists(hash: Int): Boolean{
+    override fun doesNotExist(hash: Int): Boolean{
         synchronized(mutex){
-            return values.contains(hash)
+            return !values.contains(hash)
         }
     }
 }
