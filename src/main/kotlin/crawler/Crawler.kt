@@ -1,11 +1,12 @@
 package crawler
 
+import analyzer.DataAnalyzer
 import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
 import localStorage.HostsStorage
-import interfaces.ITerminalCrawler
+import interfaces.ICrawler
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
@@ -16,13 +17,14 @@ class Crawler(
     override val crawlerUtils: CrawlerUtils,
     override val fetcher: Fetcher,
     override val robots: Robots,
+    override val dataAnalyzer: DataAnalyzer,
     override val urlParser: URLParser,
     override val frontier: Frontier,
     override val hostStorage: HostsStorage,
     override val urlHashStorage: URLHashStorage,
     override val kotlinLogging: KotlinLogging,
     override val counter: Counter
-) : ITerminalCrawler, Thread() {
+) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler:${id}")
     private var selectedHost: String? = null
 
@@ -41,6 +43,15 @@ class Crawler(
         }
     }
 
+    private fun processNewHost(){
+        val host = frontier.pickFreeQueue()
+        if(host != null){
+            connectToQueueByHost(host)
+            processRobotsTxt()
+            processNewFrontierRecord()
+        }
+    }
+
     private fun processNewFrontierRecord(){
         counter.increment()
         val urlRecord = frontier.pullURLRecord(selectedHost!!)
@@ -51,15 +62,6 @@ class Crawler(
 
         if(crawlerUtils.canProcessURL(selectedHost!!, urlRecord.formattedURL)){
             fetchHTML(urlRecord)
-        }
-    }
-
-    private fun processNewHost(){
-        val host = frontier.pickFreeQueue()
-        if(host != null){
-            connectToQueueByHost(host)
-            processRobotsTxt()
-            processNewFrontierRecord()
         }
     }
 
@@ -84,6 +86,9 @@ class Crawler(
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)
+            if(!urlRecord.getURL().contains("robots.txt")){
+                dataAnalyzer.getPageStats(html)
+            }
             processFoundURLs(urls)
         }
     }

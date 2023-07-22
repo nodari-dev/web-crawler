@@ -25,7 +25,7 @@ class FrontierTest {
 
         Assertions.assertEquals(null, frontier.getQueue(host))
 
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
         val result = frontier.getQueue(host)
 
         Assertions.assertEquals(expectedResult, result)
@@ -33,8 +33,8 @@ class FrontierTest {
 
     @Test
     fun `updates current queue`(){
-        frontier.updateOrCreateQueue(host, mockedURL.value)
-        frontier.updateOrCreateQueue(host, mockedURL2.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
+        frontier.updateOrCreateQueue(host, mockedURL2)
 
         val expectedResult = FrontierQueue(host, urlRecords,  false)
         val result = frontier.getQueue(host)
@@ -44,7 +44,7 @@ class FrontierTest {
     @Test
     fun `returns queue or null`(){
         val expectedResult = FrontierQueue(host, mutableListOf(urlRecords[0]))
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
 
         val result = frontier.getQueue(host)
         val emptyResult = frontier.getQueue("something")
@@ -54,15 +54,14 @@ class FrontierTest {
 
     @Test
     fun `allows to pull urlRecord with reformatted data from queue by host`(){
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
         val result = frontier.pullURLRecord(host)
         Assertions.assertEquals(urlRecords[0], result)
-        Assertions.assertNotEquals(urlRecords[0].getURL(), mockedURL.value)
     }
 
     @Test
     fun `picks free queue and returns hostname`(){
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
         val result = frontier.pickFreeQueue()
         Assertions.assertEquals(host, result)
 
@@ -72,7 +71,7 @@ class FrontierTest {
 
     @Test
     fun `blocks queue for other threads if it was picked` (){
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
         val result = frontier.pickFreeQueue()
         val result2 = frontier.pickFreeQueue()
 
@@ -82,7 +81,7 @@ class FrontierTest {
 
     @Test
     fun `deletes queue if there is no more urls`(){
-        frontier.updateOrCreateQueue(host, mockedURL.value)
+        frontier.updateOrCreateQueue(host, mockedURL)
         val host = frontier.pickFreeQueue()!!
         frontier.pullURLRecord(host)
 

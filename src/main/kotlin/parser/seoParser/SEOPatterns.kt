@@ -1,6 +1,12 @@
 package parser.seoParser
 
 object SEOPatterns {
+    val TITLE = Regex("<title>([^\"]*)<\\/title>")
+    const val TITLE_GROUP_INDEX: Int = 1
+
+    val META_DESCRIPTION = Regex("<meta\\s+name=\"description\"\\s+content=\"([^\"]*)\"\\s*>")
+    const val META_DESCRIPTION_GROUP_INDEX: Int = 1
+
     val META_KEYWORDS = Regex("<meta\\s+name=\"keywords\"\\s+content=\"([^\"]*)\"\\s*>")
     const val META_KEYWORDS_GROUP_INDEX: Int = 1
 

@@ -4,17 +4,21 @@ import interfaces.IURLHashStorage
 
 object URLHashStorage: IURLHashStorage{
     private val mutex = Object()
-    private val values: MutableSet<Int> = mutableSetOf()
+    private val storage: MutableSet<Int> = mutableSetOf()
 
     override fun add(value: Int){
         synchronized(mutex){
-            values.add(value)
+            storage.add(value)
         }
     }
 
     override fun doesNotExist(hash: Int): Boolean{
         synchronized(mutex){
-            return !values.contains(hash)
+            return !storage.contains(hash)
         }
+    }
+
+    internal fun clean(){
+        storage.clear()
     }
 }

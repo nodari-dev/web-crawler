@@ -1,16 +1,16 @@
 package analyzer
 
 import interfaces.IDataAnalyzer
+import parser.seoParser.SEOParser
 
 class DataAnalyzer: IDataAnalyzer {
-    // TODO: Analyze url and fetched data
+    private val seoParser = SEOParser()
 
-    override fun getURLStats(url: String): String{
-        return ""
-    }
-
-    override fun getPageStats(): String{
-        println()
+    override fun getPageStats(html: String): String{
+        println("Title ${seoParser.getTitle(html)}")
+        println("Meta description ${seoParser.getMetaDescription(html)}")
+        println("META keywords ${seoParser.getMetaKeywords(html)}")
+        println("ALT ${seoParser.getImageAlts(html)}")
         return ""
     }
 }

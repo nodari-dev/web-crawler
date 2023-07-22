@@ -1,5 +1,6 @@
 package crawler
 
+import analyzer.DataAnalyzer
 import fetcher.Fetcher
 import frontier.Frontier
 import localStorage.HostsStorage
@@ -17,6 +18,7 @@ class CrawlerTest {
     private val fetcher = Fetcher()
     private val robots = Robots()
     private val urlParser = URLParser()
+    private val dataAnalyzer = DataAnalyzer()
     private val frontier = Frontier
     private val hostStorage = HostsStorage
     private val urlHashStorage = URLHashStorage
@@ -31,6 +33,7 @@ class CrawlerTest {
             crawlerUtils,
             fetcher,
             robots,
+            dataAnalyzer,
             urlParser,
             frontier,
             hostStorage,
