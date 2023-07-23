@@ -8,7 +8,9 @@ class DataAnalyzer: IDataAnalyzer {
 
     override fun getPageStats(html: String): String{
         println("Title ${seoParser.getTitle(html)}")
+        println("OG Title ${seoParser.getOgTitle(html)}")
         println("Meta description ${seoParser.getMetaDescription(html)}")
+        println("OG description ${seoParser.getOMetaOgDescription(html)}")
         println("META keywords ${seoParser.getMetaKeywords(html)}")
         println("ALT ${seoParser.getImageAlts(html)}")
         return ""

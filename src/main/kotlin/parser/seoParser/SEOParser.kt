@@ -15,11 +15,11 @@ class SEOParser: ISEOParser {
     }
 
     override fun getOgTitle(document: String): String? {
-        TODO("Not yet implemented")
+        return parserUtils.parseSingleValue(document, SEOPatterns.META_OG_TITLE, SEOPatterns.META_OG_TITLE_GROUP_INDEX)
     }
 
-    override fun getOgDescription(document: String): String? {
-        TODO("Not yet implemented")
+    override fun getOMetaOgDescription(document: String): String? {
+        return parserUtils.parseSingleValue(document, SEOPatterns.META_OG_DESCRIPTION, SEOPatterns.META_OG_DESCRIPTION_GROUP_INDEX)
     }
 
     override fun getImageAlts(document: String): List<String> {

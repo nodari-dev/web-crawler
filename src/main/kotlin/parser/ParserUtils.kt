@@ -16,7 +16,7 @@ class ParserUtils: IParserUtils {
     }
 
     override fun parseSingleValue(html: String, regex: Regex, groupIndex: Int): String?{
-        return regex.find(html)?.groups?.get(groupIndex)?.value
+        return regex.find(html)?.groups?.get(groupIndex)?.value?.trim()
     }
 
     override fun transformToFormattedURLs(list: List<String>): List<FormattedURL>{
