@@ -32,6 +32,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("org.slf4j:slf4j-simple:1.7.9")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("redis.clients:jedis:4.3.1")
 
     testImplementation(kotlin("test"))
 }
