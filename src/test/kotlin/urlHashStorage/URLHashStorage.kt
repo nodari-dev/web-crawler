@@ -2,7 +2,7 @@ package urlHashStorage
 
 import org.junit.jupiter.api.Test
 
-class URLHashStorageTest {
+class VisitedURLsTest {
 
     @Test
     fun `test`(){

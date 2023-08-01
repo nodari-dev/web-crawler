@@ -2,7 +2,7 @@ package localStorage
 
 import interfaces.IURLHashStorage
 
-object URLHashStorage: IURLHashStorage{
+object VisitedURLs: IURLHashStorage{
     private val mutex = Object()
     private val storage: MutableSet<Int> = mutableSetOf()
 

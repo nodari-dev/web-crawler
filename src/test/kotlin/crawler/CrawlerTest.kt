@@ -4,7 +4,7 @@ import analyzer.DataAnalyzer
 import fetcher.Fetcher
 import frontier.Frontier
 import localStorage.HostsStorage
-import localStorage.URLHashStorage
+import localStorage.VisitedURLs
 import mu.KotlinLogging
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class CrawlerTest {
     private val dataAnalyzer = DataAnalyzer()
     private val frontier = Frontier
     private val hostStorage = HostsStorage
-    private val urlHashStorage = URLHashStorage
+    private val urlHashStorage = VisitedURLs
     private val kotlinLogging = KotlinLogging
     private val counter = Counter
 

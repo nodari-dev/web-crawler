@@ -1,5 +1,6 @@
 package crawlersManager
 
+import HostConnector
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.CrawlerUtils
@@ -10,7 +11,7 @@ import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ICrawlersManager
 import localStorage.HostsStorage
-import localStorage.URLHashStorage
+import localStorage.VisitedURLs
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
@@ -33,11 +34,12 @@ class CrawlersManager : ICrawlersManager {
                 CrawlerUtils(),
                 Fetcher(),
                 Robots(),
+                HostConnector(i),
                 DataAnalyzer(),
                 urlParser,
                 frontier,
                 HostsStorage,
-                URLHashStorage,
+                VisitedURLs,
                 KotlinLogging,
                 Counter
             )

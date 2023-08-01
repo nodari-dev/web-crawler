@@ -3,13 +3,13 @@ package crawler
 import dto.FormattedURL
 import dto.URLRecord
 import localStorage.HostsStorage
-import localStorage.URLHashStorage
+import localStorage.VisitedURLs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class CrawlerUtilsTest {
     private val crawlerUtils = CrawlerUtils()
-    private val urlHashStorage = URLHashStorage
+    private val urlHashStorage = VisitedURLs
     private val hostsStorage = HostsStorage
 
     @Test

@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class URLHashStorageTest {
+class VisitedURLsTest {
 
-    private val urlHashStorage = URLHashStorage
+    private val urlHashStorage = VisitedURLs
 
     @BeforeEach
     fun init(){

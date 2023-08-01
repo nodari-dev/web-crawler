@@ -4,7 +4,7 @@ import dto.FormattedURL
 import dto.URLRecord
 import interfaces.ICrawlerUtils
 import localStorage.HostsStorage
-import localStorage.URLHashStorage
+import localStorage.VisitedURLs
 
 class CrawlerUtils : ICrawlerUtils {
     override fun canProcessURL(host: String, formattedURL: FormattedURL?): Boolean {
@@ -13,7 +13,7 @@ class CrawlerUtils : ICrawlerUtils {
         }
 
         val urlRecord = URLRecord(formattedURL)
-        val isNew = URLHashStorage.doesNotExist(urlRecord.getUniqueHash())
+        val isNew = VisitedURLs.doesNotExist(urlRecord.getUniqueHash())
         val isAllowed = HostsStorage.isURLAllowed(host, formattedURL.value)
         return isNew && isAllowed
     }

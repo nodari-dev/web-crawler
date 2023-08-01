@@ -1,4 +1,4 @@
-import redis.clients.jedis.JedisPool
+import crawlersManager.CrawlersManager
 
 
 fun main() {
