@@ -8,18 +8,20 @@ import mu.KotlinLogging
 
 object Frontier: IFrontier {
     private val queues = mutableListOf<FrontierQueue>()
+    private val queueUtils = QueueUtils()
     private val mutex = Object()
     private val logger = KotlinLogging.logger("Frontier")
 
     override fun pullURLRecord(host: String): URLRecord? {
-        return synchronized(mutex){
-            val queue = queues.firstOrNull { it.host == host }
+        synchronized(mutex){
+            val queue = getQueue(host)
             val urlRecord = queue?.urlRecords?.removeFirstOrNull()
 
             if(urlRecord == null){
                 deleteQueue(host)
             }
-            urlRecord
+
+            return urlRecord
         }
     }
 
@@ -31,18 +33,12 @@ object Frontier: IFrontier {
     override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
         synchronized(mutex){
             val urlRecord = URLRecord(formattedURL)
-            if(isQueueDefined(host)){
+            if(queueUtils.isQueueDefined(queues, host)){
                 updateQueue(host, urlRecord)
             } else{
                 createQueue(host, urlRecord)
             }
             mutex.notifyAll()
-        }
-    }
-
-    private fun isQueueDefined(host: String): Boolean{
-        return synchronized(mutex){
-            queues.any { queue -> queue.host == host }
         }
     }
 

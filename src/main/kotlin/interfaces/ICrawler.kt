@@ -1,6 +1,6 @@
 package interfaces
 
-import HostConnector
+import crawler.HostConnector
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.CrawlerUtils

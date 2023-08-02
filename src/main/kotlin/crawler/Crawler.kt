@@ -1,6 +1,5 @@
 package crawler
 
-import HostConnector
 import analyzer.DataAnalyzer
 import dto.FormattedURL
 import dto.URLRecord
@@ -55,12 +54,14 @@ class Crawler(
 
     private fun processNewFrontierRecord(){
         counter.increment()
-        val host = hostConnector.getHost()!!
+        val host = hostConnector.host!!
         val urlRecord = frontier.pullURLRecord(host)
         if(urlRecord == null){
             hostConnector.disconnect()
             return
         }
+
+        VisitedURLs.add(urlRecord.getUniqueHash())
 
         if(crawlerUtils.canProcessURL(host, urlRecord.formattedURL)){
             fetchHTML(urlRecord)
@@ -68,14 +69,12 @@ class Crawler(
     }
 
     private fun processRobotsTxt(){
-        val host = hostConnector.getHost()!!
+        val host = hostConnector.host!!
         val disallowedURLs = robots.getDisallowedURLs(host)
         hostStorage.addHostRecord(host, disallowedURLs)
     }
 
     private fun fetchHTML(urlRecord: URLRecord){
-        VisitedURLs.add(urlRecord.getUniqueHash())
-
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)

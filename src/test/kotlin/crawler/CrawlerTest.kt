@@ -13,37 +13,26 @@ import robots.Robots
 
 class CrawlerTest {
     private lateinit var terminalCrawler: Crawler
-
-    private val crawlerUtils = CrawlerUtils()
-    private val fetcher = Fetcher()
-    private val robots = Robots()
-    private val urlParser = URLParser()
-    private val dataAnalyzer = DataAnalyzer()
-    private val frontier = Frontier
-    private val hostStorage = HostsStorage
-    private val urlHashStorage = VisitedURLs
-    private val kotlinLogging = KotlinLogging
-    private val counter = Counter
-
-
-    @BeforeEach
-    fun init() {
-        terminalCrawler = Crawler(
-            0,
-            crawlerUtils,
-            fetcher,
-            robots,
-            dataAnalyzer,
-            urlParser,
-            frontier,
-            hostStorage,
-            urlHashStorage,
-            kotlinLogging,
-            counter
-        )
-
-        terminalCrawler.start()
-    }
+//
+//
+//    @BeforeEach
+//    fun init() {
+//        terminalCrawler = Crawler(
+//            0,
+//            crawlerUtils,
+//            fetcher,
+//            robots,
+//            dataAnalyzer,
+//            urlParser,
+//            frontier,
+//            hostStorage,
+//            urlHashStorage,
+//            kotlinLogging,
+//            counter
+//        )
+//
+//        terminalCrawler.start()
+//    }
 
     @Test
     fun `connects to frontier queue by specific host`() {

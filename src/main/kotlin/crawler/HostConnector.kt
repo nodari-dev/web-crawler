@@ -1,28 +1,24 @@
+package crawler
 import mu.KotlinLogging
 
-class HostConnector(id: Int){
+data class HostConnector(val id: Int){
     private val kotlinLogging = KotlinLogging
-    private val logger = kotlinLogging.logger("HostConnector:${id}")
-    private val crawlerId = id
+    private val logger = kotlinLogging.logger("crawler.HostConnector:${id}")
 
-    private var selectedHost: String? = null
+    var host: String? = null
 
-    fun connect(host: String){
-        logger.info ("Crawler[$crawlerId] connected to queue with host: $host")
-        selectedHost = host
+    fun connect(newHost: String){
+        logger.info ("Crawler[$id] connected to queue with host: $host")
+        host = host
     }
 
     fun disconnect(){
-        logger.info ("Crawler[$crawlerId] disconnected from queue")
-        selectedHost = null
-    }
-
-    fun getHost(): String?{
-        return selectedHost
+        logger.info ("Crawler[$id] disconnected from queue")
+        host = null
     }
 
     fun hasConnection(): Boolean{
-        return selectedHost != null
+        return host != null
     }
 
 }

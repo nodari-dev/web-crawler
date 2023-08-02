@@ -1,6 +1,6 @@
 package crawlersManager
 
-import HostConnector
+import crawler.HostConnector
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.CrawlerUtils
@@ -19,25 +19,24 @@ import robots.Robots
 class CrawlersManager : ICrawlersManager {
     private val threads = mutableListOf<Thread>()
     private val urlParser = URLParser()
-    private val frontier = Frontier
 
     override fun addSeed(seed: String) {
         val host = urlParser.getHostWithProtocol(seed)
-        frontier.updateOrCreateQueue(host, FormattedURL(seed))
+        Frontier.updateOrCreateQueue(host, FormattedURL(seed))
     }
 
     override fun startCrawling() {
         println(Illustrations.CrawlerStarted)
-        for (i in 1..NUMBER_OF_CRAWLERS) {
+        for (index in 1..NUMBER_OF_CRAWLERS) {
             val crawler = Crawler(
-                i,
+                index,
                 CrawlerUtils(),
                 Fetcher(),
                 Robots(),
-                HostConnector(i),
+                HostConnector(index),
                 DataAnalyzer(),
                 urlParser,
-                frontier,
+                Frontier,
                 HostsStorage,
                 VisitedURLs,
                 KotlinLogging,
