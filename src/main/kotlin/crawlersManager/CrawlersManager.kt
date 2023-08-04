@@ -1,6 +1,5 @@
 package crawlersManager
 
-import crawler.HostConnector
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.CrawlerUtils
@@ -33,7 +32,6 @@ class CrawlersManager : ICrawlersManager {
                 CrawlerUtils(),
                 Fetcher(),
                 Robots(),
-                HostConnector(index),
                 DataAnalyzer(),
                 urlParser,
                 Frontier,

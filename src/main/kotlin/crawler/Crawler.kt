@@ -11,13 +11,13 @@ import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 import localStorage.VisitedURLs
+import org.jetbrains.annotations.NotNull
 
 class Crawler(
     override val id: Int,
     override val crawlerUtils: CrawlerUtils,
     override val fetcher: Fetcher,
     override val robots: Robots,
-    override val hostConnector: HostConnector,
     override val dataAnalyzer: DataAnalyzer,
     override val urlParser: URLParser,
     override val frontier: Frontier,
@@ -27,6 +27,7 @@ class Crawler(
     override val counter: Counter
 ) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler:${id}")
+    private var selectedHost: String? = null
 
     override fun run() {
         startCrawl()
@@ -34,7 +35,7 @@ class Crawler(
 
     private fun startCrawl(){
         while (true) {
-            if(hostConnector.hasConnection()){
+            if(hasConnection()){
                 processNewFrontierRecord()
             }
             else {
@@ -43,10 +44,24 @@ class Crawler(
         }
     }
 
+    private fun hasConnection(): Boolean{
+        return selectedHost != null
+    }
+
+    private fun connectToQueueByHost(host: String){
+        logger.info ("connected to queue with host: $host")
+        selectedHost = host
+    }
+
+    private fun disconnectFromQueue(){
+        logger.info ("disconnected from queue")
+        selectedHost = null
+    }
+
     private fun processNewHost(){
         val host = frontier.pickFreeQueue()
         if(host != null){
-            hostConnector.connect(host)
+            connectToQueueByHost(host)
             processRobotsTxt()
             processNewFrontierRecord()
         }
@@ -54,27 +69,24 @@ class Crawler(
 
     private fun processNewFrontierRecord(){
         counter.increment()
-        val host = hostConnector.host!!
-        val urlRecord = frontier.pullURLRecord(host)
+        val urlRecord = frontier.pullURLRecord(selectedHost!!)
         if(urlRecord == null){
-            hostConnector.disconnect()
+            disconnectFromQueue()
             return
         }
 
-        VisitedURLs.add(urlRecord.getUniqueHash())
-
-        if(crawlerUtils.canProcessURL(host, urlRecord.formattedURL)){
+        if(crawlerUtils.canProcessURL(selectedHost!!, urlRecord.formattedURL)){
             fetchHTML(urlRecord)
         }
     }
 
     private fun processRobotsTxt(){
-        val host = hostConnector.host!!
-        val disallowedURLs = robots.getDisallowedURLs(host)
-        hostStorage.addHostRecord(host, disallowedURLs)
+        val disallowedURLs = robots.getDisallowedURLs(selectedHost!!)
+        hostStorage.addHostRecord(selectedHost!!, disallowedURLs)
     }
 
     private fun fetchHTML(urlRecord: URLRecord){
+        VisitedURLs.add(urlRecord.getUniqueHash())
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)

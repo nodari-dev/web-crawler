@@ -1,6 +1,5 @@
 package interfaces
 
-import crawler.HostConnector
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.CrawlerUtils
@@ -17,7 +16,6 @@ interface ICrawler {
     val crawlerUtils: CrawlerUtils
     val fetcher: Fetcher
     val robots: Robots
-    val hostConnector: HostConnector
     val dataAnalyzer: DataAnalyzer
     val urlParser: URLParser
     val frontier: Frontier
