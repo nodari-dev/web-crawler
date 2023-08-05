@@ -11,11 +11,9 @@ import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 import localStorage.VisitedURLs
-import org.jetbrains.annotations.NotNull
 
 class Crawler(
     override val id: Int,
-    override val crawlerUtils: CrawlerUtils,
     override val fetcher: Fetcher,
     override val robots: Robots,
     override val dataAnalyzer: DataAnalyzer,
@@ -35,11 +33,9 @@ class Crawler(
 
     private fun startCrawl(){
         while (true) {
-            if(hasConnection()){
-                processNewFrontierRecord()
-            }
-            else {
-                processNewHost()
+            when(hasConnection()){
+                true -> processNewFrontierRecord()
+                else -> processNewHost()
             }
         }
     }
@@ -48,36 +44,18 @@ class Crawler(
         return selectedHost != null
     }
 
-    private fun connectToQueueByHost(host: String){
-        logger.info ("connected to queue with host: $host")
-        selectedHost = host
-    }
-
-    private fun disconnectFromQueue(){
-        logger.info ("disconnected from queue")
-        selectedHost = null
-    }
-
     private fun processNewHost(){
         val host = frontier.pickFreeQueue()
-        if(host != null){
+        host?.let{
             connectToQueueByHost(host)
             processRobotsTxt()
             processNewFrontierRecord()
         }
     }
 
-    private fun processNewFrontierRecord(){
-        counter.increment()
-        val urlRecord = frontier.pullURLRecord(selectedHost!!)
-        if(urlRecord == null){
-            disconnectFromQueue()
-            return
-        }
-
-        if(crawlerUtils.canProcessURL(selectedHost!!, urlRecord.formattedURL)){
-            fetchHTML(urlRecord)
-        }
+    private fun connectToQueueByHost(host: String){
+        logger.info ("connected established with queue by host: $host")
+        selectedHost = host
     }
 
     private fun processRobotsTxt(){
@@ -85,14 +63,28 @@ class Crawler(
         hostStorage.addHostRecord(selectedHost!!, disallowedURLs)
     }
 
+    private fun processNewFrontierRecord(){
+        when(val urlRecord = frontier.pullURLRecord(selectedHost!!)){
+            null -> disconnectFromQueue()
+            else -> {
+                if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
+            }
+        }
+    }
+
+    private fun disconnectFromQueue(){
+        logger.info ("disconnected from queue")
+        selectedHost = null
+    }
+
     private fun fetchHTML(urlRecord: URLRecord){
+        counter.increment()
         VisitedURLs.add(urlRecord.getUniqueHash())
+
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)
-            if(!urlRecord.getURL().contains("robots.txt")){
-                dataAnalyzer.getPageStats(html)
-            }
+            dataAnalyzer.getPageStats(html)
             processFetchedURLs(urls)
         }
     }
@@ -101,13 +93,28 @@ class Crawler(
         val uniqueFormattedURLs = urls.toSet()
         uniqueFormattedURLs.forEach{formattedURL ->
             val host = urlParser.getHostWithProtocol(formattedURL.value)
-            if(crawlerUtils.canProcessURL(host, formattedURL)){
-                processURL(host, formattedURL)
+            if(canProcessExternalURL(host, formattedURL)){
+                frontier.updateOrCreateQueue(host, formattedURL)
             }
         }
     }
 
-    private fun processURL(host: String, formattedURL: FormattedURL){
-        frontier.updateOrCreateQueue(host, formattedURL)
+    private fun canProcessInternalURL(urlRecord: URLRecord): Boolean{
+       return isURLValid(selectedHost!!, urlRecord.formattedURL)
+    }
+
+    private fun canProcessExternalURL(host: String, formattedURL: FormattedURL?): Boolean{
+        return isURLValid(host, formattedURL)
+    }
+
+    private fun isURLValid(host: String, formattedURL: FormattedURL?): Boolean{
+        if(formattedURL == null){
+            return false
+        }
+
+        val urlRecord = URLRecord(formattedURL)
+        val isNew = VisitedURLs.doesNotExist(urlRecord.getUniqueHash())
+        val isAllowed = HostsStorage.isURLAllowed(host, formattedURL.value)
+        return isNew && isAllowed
     }
 }

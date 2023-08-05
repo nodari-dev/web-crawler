@@ -2,7 +2,6 @@ package interfaces
 
 import analyzer.DataAnalyzer
 import crawler.Counter
-import crawler.CrawlerUtils
 import fetcher.Fetcher
 import frontier.Frontier
 import localStorage.HostsStorage
@@ -13,7 +12,6 @@ import robots.Robots
 
 interface ICrawler {
     val id: Int
-    val crawlerUtils: CrawlerUtils
     val fetcher: Fetcher
     val robots: Robots
     val dataAnalyzer: DataAnalyzer

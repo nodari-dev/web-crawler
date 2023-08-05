@@ -14,11 +14,6 @@ object HostsStorage: IHostsStorage {
             storage.add(hostRecord)
         }
     }
-    override fun getHostRecord(host: String): HostRecord?{
-        synchronized(mutex){
-            return storage.firstOrNull{hostRecord -> hostRecord.url == host}
-        }
-    }
 
     override fun isHostDefined(host: String): Boolean{
         synchronized(mutex){
@@ -27,10 +22,14 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun isURLAllowed(host: String, url: String): Boolean{
-        synchronized(mutex){
+        return synchronized(mutex) {
             val hostRecord = getHostRecord(host) ?: return true
-            return hostRecord.bannedURLs.any { bannedURL -> !url.contains(bannedURL.value) }
+            hostRecord.bannedURLs.none { bannedURL -> url.contains(bannedURL.value) }
         }
+    }
+
+    private fun getHostRecord(host: String): HostRecord?{
+        return storage.firstOrNull{hostRecord -> hostRecord.url == host}
     }
 
     internal fun clear(){

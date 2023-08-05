@@ -2,7 +2,6 @@ package crawlersManager
 
 import analyzer.DataAnalyzer
 import crawler.Counter
-import crawler.CrawlerUtils
 import crawler.Crawler
 import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
 import dto.FormattedURL
@@ -29,7 +28,6 @@ class CrawlersManager : ICrawlersManager {
         for (index in 1..NUMBER_OF_CRAWLERS) {
             val crawler = Crawler(
                 index,
-                CrawlerUtils(),
                 Fetcher(),
                 Robots(),
                 DataAnalyzer(),
