@@ -7,5 +7,5 @@ import dto.URLRecord
 interface IFrontier {
     fun pullURLRecord(host: String): URLRecord?
     fun updateOrCreateQueue(host: String, formattedURL: FormattedURL)
-    fun pickFreeQueue(): String?
+//    fun pickFreeQueue(): String?
 }

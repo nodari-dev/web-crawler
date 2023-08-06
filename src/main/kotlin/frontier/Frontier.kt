@@ -3,19 +3,27 @@ package frontier
 import dto.FormattedURL
 import dto.FrontierQueue
 import dto.URLRecord
+import frontierManager.FrontierManager
 import interfaces.IFrontier
 import mu.KotlinLogging
+import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier {
     private val queues = mutableListOf<FrontierQueue>()
-    private val mutex = Object()
+    private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
+    private val frontierManager = FrontierManager
 
     override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
-        val urlRecord = URLRecord(formattedURL)
-        when(isQueueDefined(host)){
-            true -> updateQueue(host, urlRecord)
-            else -> createQueue(host, urlRecord)
+        mutex.lock()
+        try{
+            val urlRecord = URLRecord(formattedURL)
+            when(isQueueDefined(host)){
+                true -> updateQueue(host, urlRecord)
+                else -> createQueue(host, urlRecord)
+            }
+        } finally {
+            mutex.unlock()
         }
     }
 
@@ -24,24 +32,20 @@ object Frontier: IFrontier {
     }
 
     private fun updateQueue(host: String, urlRecord: URLRecord) {
-        synchronized(mutex){
-            val queue = getQueue(host)
-            queue?.urlRecords?.add(urlRecord)
-            mutex.notifyAll()
-        }
+        val queue = getQueue(host)
+        queue?.urlRecords?.add(urlRecord)
     }
 
     private fun createQueue(host: String, urlRecord: URLRecord) {
-        synchronized(mutex){
-            logger.info ("created queue with host: $host")
-            val newQueue = FrontierQueue(host, mutableListOf(urlRecord))
-            queues.add(newQueue)
-            mutex.notifyAll()
-        }
+        logger.info ("created queue with host: $host")
+        val newQueue = FrontierQueue(host, mutableListOf(urlRecord))
+        queues.add(newQueue)
+        frontierManager.addNewHost(newQueue.host)
     }
 
     override fun pullURLRecord(host: String): URLRecord? {
-        synchronized(mutex){
+        mutex.lock()
+        try{
             val queue = getQueue(host)
             val urlRecord = queue?.urlRecords?.removeFirstOrNull()
 
@@ -50,6 +54,8 @@ object Frontier: IFrontier {
             }
 
             return urlRecord
+        } finally {
+            mutex.unlock()
         }
     }
 
@@ -60,15 +66,6 @@ object Frontier: IFrontier {
     private fun deleteQueue(host: String){
         logger.info("removed queue with host: $host")
         queues.removeIf{it.host == host}
-    }
-
-    override fun pickFreeQueue(): String?{
-        return synchronized(mutex) {
-            queues.find { !it.isBlocked }?.let { queue ->
-                queue.isBlocked = true
-                queue.host
-            }
-        }
     }
 
     internal fun clear(){

@@ -3,8 +3,7 @@ package crawlersManager
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.Crawler
-import crawlersManager.Configuration.NUMBER_OF_CRAWLERS
-import dto.FormattedURL
+import crawlersManager.Configuration.MAX_NUMBER_OF_CRAWLERS
 import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ICrawlersManager
@@ -14,39 +13,46 @@ import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 
-class CrawlersManager : ICrawlersManager {
-    private val threads = mutableListOf<Thread>()
-    private val urlParser = URLParser()
+object CrawlersManager : ICrawlersManager {
+    private val activeCrawlers = mutableListOf<Thread>()
+    private val hostsToProcess = mutableListOf<String>()
 
-    override fun addSeed(seed: String) {
-        val host = urlParser.getHostWithProtocol(seed)
-        Frontier.updateOrCreateQueue(host, FormattedURL(seed))
+    fun provideNewHost(host: String){
+        hostsToProcess.add(host)
+        generateNewCrawlers()
     }
 
-    override fun startCrawling() {
-        println(Illustrations.CrawlerStarted)
-        for (index in 1..NUMBER_OF_CRAWLERS) {
-            val crawler = Crawler(
-                index,
-                Fetcher(),
-                Robots(),
-                DataAnalyzer(),
-                urlParser,
-                Frontier,
-                HostsStorage,
-                VisitedURLs,
-                KotlinLogging,
-                Counter
-            )
-            threads.add(crawler)
-            crawler.start()
-        }
+    fun murder(crawler: Thread){
+        activeCrawlers.remove(crawler)
+    }
 
-        joinThreads()
+    private fun generateNewCrawlers(){
+        val hostsToRemove = mutableListOf<String>()
+        for(i in 0 until hostsToProcess.size){
+            if(activeCrawlers.size < MAX_NUMBER_OF_CRAWLERS){
+                val crawler = Crawler(
+                    hostsToProcess[i],
+                    Fetcher(),
+                    Robots(),
+                    DataAnalyzer(),
+                    URLParser(),
+                    Frontier,
+                    HostsStorage,
+                    VisitedURLs,
+                    KotlinLogging,
+                    Counter
+                )
+                activeCrawlers.add(crawler)
+                crawler.start()
+                hostsToRemove.add(hostsToProcess[i])
+            }
+        }
+        hostsToProcess.removeAll(hostsToRemove)
+        hostsToRemove.clear()
     }
 
     private fun joinThreads() {
-        threads.forEach { thread ->
+        activeCrawlers.forEach { thread ->
             thread.join()
         }
     }

@@ -11,7 +11,7 @@ import parser.urlParser.URLParser
 import robots.Robots
 
 interface ICrawler {
-    val id: Int
+    val primaryHost: String
     val fetcher: Fetcher
     val robots: Robots
     val dataAnalyzer: DataAnalyzer

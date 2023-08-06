@@ -1,19 +1,20 @@
 package crawler
 
 import analyzer.DataAnalyzer
+import crawlersManager.CrawlersManager
 import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
-import localStorage.HostsStorage
 import interfaces.ICrawler
+import localStorage.HostsStorage
+import localStorage.VisitedURLs
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
-import localStorage.VisitedURLs
 
 class Crawler(
-    override val id: Int,
+    override val primaryHost: String,
     override val fetcher: Fetcher,
     override val robots: Robots,
     override val dataAnalyzer: DataAnalyzer,
@@ -25,56 +26,35 @@ class Crawler(
     override val counter: Counter
 ) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler:${id}")
-    private var selectedHost: String? = null
+    private var done = false
 
     override fun run() {
         startCrawl()
     }
 
     private fun startCrawl(){
-        while (true) {
-            when(hasConnection()){
-                true -> processNewFrontierRecord()
-                else -> processNewHost()
-            }
-        }
-    }
-
-    private fun hasConnection(): Boolean{
-        return selectedHost != null
-    }
-
-    private fun processNewHost(){
-        val host = frontier.pickFreeQueue()
-        host?.let{
-            connectToQueueByHost(host)
-            processRobotsTxt()
+//        processRobotsTxt()
+        println("Hello, I'm crawler $primaryHost")
+        while (!done) {
             processNewFrontierRecord()
         }
     }
 
-    private fun connectToQueueByHost(host: String){
-        logger.info ("connected established with queue by host: $host")
-        selectedHost = host
-    }
-
-    private fun processRobotsTxt(){
-        val disallowedURLs = robots.getDisallowedURLs(selectedHost!!)
-        hostStorage.addHostRecord(selectedHost!!, disallowedURLs)
-    }
-
     private fun processNewFrontierRecord(){
-        when(val urlRecord = frontier.pullURLRecord(selectedHost!!)){
-            null -> disconnectFromQueue()
-            else -> {
-                if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
-            }
+        val urlRecord = frontier.pullURLRecord(primaryHost)
+        if(urlRecord == null){
+            sendMurderRequest()
+        } else{
+            if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
         }
     }
-
-    private fun disconnectFromQueue(){
-        logger.info ("disconnected from queue")
-        selectedHost = null
+//
+    private fun sendMurderRequest(){
+        logger.info ("KILL ME PLEASE")
+        CrawlersManager.murder(this)
+        done = true
+        logger.info ("Thank you, now I'm free... God bless your soul")
+        return
     }
 
     private fun fetchHTML(urlRecord: URLRecord){
@@ -84,7 +64,7 @@ class Crawler(
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)
-            dataAnalyzer.getPageStats(html)
+//            dataAnalyzer.getPageStats(html)
             processFetchedURLs(urls)
         }
     }
@@ -100,7 +80,7 @@ class Crawler(
     }
 
     private fun canProcessInternalURL(urlRecord: URLRecord): Boolean{
-       return isURLValid(selectedHost!!, urlRecord.formattedURL)
+       return isURLValid(primaryHost, urlRecord.formattedURL)
     }
 
     private fun canProcessExternalURL(host: String, formattedURL: FormattedURL?): Boolean{

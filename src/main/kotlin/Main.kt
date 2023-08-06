@@ -1,10 +1,13 @@
 import crawlersManager.CrawlersManager
+import frontierManager.FrontierManager
 
 
 fun main() {
-    val manager = CrawlersManager()
-    manager.addSeed("https://ecospace.org.ua")
-    manager.startCrawling()
+    val crawlerManager = CrawlersManager
+    val frontierManager = FrontierManager
+    frontierManager.addSeed("https://ecospace.org.ua")
+
+    // TODO: KEYBOARD INTERRUPT -> JOIN THREADS
 
 //    val pool = JedisPool("localhost", 6379)
 //
