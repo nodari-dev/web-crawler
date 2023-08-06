@@ -1,4 +1,4 @@
-package communicationManager
+package controller
 
 import analyzer.DataAnalyzer
 import crawler.Counter
@@ -6,14 +6,14 @@ import crawler.Crawler
 import dto.FormattedURL
 import fetcher.Fetcher
 import frontier.Frontier
-import interfaces.ICommunicationManager
+import interfaces.IController
 import localStorage.HostsStorage
 import localStorage.VisitedURLs
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 
-object CommunicationManager: ICommunicationManager {
+object Controller: IController {
     private val frontier = Frontier
     private val urlParser = URLParser()
     private val activeCrawlers = mutableListOf<Thread>()

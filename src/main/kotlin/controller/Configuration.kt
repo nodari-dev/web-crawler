@@ -1,4 +1,4 @@
-package communicationManager
+package controller
 
 object Configuration{
     const val TIME_BETWEEN_FETCHING: Long = 3500

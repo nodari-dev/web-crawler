@@ -1,7 +1,7 @@
 package crawler
 
 import analyzer.DataAnalyzer
-import communicationManager.CommunicationManager
+import controller.Controller
 import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
@@ -26,7 +26,7 @@ class Crawler(
     override val counter: Counter
 ) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler $primaryHost")
-    private val communicationManager = CommunicationManager
+    private val communicationManager = Controller
     private var done = false
 
     override fun run() {

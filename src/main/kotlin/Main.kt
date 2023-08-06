@@ -1,9 +1,9 @@
-import communicationManager.CommunicationManager
-
+import controller.Controller
 
 fun main() {
-    val controller = CommunicationManager
+    val controller = Controller
     controller.addSeed("https://ecospace.org.ua")
+    controller.addSeed("https://magecloud.agency")
     controller.start()
 
 //    val pool = JedisPool("localhost", 6379)

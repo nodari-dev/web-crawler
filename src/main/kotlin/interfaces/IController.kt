@@ -1,6 +1,6 @@
 package interfaces
 
-interface ICommunicationManager {
+interface IController {
     fun start()
     fun stopCrawler(crawler: Thread)
     fun addSeed(seed: String)
