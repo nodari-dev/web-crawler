@@ -1,35 +1,50 @@
-package crawlersManager
+package communicationManager
 
 import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.Crawler
-import crawlersManager.Configuration.MAX_NUMBER_OF_CRAWLERS
+import dto.FormattedURL
 import fetcher.Fetcher
 import frontier.Frontier
-import interfaces.ICrawlersManager
+import interfaces.ICommunicationManager
 import localStorage.HostsStorage
 import localStorage.VisitedURLs
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 
-object CrawlersManager : ICrawlersManager {
+object CommunicationManager: ICommunicationManager {
+    private val frontier = Frontier
+    private val urlParser = URLParser()
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
+    private val seedURls = mutableListOf<String>()
 
-    fun provideNewHost(host: String){
-        hostsToProcess.add(host)
+    override fun start(){
+        seedURls.forEach { seed ->
+            val host = urlParser.getHostWithProtocol(seed)
+            frontier.updateOrCreateQueue(host, FormattedURL(seed))
+        }
+    }
+
+    override fun stopCrawler(crawler: Thread){
+        activeCrawlers.remove(crawler)
         generateNewCrawlers()
     }
 
-    fun murder(crawler: Thread){
-        activeCrawlers.remove(crawler)
+    override fun addSeed(seed: String) {
+        seedURls.add(seed)
+    }
+
+    override fun addHost(host: String){
+        hostsToProcess.add(host)
+        generateNewCrawlers()
     }
 
     private fun generateNewCrawlers(){
         val hostsToRemove = mutableListOf<String>()
         for(i in 0 until hostsToProcess.size){
-            if(activeCrawlers.size < MAX_NUMBER_OF_CRAWLERS){
+            if(activeCrawlers.size < Configuration.MAX_NUMBER_OF_CRAWLERS){
                 val crawler = Crawler(
                     hostsToProcess[i],
                     Fetcher(),
@@ -49,11 +64,5 @@ object CrawlersManager : ICrawlersManager {
         }
         hostsToProcess.removeAll(hostsToRemove)
         hostsToRemove.clear()
-    }
-
-    private fun joinThreads() {
-        activeCrawlers.forEach { thread ->
-            thread.join()
-        }
     }
 }

@@ -1,4 +1,4 @@
-package crawlersManager
+package communicationManager
 
 object Illustrations {
     const val CrawlerStarted = "" +

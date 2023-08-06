@@ -1,9 +1,9 @@
 package frontier
 
+import communicationManager.CommunicationManager
 import dto.FormattedURL
 import dto.FrontierQueue
 import dto.URLRecord
-import frontierManager.FrontierManager
 import interfaces.IFrontier
 import mu.KotlinLogging
 import java.util.concurrent.locks.ReentrantLock
@@ -12,7 +12,7 @@ object Frontier: IFrontier {
     private val queues = mutableListOf<FrontierQueue>()
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
-    private val frontierManager = FrontierManager
+    private val communicationManager = CommunicationManager
 
     override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
         mutex.lock()
@@ -40,7 +40,7 @@ object Frontier: IFrontier {
         logger.info ("created queue with host: $host")
         val newQueue = FrontierQueue(host, mutableListOf(urlRecord))
         queues.add(newQueue)
-        frontierManager.addNewHost(newQueue.host)
+        communicationManager.addHost(newQueue.host)
     }
 
     override fun pullURLRecord(host: String): URLRecord? {

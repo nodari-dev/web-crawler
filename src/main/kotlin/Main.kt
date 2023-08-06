@@ -1,11 +1,10 @@
-import crawlersManager.CrawlersManager
-import frontierManager.FrontierManager
+import communicationManager.CommunicationManager
 
 
 fun main() {
-    val frontierManager = FrontierManager
-    frontierManager.addSeed("https://ecospace.org.ua")
-    frontierManager.start()
+    val controller = CommunicationManager
+    controller.addSeed("https://ecospace.org.ua")
+    controller.start()
 
 //    val pool = JedisPool("localhost", 6379)
 //

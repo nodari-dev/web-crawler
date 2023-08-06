@@ -1,7 +1,7 @@
 package crawler
 
 import analyzer.DataAnalyzer
-import crawlersManager.CrawlersManager
+import communicationManager.CommunicationManager
 import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
@@ -25,7 +25,8 @@ class Crawler(
     override val kotlinLogging: KotlinLogging,
     override val counter: Counter
 ) : ICrawler, Thread() {
-    private val logger = kotlinLogging.logger("Crawler:${id}")
+    private val logger = kotlinLogging.logger("Crawler $primaryHost")
+    private val communicationManager = CommunicationManager
     private var done = false
 
     override fun run() {
@@ -34,24 +35,23 @@ class Crawler(
 
     private fun startCrawl(){
 //        processRobotsTxt()
-        println("Hello, I'm crawler $primaryHost")
+        logger.info ("Started")
         while (!done) {
             processNewFrontierRecord()
         }
     }
 
     private fun processNewFrontierRecord(){
-        val urlRecord = frontier.pullURLRecord(primaryHost)
-        if(urlRecord == null){
-            sendMurderRequest()
-        } else{
-            if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
+        when(val urlRecord = frontier.pullURLRecord(primaryHost)){
+            null -> sendMurderRequest()
+            else -> {
+                if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
+            }
         }
     }
-//
+
     private fun sendMurderRequest(){
-        logger.info ("KILL ME PLEASE")
-        CrawlersManager.murder(this)
+        communicationManager.stopCrawler(this)
         done = true
         logger.info ("Thank you, now I'm free... God bless your soul")
         return

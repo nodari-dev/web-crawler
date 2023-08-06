@@ -1,4 +1,4 @@
-package crawlersManager
+package communicationManager
 
 object Configuration{
     const val TIME_BETWEEN_FETCHING: Long = 3500
