@@ -6,6 +6,7 @@ fun main() {
     val crawlerManager = CrawlersManager
     val frontierManager = FrontierManager
     frontierManager.addSeed("https://ecospace.org.ua")
+    frontierManager.start()
 
     // TODO: KEYBOARD INTERRUPT -> JOIN THREADS
 
