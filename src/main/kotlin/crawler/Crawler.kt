@@ -27,44 +27,50 @@ class Crawler(
 ) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler $primaryHost")
     private val communicationManager = Controller
-    private var done = false
+    private var canProceedCrawling = true
 
     override fun run() {
         startCrawl()
     }
 
     private fun startCrawl(){
-//        processRobotsTxt()
         logger.info ("Started")
-        while (!done) {
+        processRobotsTxt()
+        while (canProceedCrawling) {
             processNewFrontierRecord()
         }
+    }
+
+    private fun processRobotsTxt(){
+        val disallowedURLs = robots.getDisallowedURLs(primaryHost)
+        hostStorage.addHostRecord(primaryHost, disallowedURLs)
     }
 
     private fun processNewFrontierRecord(){
         when(val urlRecord = frontier.pullURLRecord(primaryHost)){
             null -> sendMurderRequest()
             else -> {
-                if(canProcessInternalURL(urlRecord)) fetchHTML(urlRecord)
+                if(canProcessInternalURL(urlRecord)){
+                    counter.increment()
+                    VisitedURLs.add(urlRecord.getUniqueHash())
+                    fetchHTML(urlRecord)
+                }
             }
         }
     }
 
     private fun sendMurderRequest(){
         communicationManager.stopCrawler(this)
-        done = true
+        canProceedCrawling = false
         logger.info ("Thank you, now I'm free... God bless your soul")
         return
     }
 
     private fun fetchHTML(urlRecord: URLRecord){
-        counter.increment()
-        VisitedURLs.add(urlRecord.getUniqueHash())
-
         val html = fetcher.getPageContent(urlRecord.getURL())
         html?.let{
             val urls = urlParser.getURLs(html)
-//            dataAnalyzer.getPageStats(html)
+            println(dataAnalyzer.getPageStats(html))
             processFetchedURLs(urls)
         }
     }
