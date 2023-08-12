@@ -1,6 +1,6 @@
 package dto
 
-data class URLRecord(var formattedURL: FormattedURL) {
+data class FrontierRecord(var formattedURL: FormattedURL) {
     fun getUniqueHash(): Int{
         return formattedURL.value.hashCode()
     }

@@ -1,9 +1,8 @@
 package interfaces
 
-import analyzer.DataAnalyzer
 import crawler.Counter
 import fetcher.Fetcher
-import frontier.Frontier
+import frontier.FrontierRedis
 import localStorage.HostsStorage
 import localStorage.VisitedURLs
 import mu.KotlinLogging
@@ -15,7 +14,7 @@ interface ICrawler {
     val fetcher: Fetcher
     val robots: Robots
     val urlParser: URLParser
-    val frontier: Frontier
+    val frontier: FrontierRedis
     val hostStorage: HostsStorage
     val urlHashStorage: VisitedURLs
     val kotlinLogging: KotlinLogging

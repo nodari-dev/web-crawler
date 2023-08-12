@@ -4,19 +4,25 @@ import communicationManager.CommunicationManager
 import dto.FormattedURL
 import dto.FrontierQueue
 import dto.FrontierRecord
-import interfaces.IFrontier
+import frontier.Configuration.DEFAULT_PATH
+import frontier.Configuration.FRONTIER_KEY
+import frontier.Configuration.QUEUES_KEY
+import interfaces.IFrontierRedis
 import mu.KotlinLogging
+import redis.clients.jedis.JedisPool
 import java.util.concurrent.locks.ReentrantLock
 
-object Frontier: IFrontier {
+
+object FrontierRedis: IFrontierRedis {
     private val queues = mutableListOf<FrontierQueue>()
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
-    private val controller = CommunicationManager
+    private val communicationManager = CommunicationManager
+    private val pool = JedisPool("localhost", 6379)
 
     override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
         mutex.lock()
-        try{
+        try {
             val frontierRecord = FrontierRecord(formattedURL)
             when(isQueueDefined(host)){
                 true -> updateQueue(host, frontierRecord)
@@ -28,48 +34,48 @@ object Frontier: IFrontier {
     }
 
     private fun isQueueDefined(host: String): Boolean{
-        return queues.any { queue -> queue.host == host }
+        pool.resource.use { jedis ->
+            println("${jedis.exists("$DEFAULT_PATH:$host")} $host")
+            return jedis.exists("$DEFAULT_PATH:$host")
+        }
     }
 
     private fun updateQueue(host: String, frontierRecord: FrontierRecord) {
-        val queue = getQueue(host)
-        queue?.frontierRecords?.add(frontierRecord)
+        pool.resource.use { jedis ->
+            jedis.rpush("$DEFAULT_PATH:$host", frontierRecord.getURL())
+        }
     }
 
     private fun createQueue(host: String, frontierRecord: FrontierRecord) {
         logger.info ("created queue with host: $host")
-
-        val newQueue = FrontierQueue(host, mutableListOf(frontierRecord))
-        queues.add(newQueue)
-        controller.addHost(host)
+        pool.resource.use { jedis ->
+            jedis.lpush(DEFAULT_PATH, host)
+            jedis.rpush("$DEFAULT_PATH:$host", frontierRecord.getURL())
+        }
+        communicationManager.addHost(host)
     }
 
     override fun pullURLRecord(host: String): FrontierRecord? {
         mutex.lock()
         try{
-            val queue = getQueue(host)
-            val urlRecord = queue?.frontierRecords?.removeFirstOrNull()
+            pool.resource.use { jedis ->
+                val url = jedis.lpop("$DEFAULT_PATH:$host")
+                if(url == null){
+                    deleteQueue(host)
+                    return null
+                }
 
-            if(urlRecord == null){
-                deleteQueue(host)
+                return FrontierRecord(FormattedURL(url))
             }
-
-            return urlRecord
         } finally {
             mutex.unlock()
         }
     }
 
-    private fun getQueue(host: String): FrontierQueue?{
-        return queues.firstOrNull { it.host == host }
-    }
-
     private fun deleteQueue(host: String){
         logger.info("removed queue with host: $host")
-        queues.removeIf{it.host == host}
-    }
-
-    internal fun clear(){
-        queues.clear()
+        pool.resource.use { jedis ->
+            jedis.lrem(DEFAULT_PATH, 1 , host)
+        }
     }
 }

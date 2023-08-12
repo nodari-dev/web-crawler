@@ -1,7 +1,7 @@
 package crawler
 
 import dto.FormattedURL
-import dto.URLRecord
+import dto.FrontierRecord
 import localStorage.HostsStorage
 import localStorage.VisitedURLs
 import org.junit.jupiter.api.Assertions
@@ -20,7 +20,7 @@ class CrawlerUtilsTest {
 
         val bannedURLs = listOf(url1)
 
-        urlHashStorage.add(URLRecord(url1).getUniqueHash())
+        urlHashStorage.add(FrontierRecord(url1).getUniqueHash())
         hostsStorage.addHostRecord(host,bannedURLs)
 
         Assertions.assertEquals(false, crawlerUtils.canProcessURL(host, url1))

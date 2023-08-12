@@ -2,9 +2,10 @@ package crawler
 
 import communicationManager.CommunicationManager
 import dto.FormattedURL
-import dto.URLRecord
+import dto.FrontierRecord
 import fetcher.Fetcher
 import frontier.Frontier
+import frontier.FrontierRedis
 import interfaces.ICrawler
 import localStorage.HostsStorage
 import localStorage.SEOStorage
@@ -18,7 +19,7 @@ class Crawler(
     override val fetcher: Fetcher,
     override val robots: Robots,
     override val urlParser: URLParser,
-    override val frontier: Frontier,
+    override val frontier: FrontierRedis,
     override val hostStorage: HostsStorage,
     override val urlHashStorage: VisitedURLs,
     override val kotlinLogging: KotlinLogging,
@@ -47,7 +48,7 @@ class Crawler(
 
     private fun processNewFrontierRecord(){
         when(val urlRecord = frontier.pullURLRecord(primaryHost)){
-            null -> stopCrawling()
+            null -> sendMurderRequest()
             else -> {
                 if(canProcessInternalURL(urlRecord)){
                     counter.increment()
@@ -58,10 +59,6 @@ class Crawler(
         }
     }
 
-    private fun stopCrawling(){
-        sendMurderRequest()
-    }
-
     private fun sendMurderRequest(){
         communicationManager.stopCrawler(this)
         canProceedCrawling = false
@@ -69,12 +66,12 @@ class Crawler(
         return
     }
 
-    private fun fetchHTML(urlRecord: URLRecord){
-        val url = urlRecord.getURL()
+    private fun fetchHTML(frontierRecord: FrontierRecord){
+        val url = frontierRecord.getURL()
         val html = fetcher.getPageContent(url)
         html?.let{
             val urls = urlParser.getURLs(html)
-            SEOStorage.updateOrCreateSEORecord(primaryHost, url ,html)
+            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
             processFetchedURLs(urls)
         }
     }
@@ -89,8 +86,8 @@ class Crawler(
         }
     }
 
-    private fun canProcessInternalURL(urlRecord: URLRecord): Boolean{
-       return isURLValid(primaryHost, urlRecord.formattedURL)
+    private fun canProcessInternalURL(frontierRecord: FrontierRecord): Boolean{
+       return isURLValid(primaryHost, frontierRecord.formattedURL)
     }
 
     private fun canProcessExternalURL(host: String, formattedURL: FormattedURL?): Boolean{
@@ -102,8 +99,8 @@ class Crawler(
             return false
         }
 
-        val urlRecord = URLRecord(formattedURL)
-        val isNew = VisitedURLs.doesNotExist(urlRecord.getUniqueHash())
+        val frontierRecord = FrontierRecord(formattedURL)
+        val isNew = VisitedURLs.doesNotExist(frontierRecord.getUniqueHash())
         val isAllowed = HostsStorage.isURLAllowed(host, formattedURL.value)
         return isNew && isAllowed
     }

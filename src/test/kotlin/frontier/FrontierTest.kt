@@ -2,7 +2,7 @@ package frontier
 
 import dto.FormattedURL
 import dto.FrontierQueue
-import dto.URLRecord
+import dto.FrontierRecord
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ class FrontierTest {
     private val host = "host"
     private val mockedURL = FormattedURL("url")
     private val mockedURL2 = FormattedURL("url2")
-    private val urlRecords = mutableListOf(URLRecord(mockedURL), URLRecord(mockedURL2))
+    private val frontierRecords = mutableListOf(FrontierRecord(mockedURL), FrontierRecord(mockedURL2))
 
     @BeforeEach
     fun init(){
@@ -21,7 +21,7 @@ class FrontierTest {
 
     @Test
     fun `creates queue if host does not exist`(){
-        val expectedResult = FrontierQueue(host, mutableListOf(urlRecords[0]))
+        val expectedResult = FrontierQueue(host, mutableListOf(frontierRecords[0]))
 
         Assertions.assertEquals(null, frontier.getQueue(host))
 
@@ -36,14 +36,14 @@ class FrontierTest {
         frontier.updateOrCreateQueue(host, mockedURL)
         frontier.updateOrCreateQueue(host, mockedURL2)
 
-        val expectedResult = FrontierQueue(host, urlRecords,  false)
+        val expectedResult = FrontierQueue(host, frontierRecords,  false)
         val result = frontier.getQueue(host)
         Assertions.assertEquals(expectedResult, result)
     }
 
     @Test
     fun `returns queue or null`(){
-        val expectedResult = FrontierQueue(host, mutableListOf(urlRecords[0]))
+        val expectedResult = FrontierQueue(host, mutableListOf(frontierRecords[0]))
         frontier.updateOrCreateQueue(host, mockedURL)
 
         val result = frontier.getQueue(host)
@@ -56,7 +56,7 @@ class FrontierTest {
     fun `allows to pull urlRecord with reformatted data from queue by host`(){
         frontier.updateOrCreateQueue(host, mockedURL)
         val result = frontier.pullURLRecord(host)
-        Assertions.assertEquals(urlRecords[0], result)
+        Assertions.assertEquals(frontierRecords[0], result)
     }
 
     @Test
@@ -65,7 +65,7 @@ class FrontierTest {
         val result = frontier.pickFreeQueue()
         Assertions.assertEquals(host, result)
 
-        val expectedResult = FrontierQueue(host, mutableListOf(urlRecords[0]), true)
+        val expectedResult = FrontierQueue(host, mutableListOf(frontierRecords[0]), true)
         Assertions.assertEquals(expectedResult, frontier.getQueue(host))
     }
 

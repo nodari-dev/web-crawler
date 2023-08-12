@@ -5,6 +5,7 @@ import crawler.Crawler
 import dto.FormattedURL
 import fetcher.Fetcher
 import frontier.Frontier
+import frontier.FrontierRedis
 import interfaces.IController
 import localStorage.HostsStorage
 import localStorage.VisitedURLs
@@ -13,7 +14,7 @@ import parser.urlParser.URLParser
 import robots.Robots
 
 object CommunicationManager: IController {
-    private val frontier = Frontier
+    private val frontier = FrontierRedis
     private val urlParser = URLParser()
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
@@ -49,7 +50,7 @@ object CommunicationManager: IController {
                     Fetcher(),
                     Robots(),
                     URLParser(),
-                    Frontier,
+                    FrontierRedis,
                     HostsStorage,
                     VisitedURLs,
                     KotlinLogging,
