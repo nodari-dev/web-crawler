@@ -1,4 +1,4 @@
-package controller
+package communicationManager
 
 object Illustrations {
     const val CrawlerStarted = "" +

@@ -1,12 +1,10 @@
 package localStorage
 
-import dto.SEORecord
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class WebsiteSEOStorageTest {
-    private val websiteSEOStorage = WebsiteSEOStorage
+    private val websiteSEOStorage = SEOStorage
 
     @BeforeEach
     fun init(){

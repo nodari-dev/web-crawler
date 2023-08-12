@@ -1,13 +1,13 @@
 package crawler
 
-import analyzer.DataAnalyzer
-import controller.Controller
+import communicationManager.CommunicationManager
 import dto.FormattedURL
 import dto.URLRecord
 import fetcher.Fetcher
 import frontier.Frontier
 import interfaces.ICrawler
 import localStorage.HostsStorage
+import localStorage.SEOStorage
 import localStorage.VisitedURLs
 import mu.KotlinLogging
 import parser.urlParser.URLParser
@@ -17,7 +17,6 @@ class Crawler(
     override val primaryHost: String,
     override val fetcher: Fetcher,
     override val robots: Robots,
-    override val dataAnalyzer: DataAnalyzer,
     override val urlParser: URLParser,
     override val frontier: Frontier,
     override val hostStorage: HostsStorage,
@@ -26,7 +25,7 @@ class Crawler(
     override val counter: Counter
 ) : ICrawler, Thread() {
     private val logger = kotlinLogging.logger("Crawler $primaryHost")
-    private val communicationManager = Controller
+    private val communicationManager = CommunicationManager
     private var canProceedCrawling = true
 
     override fun run() {
@@ -48,7 +47,7 @@ class Crawler(
 
     private fun processNewFrontierRecord(){
         when(val urlRecord = frontier.pullURLRecord(primaryHost)){
-            null -> sendMurderRequest()
+            null -> stopCrawling()
             else -> {
                 if(canProcessInternalURL(urlRecord)){
                     counter.increment()
@@ -59,6 +58,10 @@ class Crawler(
         }
     }
 
+    private fun stopCrawling(){
+        sendMurderRequest()
+    }
+
     private fun sendMurderRequest(){
         communicationManager.stopCrawler(this)
         canProceedCrawling = false
@@ -67,10 +70,11 @@ class Crawler(
     }
 
     private fun fetchHTML(urlRecord: URLRecord){
-        val html = fetcher.getPageContent(urlRecord.getURL())
+        val url = urlRecord.getURL()
+        val html = fetcher.getPageContent(url)
         html?.let{
             val urls = urlParser.getURLs(html)
-            println(dataAnalyzer.getPageStats(html))
+            SEOStorage.updateOrCreateSEORecord(primaryHost, url ,html)
             processFetchedURLs(urls)
         }
     }

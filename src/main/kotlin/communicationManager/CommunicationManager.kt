@@ -1,6 +1,5 @@
-package controller
+package communicationManager
 
-import analyzer.DataAnalyzer
 import crawler.Counter
 import crawler.Crawler
 import dto.FormattedURL
@@ -13,27 +12,27 @@ import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
 
-object Controller: IController {
+object CommunicationManager: IController {
     private val frontier = Frontier
     private val urlParser = URLParser()
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
-    private val seedURls = mutableListOf<String>()
+    private val startingPoints = mutableListOf<String>()
 
     override fun start(){
-        seedURls.forEach { seed ->
+        startingPoints.forEach { seed ->
             val host = urlParser.getHostWithProtocol(seed)
             frontier.updateOrCreateQueue(host, FormattedURL(seed))
         }
     }
 
+    override fun addStartingPointURLs(seeds: List<String>) {
+        startingPoints.addAll(seeds)
+    }
+
     override fun stopCrawler(crawler: Thread){
         activeCrawlers.remove(crawler)
         generateNewCrawlers()
-    }
-
-    override fun addSeed(seed: String) {
-        seedURls.add(seed)
     }
 
     override fun addHost(host: String){
@@ -49,7 +48,6 @@ object Controller: IController {
                     hostsToProcess[i],
                     Fetcher(),
                     Robots(),
-                    DataAnalyzer(),
                     URLParser(),
                     Frontier,
                     HostsStorage,

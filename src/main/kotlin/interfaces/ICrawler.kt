@@ -14,7 +14,6 @@ interface ICrawler {
     val primaryHost: String
     val fetcher: Fetcher
     val robots: Robots
-    val dataAnalyzer: DataAnalyzer
     val urlParser: URLParser
     val frontier: Frontier
     val hostStorage: HostsStorage

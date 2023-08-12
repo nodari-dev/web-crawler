@@ -2,7 +2,7 @@ package interfaces
 
 interface IController {
     fun start()
-    fun stopCrawler(crawler: Thread)
-    fun addSeed(seed: String)
+    fun addStartingPointURLs(seeds: List<String>)
     fun addHost(host: String)
+    fun stopCrawler(crawler: Thread)
 }
