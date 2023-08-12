@@ -2,14 +2,14 @@ package crawler
 
 import dto.FormattedURL
 import dto.FrontierRecord
-import localStorage.HostsStorage
-import localStorage.VisitedURLs
+import storages.hostsStorage.HostsStorage
+import storages.visitedURLsStorage.VisitedURLsStorage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class CrawlerUtilsTest {
     private val crawlerUtils = CrawlerUtils()
-    private val urlHashStorage = VisitedURLs
+    private val urlHashStorage = VisitedURLsStorage
     private val hostsStorage = HostsStorage
 
     @Test

@@ -1,7 +1,7 @@
-package localStorage
+package storages
 
 import dto.FormattedURL
-import dto.HostRecord
+import storages.hostsStorage.HostsStorage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

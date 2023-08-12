@@ -4,12 +4,11 @@ import communicationManager.CommunicationManager
 import dto.FormattedURL
 import dto.FrontierRecord
 import fetcher.Fetcher
-import frontier.Frontier
 import frontier.FrontierRedis
 import interfaces.ICrawler
-import localStorage.HostsStorage
-import localStorage.SEOStorage
-import localStorage.VisitedURLs
+import storages.hostsStorage.HostsStorage
+import storages.SEOStorage
+import storages.visitedURLsStorage.VisitedURLsStorage
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
@@ -20,8 +19,8 @@ class Crawler(
     override val robots: Robots,
     override val urlParser: URLParser,
     override val frontier: FrontierRedis,
-    override val hostStorage: HostsStorage,
-    override val urlHashStorage: VisitedURLs,
+    override val hostsStorage: HostsStorage,
+    override val visitedURLsStorage: VisitedURLsStorage,
     override val kotlinLogging: KotlinLogging,
     override val counter: Counter
 ) : ICrawler, Thread() {
@@ -43,18 +42,18 @@ class Crawler(
 
     private fun processRobotsTxt(){
         val disallowedURLs = robots.getDisallowedURLs(primaryHost)
-        hostStorage.addHostRecord(primaryHost, disallowedURLs)
+        hostsStorage.provideHost(primaryHost, disallowedURLs)
     }
 
     private fun processNewFrontierRecord(){
-        when(val urlRecord = frontier.pullURLRecord(primaryHost)){
-            null -> sendMurderRequest()
-            else -> {
-                if(canProcessInternalURL(urlRecord)){
-                    counter.increment()
-                    VisitedURLs.add(urlRecord.getUniqueHash())
-                    fetchHTML(urlRecord)
-                }
+        val urlRecord = frontier.pullURLRecord(primaryHost)
+        if(urlRecord == null){
+            sendMurderRequest()
+        } else{
+            if(canProcessInternalURL(urlRecord)){
+                counter.increment()
+                visitedURLsStorage.add(urlRecord.getUniqueHash())
+                fetchHTML(urlRecord)
             }
         }
     }
@@ -62,7 +61,7 @@ class Crawler(
     private fun sendMurderRequest(){
         communicationManager.stopCrawler(this)
         canProceedCrawling = false
-        logger.info ("Thank you, now I'm free... God bless your soul")
+        logger.info ("Stopped")
         return
     }
 
@@ -71,7 +70,7 @@ class Crawler(
         val html = fetcher.getPageContent(url)
         html?.let{
             val urls = urlParser.getURLs(html)
-            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
+//            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
             processFetchedURLs(urls)
         }
     }
@@ -100,8 +99,8 @@ class Crawler(
         }
 
         val frontierRecord = FrontierRecord(formattedURL)
-        val isNew = VisitedURLs.doesNotExist(frontierRecord.getUniqueHash())
-        val isAllowed = HostsStorage.isURLAllowed(host, formattedURL.value)
+        val isNew = visitedURLsStorage.doesNotExist(frontierRecord.getUniqueHash())
+        val isAllowed = hostsStorage.isURLAllowed(host, formattedURL.value)
         return isNew && isAllowed
     }
 }

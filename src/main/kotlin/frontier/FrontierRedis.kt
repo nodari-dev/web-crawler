@@ -12,6 +12,7 @@ import mu.KotlinLogging
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPooled
 import redis.clients.jedis.Transaction
+import redisConnector.RedisConnector
 import java.util.concurrent.locks.ReentrantLock
 
 
@@ -19,7 +20,7 @@ object FrontierRedis: IFrontierRedis {
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
     private val communicationManager = CommunicationManager
-    private val jedis = JedisPooled("localhost", 6379);
+    private val jedis = RedisConnector.getJedis()
 
     init {
         jedis.set(FRONTIER_KEY, QUEUES_KEY)

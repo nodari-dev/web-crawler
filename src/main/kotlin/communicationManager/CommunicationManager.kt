@@ -4,11 +4,10 @@ import crawler.Counter
 import crawler.Crawler
 import dto.FormattedURL
 import fetcher.Fetcher
-import frontier.Frontier
 import frontier.FrontierRedis
 import interfaces.IController
-import localStorage.HostsStorage
-import localStorage.VisitedURLs
+import storages.hostsStorage.HostsStorage
+import storages.visitedURLsStorage.VisitedURLsStorage
 import mu.KotlinLogging
 import parser.urlParser.URLParser
 import robots.Robots
@@ -52,7 +51,7 @@ object CommunicationManager: IController {
                     URLParser(),
                     FrontierRedis,
                     HostsStorage,
-                    VisitedURLs,
+                    VisitedURLsStorage,
                     KotlinLogging,
                     Counter
                 )

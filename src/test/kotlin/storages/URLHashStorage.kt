@@ -1,12 +1,13 @@
-package localStorage
+package storages
 
+import storages.visitedURLsStorage.VisitedURLsStorage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class VisitedURLsTest {
 
-    private val urlHashStorage = VisitedURLs
+    private val urlHashStorage = VisitedURLsStorage
 
     @BeforeEach
     fun init(){

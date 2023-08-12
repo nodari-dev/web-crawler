@@ -1,15 +1,6 @@
 package crawler
 
-import analyzer.DataAnalyzer
-import fetcher.Fetcher
-import frontier.Frontier
-import localStorage.HostsStorage
-import localStorage.VisitedURLs
-import mu.KotlinLogging
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import parser.urlParser.URLParser
-import robots.Robots
 
 class CrawlerTest {
     private lateinit var terminalCrawler: Crawler

@@ -1,7 +1,6 @@
-package localStorage
+package storages
 
 import analyzer.DataAnalyzer
-import dto.FormattedURL
 import dto.SEORecord
 import interfaces.ISEOStorage
 import java.util.concurrent.locks.ReentrantLock
