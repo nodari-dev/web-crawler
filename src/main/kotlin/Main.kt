@@ -1,6 +1,4 @@
 import communicationManager.CommunicationManager
-import dto.FormattedURL
-import frontier.FrontierRedis
 
 fun main() {
     val communicationManager = CommunicationManager
