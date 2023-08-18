@@ -6,7 +6,7 @@ import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import crawler.Counter
-import communicationManager.Configuration.TIME_BETWEEN_FETCHING
+import configuration.Configuration.TIME_BETWEEN_FETCHING
 import exceptions.FetchingFailedException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

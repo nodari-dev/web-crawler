@@ -1,5 +1,5 @@
 package interfaces
 
 interface ISEOStorage {
-    fun updateOrCreateSEORecord(host: String, url: String, html: String)
+    fun updateOrCreateSEOEntry(host: String, url: String, html: String)
 }

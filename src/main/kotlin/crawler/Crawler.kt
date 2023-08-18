@@ -1,24 +1,23 @@
 package crawler
 
-import communicationManager.CommunicationManager
+import communication.CommunicationManager
 import dto.FormattedURL
 import dto.FrontierRecord
 import fetcher.Fetcher
-import frontier.FrontierRedis
+import frontier.Frontier
 import interfaces.ICrawler
-import storages.hostsStorage.HostsStorage
-import storages.SEOStorage
-import storages.visitedURLsStorage.VisitedURLsStorage
+import storage.hosts.HostsStorage
+import storage.visitedurls.VisitedURLsStorage
 import mu.KotlinLogging
-import parser.urlParser.URLParser
-import robots.Robots
+import parser.urlparser.URLParser
+import robots.RobotsManager
 
 class Crawler(
     override val primaryHost: String,
     override val fetcher: Fetcher,
-    override val robots: Robots,
+    override val robotsManager: RobotsManager,
     override val urlParser: URLParser,
-    override val frontier: FrontierRedis,
+    override val frontier: Frontier,
     override val hostsStorage: HostsStorage,
     override val visitedURLsStorage: VisitedURLsStorage,
     override val kotlinLogging: KotlinLogging,
@@ -41,12 +40,12 @@ class Crawler(
     }
 
     private fun processRobotsTxt(){
-        val disallowedURLs = robots.getDisallowedURLs(primaryHost)
+        val disallowedURLs = robotsManager.getDisallowedURLs(primaryHost)
         hostsStorage.provideHost(primaryHost, disallowedURLs)
     }
 
     private fun processNewFrontierRecord(){
-        val urlRecord = frontier.pullURLRecord(primaryHost)
+        val urlRecord = frontier.pullURL(primaryHost)
         if(urlRecord == null){
             sendMurderRequest()
         } else{

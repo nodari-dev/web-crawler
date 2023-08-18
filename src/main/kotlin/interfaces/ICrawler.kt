@@ -2,19 +2,19 @@ package interfaces
 
 import crawler.Counter
 import fetcher.Fetcher
-import frontier.FrontierRedis
-import storages.hostsStorage.HostsStorage
-import storages.visitedURLsStorage.VisitedURLsStorage
+import frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.visitedurls.VisitedURLsStorage
 import mu.KotlinLogging
-import parser.urlParser.URLParser
-import robots.Robots
+import parser.urlparser.URLParser
+import robots.RobotsManager
 
 interface ICrawler {
     val primaryHost: String
     val fetcher: Fetcher
-    val robots: Robots
+    val robotsManager: RobotsManager
     val urlParser: URLParser
-    val frontier: FrontierRedis
+    val frontier: Frontier
     val hostsStorage: HostsStorage
     val visitedURLsStorage: VisitedURLsStorage
     val kotlinLogging: KotlinLogging

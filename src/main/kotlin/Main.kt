@@ -1,4 +1,4 @@
-import communicationManager.CommunicationManager
+import communication.CommunicationManager
 
 fun main() {
     val communicationManager = CommunicationManager

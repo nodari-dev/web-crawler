@@ -2,7 +2,7 @@ package analyzer
 
 import dto.SEOContent
 import interfaces.IDataAnalyzer
-import parser.seoParser.SEOParser
+import parser.seoparser.SEOParser
 
 class DataAnalyzer : IDataAnalyzer {
     private val seoParser = SEOParser()
