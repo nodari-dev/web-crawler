@@ -3,6 +3,7 @@ package parser
 import dto.FormattedURL
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.regex.Pattern
 
 class ParserUtilsTest {
     private val parserUtils = ParserUtils()
@@ -19,7 +20,7 @@ class ParserUtilsTest {
             </html>
         """
 
-        val pattern = """<div>(.*?)</div>""".toRegex()
+        val pattern = Pattern.compile("""<div>(.*?)</div>""")
         val groupIndex = 1
         val expectedResult = listOf("Item 1", "Item 2", "Item 3")
         val result = parserUtils.parseValues(html, pattern, groupIndex)
@@ -37,7 +38,7 @@ class ParserUtilsTest {
             </html>
         """
 
-        val pattern = """<p>(.*?)</p>""".toRegex()
+        val pattern =  Pattern.compile("""<p>(.*?)</p>""")
         val groupIndex = 1
         val expectedResult = "Hello world!"
         val result = parserUtils.parseSingleValue(html, pattern, groupIndex)

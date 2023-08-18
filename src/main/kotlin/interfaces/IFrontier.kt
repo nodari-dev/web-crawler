@@ -1,9 +1,8 @@
 package interfaces
 
 import dto.FormattedURL
-import dto.FrontierRecord
 
 interface IFrontier {
-    fun pullURLRecord(host: String): FrontierRecord?
+    fun pullURL(host: String): FormattedURL?
     fun updateOrCreateQueue(host: String, formattedURL: FormattedURL)
 }

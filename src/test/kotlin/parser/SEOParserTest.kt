@@ -2,7 +2,7 @@ package parser
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import parser.seoParser.SEOParser
+import parser.seoparser.SEOParser
 
 class SEOParserTest {
     private val seoParser = SEOParser()

@@ -1,6 +1,7 @@
 package interfaces
 
 import crawler.Counter
+import crawler.URLValidator
 import fetcher.Fetcher
 import frontier.Frontier
 import storage.hosts.HostsStorage
@@ -14,6 +15,7 @@ interface ICrawler {
     val fetcher: Fetcher
     val robotsManager: RobotsManager
     val urlParser: URLParser
+    val urlValidator: URLValidator
     val frontier: Frontier
     val hostsStorage: HostsStorage
     val visitedURLsStorage: VisitedURLsStorage

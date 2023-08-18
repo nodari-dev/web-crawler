@@ -6,4 +6,8 @@ data class FormattedURL(var value: String){
             value = "$value/"
         }
     }
+
+    fun getHash(): Int{
+        return value.hashCode()
+    }
 }

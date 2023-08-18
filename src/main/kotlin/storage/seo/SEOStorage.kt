@@ -37,7 +37,6 @@ object SEOStorage: ISEOStorage{
     }
 
     private fun updateSEODetails(host: String, url: String, html: String){
-        println("updateSEORecord $host")
         if(isSEODefinedForItem(host, url)){
             updateSEOItemDetails(host, url)
         } else{
@@ -46,7 +45,6 @@ object SEOStorage: ISEOStorage{
     }
 
     private fun createNewSEOForHost(host: String, url: String, html: String){
-        println("createSEORecord $host")
         jedis.lpush(DEFAULT_PATH, host)
         createNewSEOItem(host, url)
     }
@@ -61,7 +59,6 @@ object SEOStorage: ISEOStorage{
     }
 
     private fun createNewSEOItem(host: String, url: String){
-        println("createItem $host $url")
         val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, url)
     }

@@ -3,6 +3,7 @@ package communication
 import configuration.Configuration
 import crawler.Counter
 import crawler.Crawler
+import crawler.URLValidator
 import dto.FormattedURL
 import fetcher.Fetcher
 import frontier.Frontier
@@ -50,6 +51,7 @@ object CommunicationManager: IController {
                     Fetcher(),
                     RobotsManager(),
                     URLParser(),
+                    URLValidator(),
                     Frontier,
                     HostsStorage,
                     VisitedURLsStorage,

@@ -8,6 +8,7 @@ class DataAnalyzer : IDataAnalyzer {
     private val seoParser = SEOParser()
 
     override fun getPageStats(html: String): SEOContent {
+
         return SEOContent(
             seoParser.getTitle(html),
             seoParser.getOgTitle(html),

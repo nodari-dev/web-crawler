@@ -2,7 +2,7 @@ package storage
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import storage.SEOStorage.SEOStorage
+import storage.seo.SEOStorage
 
 class WebsiteSEOStorageTest {
     private val websiteSEOStorage = SEOStorage

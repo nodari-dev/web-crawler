@@ -2,18 +2,17 @@ package frontier
 
 import communication.CommunicationManager
 import dto.FormattedURL
-import dto.FrontierRecord
 import frontier.Configuration.DEFAULT_PATH
 import frontier.Configuration.FRONTIER_KEY
 import frontier.Configuration.QUEUES_KEY
-import interfaces.IFrontierRedis
+import interfaces.IFrontier
 import mu.KotlinLogging
 import redis.RedisConnector
 import storage.StorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 
-object Frontier: IFrontierRedis {
+object Frontier: IFrontier{
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
     private val storageUtils = StorageUtils()
@@ -27,11 +26,10 @@ object Frontier: IFrontierRedis {
     override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
         mutex.lock()
         try {
-            val frontierRecord = FrontierRecord(formattedURL)
             if(isQueueDefinedForHost(host)){
-                updateQueue(host, frontierRecord)
+                updateQueue(host, formattedURL)
             } else{
-                createQueue(host, frontierRecord)
+                createQueue(host, formattedURL)
             }
         } finally {
             mutex.unlock()
@@ -42,21 +40,21 @@ object Frontier: IFrontierRedis {
         return jedis.lpos(DEFAULT_PATH, host) != null
     }
 
-    private fun updateQueue(host: String, frontierRecord: FrontierRecord) {
+    private fun updateQueue(host: String, formattedURL: FormattedURL) {
         val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, frontierRecord.getURL())
+        jedis.rpush(path, formattedURL.value)
     }
 
-    private fun createQueue(host: String, frontierRecord: FrontierRecord) {
+    private fun createQueue(host: String, formattedURL: FormattedURL) {
         logger.info ("created queue with host: $host")
         jedis.lpush(DEFAULT_PATH, host)
 
         val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, frontierRecord.getURL())
+        jedis.rpush(path, formattedURL.value)
         communicationManager.addHost(host)
     }
 
-    override fun pullURL(host: String): FrontierRecord? {
+    override fun pullURL(host: String): FormattedURL? {
         mutex.lock()
         try{
             val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
@@ -66,7 +64,7 @@ object Frontier: IFrontierRedis {
                 return null
             }
 
-            return FrontierRecord(FormattedURL(url))
+            return FormattedURL(url)
         } finally {
             mutex.unlock()
         }

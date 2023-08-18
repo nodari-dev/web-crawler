@@ -3,7 +3,7 @@ package parser
 import dto.FormattedURL
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import parser.urlParser.URLParser
+import parser.urlparser.URLParser
 
 class URLParserTest {
     private val urlParser = URLParser()
