@@ -47,7 +47,7 @@ class Crawler(
     private fun processNewFrontierRecord(){
         val pulledURL = frontier.pullURL(primaryHost)
         if(pulledURL == null){
-            sendMurderRequest()
+            sendKillRequest()
         } else{
             if(urlValidator.canProcessInternalURL(primaryHost, pulledURL)){
                 counter.increment()
@@ -57,7 +57,7 @@ class Crawler(
         }
     }
 
-    private fun sendMurderRequest(){
+    private fun sendKillRequest(){
         communicationManager.stopCrawler(this)
         canProceedCrawling = false
         logger.info ("Stopped")

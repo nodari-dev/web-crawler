@@ -1,6 +1,4 @@
-import analyzer.DataAnalyzer
 import communication.CommunicationManager
-import fetcher.Fetcher
 
 fun main() {
     val communicationManager = CommunicationManager

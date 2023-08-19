@@ -58,16 +58,20 @@ object Frontier: IFrontier{
         mutex.lock()
         try{
             val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            val url = jedis.lpop(path)
-            if(url == null){
+
+            if(isQueueEmpty(path)){
                 deleteQueue(host)
                 return null
             }
+            return FormattedURL(jedis.lpop(path))
 
-            return FormattedURL(url)
         } finally {
             mutex.unlock()
         }
+    }
+
+    private fun isQueueEmpty(path: String): Boolean{
+        return jedis.lrange(path, 0 , 1).size == 0
     }
 
     private fun deleteQueue(host: String){
