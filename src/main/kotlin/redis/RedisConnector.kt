@@ -1,11 +1,12 @@
 package redis
 
-import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.Jedis
+import redis.clients.jedis.JedisPool
 
 object RedisConnector {
-    private val jedis = JedisPooled("localhost", 6379)
+    private val jedis = JedisPool("localhost", 6379)
 
-    fun getJedis(): JedisPooled {
-        return jedis
+    fun getJedis(): Jedis {
+        return jedis.resource
     }
 }

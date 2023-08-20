@@ -28,45 +28,44 @@ class Crawler(
     private var canProceedCrawling = true
 
     override fun run() {
-        startCrawl()
-    }
-
-    private fun startCrawl(){
-        logger.info ("Started")
+        logger.info("Started")
         processRobotsTxt()
         while (canProceedCrawling) {
-            processNewFrontierRecord()
+            communicateWithFrontier()
         }
     }
-
-    private fun processRobotsTxt(){
+    private fun processRobotsTxt() {
         val disallowedURLs = robotsManager.getDisallowedURLs(primaryHost)
         hostsStorage.provideHost(primaryHost, disallowedURLs)
     }
 
-    private fun processNewFrontierRecord(){
-        val pulledURL = frontier.pullURL(primaryHost)
-        if(pulledURL == null){
+    private fun communicateWithFrontier() {
+        if (frontier.isQueueEmpty(primaryHost)) {
             sendKillRequest()
-        } else{
-            if(urlValidator.canProcessInternalURL(primaryHost, pulledURL)){
-                counter.increment()
-                visitedURLsStorage.add(pulledURL.getHash())
-                fetchHTML(pulledURL)
-            }
+        } else {
+            processNewFrontierRecord()
         }
     }
 
-    private fun sendKillRequest(){
+    private fun sendKillRequest() {
         communicationManager.stopCrawler(this)
         canProceedCrawling = false
-        logger.info ("Stopped")
+        logger.info("Stopped")
         return
     }
 
-    private fun fetchHTML(formattedURL: FormattedURL){
+    private fun processNewFrontierRecord() {
+        val pulledURL = frontier.pullURL(primaryHost)
+        if (urlValidator.canProcessInternalURL(primaryHost, pulledURL)) {
+            counter.increment()
+            visitedURLsStorage.add(pulledURL.getHash())
+            fetchHTML(pulledURL)
+        }
+    }
+
+    private fun fetchHTML(formattedURL: FormattedURL) {
         val html = fetcher.getPageContent(formattedURL.value)
-        html?.let{
+        html?.let {
             val urls = urlParser.getURLs(html)
 //            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
             processFetchedURLs(urls)
@@ -75,9 +74,9 @@ class Crawler(
 
     private fun processFetchedURLs(urls: List<FormattedURL>) {
         val uniqueFormattedURLs = urls.toSet()
-        uniqueFormattedURLs.forEach{formattedURL ->
+        uniqueFormattedURLs.forEach { formattedURL ->
             val host = urlParser.getHostWithProtocol(formattedURL.value)
-            if(urlValidator.canProcessExternalURL(host, formattedURL)){
+            if (urlValidator.canProcessExternalURL(host, formattedURL)) {
                 frontier.updateOrCreateQueue(host, formattedURL)
             }
         }

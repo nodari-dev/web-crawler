@@ -51,27 +51,26 @@ object Frontier: IFrontier{
 
         val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, formattedURL.value)
-        communicationManager.addHost(host)
+        communicationManager.notifyWithNewQueue(host)
     }
 
-    override fun pullURL(host: String): FormattedURL? {
+    override fun pullURL(host: String): FormattedURL {
         mutex.lock()
         try{
             val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-
-            if(isQueueEmpty(path)){
-                deleteQueue(host)
-                return null
-            }
             return FormattedURL(jedis.lpop(path))
-
         } finally {
             mutex.unlock()
         }
     }
 
-    private fun isQueueEmpty(path: String): Boolean{
-        return jedis.lrange(path, 0 , 1).size == 0
+    fun isQueueEmpty(host: String): Boolean{
+        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        val isEmpty = jedis.lrange(path, 0 , 1).size == 0
+        if(isEmpty){
+            deleteQueue(host)
+        }
+        return isEmpty
     }
 
     private fun deleteQueue(host: String){

@@ -1,6 +1,7 @@
 package communication
 
 import configuration.Configuration
+import configuration.Configuration.CONTINUE_FROM_CACHED_DATA
 import crawler.Counter
 import crawler.Crawler
 import crawler.URLValidator
@@ -12,6 +13,7 @@ import storage.hosts.HostsStorage
 import storage.visitedurls.VisitedURLsStorage
 import mu.KotlinLogging
 import parser.urlparser.URLParser
+import redis.RedisConnector
 import robots.RobotsManager
 
 object CommunicationManager: IController {
@@ -20,8 +22,15 @@ object CommunicationManager: IController {
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
     private val startingPoints = mutableListOf<String>()
+    private val jedis = RedisConnector.getJedis()
 
     override fun start(){
+        if(CONTINUE_FROM_CACHED_DATA){
+
+        } else{
+            jedis.flushAll()
+        }
+
         startingPoints.forEach { seed ->
             val host = urlParser.getHostWithProtocol(seed)
             frontier.updateOrCreateQueue(host, FormattedURL(seed))
@@ -37,7 +46,7 @@ object CommunicationManager: IController {
         generateNewCrawlers()
     }
 
-    override fun addHost(host: String){
+    override fun notifyWithNewQueue(host: String){
         hostsToProcess.add(host)
         generateNewCrawlers()
     }
