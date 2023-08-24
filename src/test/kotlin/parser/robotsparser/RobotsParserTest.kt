@@ -1,11 +1,11 @@
-package parser
+package parser.robotsparser
 
 import dto.FormattedURL
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import parser.robotsparser.RobotsParser
 
-class RobotsManagerParserTest {
+class RobotsParserTest {
     private val robotsParser = RobotsParser()
 
     @Test

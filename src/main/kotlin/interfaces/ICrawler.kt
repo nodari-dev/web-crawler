@@ -12,14 +12,5 @@ import robots.RobotsManager
 
 interface ICrawler {
     val primaryHost: String
-    val fetcher: Fetcher
-    val robotsManager: RobotsManager
-    val urlParser: URLParser
-    val urlValidator: URLValidator
-    val frontier: Frontier
-    val hostsStorage: HostsStorage
-    val visitedURLsStorage: VisitedURLsStorage
-    val kotlinLogging: KotlinLogging
-    val counter: Counter
     fun start()
 }

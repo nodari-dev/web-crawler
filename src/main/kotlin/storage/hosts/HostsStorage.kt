@@ -19,7 +19,7 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun provideHost(host: String, bannedURLs: List<FormattedURL>){
-        if(isHostIsNew(host)){
+        if(isHostNew(host)){
             createHost(host, bannedURLs)
         }
     }
@@ -40,7 +40,7 @@ object HostsStorage: IHostsStorage {
     override fun isURLAllowed(host: String, url: String): Boolean{
         mutex.lock()
         try{
-            if(isHostIsNew(host)){
+            if(isHostNew(host)){
                 return true
             }
 
@@ -52,7 +52,7 @@ object HostsStorage: IHostsStorage {
         }
     }
 
-    private fun isHostIsNew(host: String): Boolean{
+    private fun isHostNew(host: String): Boolean{
         return jedis.lpos(DEFAULT_PATH, host) == null
     }
 

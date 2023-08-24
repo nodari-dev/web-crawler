@@ -51,7 +51,7 @@ object Frontier: IFrontier{
 
         val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, formattedURL.value)
-        communicationManager.notifyWithNewQueue(host)
+        communicationManager.requestCrawlerInitialization(host)
     }
 
     override fun pullURL(host: String): FormattedURL {

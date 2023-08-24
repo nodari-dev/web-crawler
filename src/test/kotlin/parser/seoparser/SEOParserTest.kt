@@ -1,4 +1,4 @@
-package parser
+package parser.seoparser
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

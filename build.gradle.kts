@@ -34,6 +34,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("redis.clients:jedis:4.3.1")
 
+    testImplementation ("org.mockito:mockito-core:3.+")
     testImplementation(kotlin("test"))
 }
 
@@ -48,58 +49,3 @@ tasks.withType<KotlinCompile> {
 application {
     mainClass.set("MainKt")
 }
-//
-//flyway {
-//    url = dbUrl
-//    schemas = arrayOf(dbSchema)
-//    user = dbUser
-//    password = dbPassword
-//    baselineVersion = "-1"
-//    table = "flyway_schema_history"
-//    cleanDisabled = false
-//    sqlMigrationPrefix = "V"
-//    sqlMigrationSeparator = "__"
-//    sqlMigrationSuffixes = arrayOf(".sql")
-//    locations = arrayOf("database/migration")
-//    outOfOrder = false
-//    baselineOnMigrate = true
-//}
-//jooq {
-//    version.set(jooqVersion)
-//    edition.set(nu.studer.gradle.jooq.JooqEdition.OSS)
-//
-//    configurations {
-//        create("main") {
-//            generateSchemaSourceOnCompilation.set(true)
-//
-//            jooqConfiguration.apply {
-////                logging = Logging.INFO
-//                jdbc.apply {
-//                    driver = "org.postgresql.Driver"
-//                    url = dbUrl
-//                    user = dbUser
-//                    password = dbPassword
-//                }
-//                generator.apply {
-//                    name = "org.jooq.codegen.KotlinGenerator"
-//                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
-//                    database.apply {
-//                        name = "org.jooq.meta.postgres.PostgresDatabase"
-//                        inputSchema = dbSchema
-//                        excludes = "key_vault|flyway_schema_history"
-//                    }
-//                    generate.apply {
-//                        isDeprecated = false
-//                        isRecords = true
-//                        isRelations = true
-//                        isPojos = true
-//                        isPojosEqualsAndHashCode = true
-//                    }
-//                    target.apply {
-//                        packageName = "jooq.generated"
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}

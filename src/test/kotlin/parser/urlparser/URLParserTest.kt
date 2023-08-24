@@ -1,4 +1,4 @@
-package parser
+package parser.urlparser
 
 import dto.FormattedURL
 import org.junit.jupiter.api.Assertions

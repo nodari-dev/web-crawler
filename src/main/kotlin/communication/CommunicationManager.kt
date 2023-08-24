@@ -1,36 +1,38 @@
 package communication
 
-import configuration.Configuration
 import configuration.Configuration.CONTINUE_FROM_CACHED_DATA
-import crawler.Counter
-import crawler.Crawler
-import crawler.URLValidator
+import crawler.CrawlersFactory
 import dto.FormattedURL
-import fetcher.Fetcher
 import frontier.Frontier
-import interfaces.IController
+import interfaces.ICommunicationManager
 import storage.hosts.HostsStorage
 import storage.visitedurls.VisitedURLsStorage
-import mu.KotlinLogging
 import parser.urlparser.URLParser
 import redis.RedisConnector
-import robots.RobotsManager
 
-object CommunicationManager: IController {
+object CommunicationManager: ICommunicationManager {
     private val frontier = Frontier
+    private val crawlersFactory = CrawlersFactory
     private val urlParser = URLParser()
-    private val activeCrawlers = mutableListOf<Thread>()
-    private val hostsToProcess = mutableListOf<String>()
     private val startingPoints = mutableListOf<String>()
     private val jedis = RedisConnector.getJedis()
+    private val visitedURLsStorage = VisitedURLsStorage
+    private val hostsStorage = HostsStorage
 
     override fun start(){
         if(CONTINUE_FROM_CACHED_DATA){
-
+            proceedWithExistingData()
         } else{
-            jedis.flushAll()
+            startFromScratch()
         }
+    }
 
+    private fun proceedWithExistingData(){
+        println("will be soon")
+    }
+
+    private fun startFromScratch(){
+        jedis.flushAll()
         startingPoints.forEach { seed ->
             val host = urlParser.getHostWithProtocol(seed)
             frontier.updateOrCreateQueue(host, FormattedURL(seed))
@@ -41,38 +43,31 @@ object CommunicationManager: IController {
         startingPoints.addAll(seeds)
     }
 
-    override fun stopCrawler(crawler: Thread){
-        activeCrawlers.remove(crawler)
-        generateNewCrawlers()
+    override fun requestCrawlerTermination(crawler: Thread){
+        crawlersFactory.killCrawler(crawler)
     }
 
-    override fun notifyWithNewQueue(host: String){
-        hostsToProcess.add(host)
-        generateNewCrawlers()
+    override fun requestCrawlerInitialization(host: String){
+        crawlersFactory.processQueue(host)
     }
 
-    private fun generateNewCrawlers(){
-        val hostsToRemove = mutableListOf<String>()
-        for(i in 0 until hostsToProcess.size){
-            if(activeCrawlers.size < Configuration.MAX_NUMBER_OF_CRAWLERS){
-                val crawler = Crawler(
-                    hostsToProcess[i],
-                    Fetcher(),
-                    RobotsManager(),
-                    URLParser(),
-                    URLValidator(),
-                    Frontier,
-                    HostsStorage,
-                    VisitedURLsStorage,
-                    KotlinLogging,
-                    Counter
-                )
-                activeCrawlers.add(crawler)
-                crawler.start()
-                hostsToRemove.add(hostsToProcess[i])
-            }
-        }
-        hostsToProcess.removeAll(hostsToRemove)
-        hostsToRemove.clear()
+    fun requestFrontierURL(host: String): FormattedURL{
+        return frontier.pullURL(host)
+    }
+
+    fun checkFrontierQueueEmptiness(host: String): Boolean{
+        return frontier.isQueueEmpty(host)
+    }
+
+    fun sendNewURLToFrontier(host: String, formattedURL: FormattedURL){
+        return frontier.updateOrCreateQueue(host, formattedURL)
+    }
+
+    fun addVisitedURL(hash: Int){
+        visitedURLsStorage.add(hash)
+    }
+
+    fun addHostData(host: String, bannedURLs: List<FormattedURL>){
+        hostsStorage.provideHost(host, bannedURLs)
     }
 }
