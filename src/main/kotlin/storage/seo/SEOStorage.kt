@@ -3,7 +3,7 @@ package storage.seo
 import analyzer.DataAnalyzer
 import interfaces.ISEOStorage
 import redis.RedisConnector
-import storage.StorageUtils
+import storage.RedisStorageUtils
 import storage.seo.Configuration.DEFAULT_PATH
 import storage.seo.Configuration.SEO_KEY
 import storage.seo.Configuration.SEO_LIST_KEY
@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock
 object SEOStorage: ISEOStorage{
     private val dataAnalyzer = DataAnalyzer()
     private val mutex = ReentrantLock()
-    private val storageUtils = StorageUtils()
+    private val redisStorageUtils = RedisStorageUtils()
     private val jedis = RedisConnector.getJedis()
 
     init {
@@ -50,7 +50,7 @@ object SEOStorage: ISEOStorage{
     }
 
     private fun isSEODefinedForItem(host: String, url: String): Boolean{
-        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         return jedis.lpos(path, url) != null
     }
 
@@ -59,7 +59,7 @@ object SEOStorage: ISEOStorage{
     }
 
     private fun createNewSEOItem(host: String, url: String){
-        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, url)
     }
 }

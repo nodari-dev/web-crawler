@@ -1,15 +1,15 @@
 package robots
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 import fetcher.Fetcher
-import interfaces.IRobots
+import interfaces.IRobotsUtils
 import parser.robotsparser.RobotsParser
 
-class RobotsManager : IRobots {
+class RobotsUtils : IRobotsUtils {
     private val fetcher = Fetcher()
     private val robotsParser = RobotsParser()
 
-    override fun getDisallowedURLs(host: String): List<FormattedURL> {
+    override fun getDisallowedURLs(host: String): List<HashedUrlPair> {
         val document = getRobotsTxtDocument(host)
         return document?.let { content -> robotsParser.getRobotsDisallowed(content) } ?: emptyList()
     }

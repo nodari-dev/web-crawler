@@ -1,16 +1,14 @@
 package storage
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 import storage.hosts.HostsStorage
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class HostStorageTest {
     private val hostStorage = HostsStorage
 
     private val host = "somehost"
-    private val bannedURLs = listOf(FormattedURL("url"))
+    private val bannedURLs = listOf(HashedUrlPair("url"))
 
     @Test
     fun `adds new host to storage and able to return`(){

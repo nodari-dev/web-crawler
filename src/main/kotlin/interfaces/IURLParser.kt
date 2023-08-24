@@ -1,8 +1,8 @@
 package interfaces
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 
 interface IURLParser {
-    fun getURLs(document: String): List<FormattedURL>
+    fun getURLs(document: String): List<HashedUrlPair>
     fun getHostWithProtocol(document: String): String
 }

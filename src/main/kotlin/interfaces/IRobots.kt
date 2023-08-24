@@ -1,7 +1,7 @@
 package interfaces
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 
-interface IRobots {
-    fun getDisallowedURLs(host: String): List<FormattedURL>
+interface IRobotsUtils {
+    fun getDisallowedURLs(host: String): List<HashedUrlPair>
 }

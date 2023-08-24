@@ -2,7 +2,7 @@ package communication
 
 import configuration.Configuration.CONTINUE_FROM_CACHED_DATA
 import crawler.CrawlersFactory
-import dto.FormattedURL
+import dto.HashedUrlPair
 import frontier.Frontier
 import interfaces.ICommunicationManager
 import storage.hosts.HostsStorage
@@ -35,7 +35,7 @@ object CommunicationManager: ICommunicationManager {
         jedis.flushAll()
         startingPoints.forEach { seed ->
             val host = urlParser.getHostWithProtocol(seed)
-            frontier.updateOrCreateQueue(host, FormattedURL(seed))
+            frontier.updateOrCreateQueue(host, HashedUrlPair(seed))
         }
     }
 
@@ -51,7 +51,7 @@ object CommunicationManager: ICommunicationManager {
         crawlersFactory.processQueue(host)
     }
 
-    fun requestFrontierURL(host: String): FormattedURL{
+    fun requestFrontierURL(host: String): HashedUrlPair{
         return frontier.pullURL(host)
     }
 
@@ -59,15 +59,15 @@ object CommunicationManager: ICommunicationManager {
         return frontier.isQueueEmpty(host)
     }
 
-    fun sendNewURLToFrontier(host: String, formattedURL: FormattedURL){
-        return frontier.updateOrCreateQueue(host, formattedURL)
+    fun sendNewURLToFrontier(host: String, hashedUrlPair: HashedUrlPair){
+        return frontier.updateOrCreateQueue(host, hashedUrlPair)
     }
 
     fun addVisitedURL(hash: Int){
         visitedURLsStorage.add(hash)
     }
 
-    fun addHostData(host: String, bannedURLs: List<FormattedURL>){
+    fun addHostData(host: String, bannedURLs: List<HashedUrlPair>){
         hostsStorage.provideHost(host, bannedURLs)
     }
 }

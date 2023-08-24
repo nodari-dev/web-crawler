@@ -1,15 +1,13 @@
 package frontier
 
-import dto.FormattedURL
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
+import dto.HashedUrlPair
 import org.junit.jupiter.api.Test
 
 class FrontierTest {
     private val frontier = Frontier
     private val host = "host"
-    private val mockedURL = FormattedURL("url")
-    private val mockedURL2 = FormattedURL("url2")
+    private val mockedURL = HashedUrlPair("url")
+    private val mockedURL2 = HashedUrlPair("url2")
 //    private val frontierRecords = mutableListOf(FrontierRecord(mockedURL), FrontierRecord(mockedURL2))
     
     @Test

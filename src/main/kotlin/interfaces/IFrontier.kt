@@ -1,8 +1,8 @@
 package interfaces
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 
 interface IFrontier {
-    fun pullURL(host: String): FormattedURL?
-    fun updateOrCreateQueue(host: String, formattedURL: FormattedURL)
+    fun pullURL(host: String): HashedUrlPair?
+    fun updateOrCreateQueue(host: String, hashedUrlPair: HashedUrlPair)
 }

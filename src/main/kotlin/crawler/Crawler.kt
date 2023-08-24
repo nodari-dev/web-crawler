@@ -1,22 +1,19 @@
 package crawler
 
 import communication.CommunicationManager
-import dto.FormattedURL
+import dto.HashedUrlPair
 import fetcher.Fetcher
-import frontier.Frontier
 import interfaces.ICrawler
-import storage.hosts.HostsStorage
-import storage.visitedurls.VisitedURLsStorage
 import mu.KotlinLogging
 import parser.urlparser.URLParser
-import robots.RobotsManager
+import robots.RobotsUtils
 
 class Crawler(
     override val primaryHost: String,
 ) : ICrawler, Thread() {
     private val logger = KotlinLogging.logger("Crawler $primaryHost")
     private val fetcher = Fetcher()
-    private val robotsManager = RobotsManager()
+    private val robotsUtils = RobotsUtils()
     private val urlValidator = URLValidator()
     private val urlParser = URLParser()
     private val communicationManager = CommunicationManager
@@ -32,7 +29,7 @@ class Crawler(
     }
 
     private fun processRobotsTxt() {
-        val disallowedURLs = robotsManager.getDisallowedURLs(primaryHost)
+        val disallowedURLs = robotsUtils.getDisallowedURLs(primaryHost)
         communicationManager.addHostData(primaryHost, disallowedURLs)
     }
 
@@ -60,8 +57,8 @@ class Crawler(
         }
     }
 
-    private fun fetchHTML(formattedURL: FormattedURL) {
-        val html = fetcher.getPageContent(formattedURL.value)
+    private fun fetchHTML(hashedUrlPair: HashedUrlPair) {
+        val html = fetcher.getPageContent(hashedUrlPair.value)
         html?.let {
             val urls = urlParser.getURLs(html)
 //            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
@@ -69,7 +66,7 @@ class Crawler(
         }
     }
 
-    private fun processFetchedURLs(urls: List<FormattedURL>) {
+    private fun processFetchedURLs(urls: List<HashedUrlPair>) {
         val uniqueFormattedURLs = urls.toSet()
         uniqueFormattedURLs.forEach { formattedURL ->
             val host = urlParser.getHostWithProtocol(formattedURL.value)

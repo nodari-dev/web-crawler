@@ -1,6 +1,6 @@
 package parser
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 import interfaces.IParserUtils
 import java.util.regex.Pattern
 
@@ -25,7 +25,7 @@ class ParserUtils: IParserUtils {
         return null
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<FormattedURL>{
-        return list.map { element -> FormattedURL(element) }
+    override fun transformToFormattedURLs(list: List<String>): List<HashedUrlPair>{
+        return list.map { element -> HashedUrlPair(element) }
     }
 }

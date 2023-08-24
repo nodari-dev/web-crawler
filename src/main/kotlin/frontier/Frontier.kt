@@ -1,21 +1,21 @@
 package frontier
 
 import communication.CommunicationManager
-import dto.FormattedURL
+import dto.HashedUrlPair
 import frontier.Configuration.DEFAULT_PATH
 import frontier.Configuration.FRONTIER_KEY
 import frontier.Configuration.QUEUES_KEY
 import interfaces.IFrontier
 import mu.KotlinLogging
 import redis.RedisConnector
-import storage.StorageUtils
+import storage.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 
 object Frontier: IFrontier{
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
-    private val storageUtils = StorageUtils()
+    private val redisStorageUtils = RedisStorageUtils()
     private val communicationManager = CommunicationManager
     private val jedis = RedisConnector.getJedis()
 
@@ -23,13 +23,13 @@ object Frontier: IFrontier{
         jedis.set(FRONTIER_KEY, QUEUES_KEY)
     }
 
-    override fun updateOrCreateQueue(host: String, formattedURL: FormattedURL) {
+    override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedUrlPair) {
         mutex.lock()
         try {
             if(isQueueDefinedForHost(host)){
-                updateQueue(host, formattedURL)
+                updateQueue(host, hashedUrlPair)
             } else{
-                createQueue(host, formattedURL)
+                createQueue(host, hashedUrlPair)
             }
         } finally {
             mutex.unlock()
@@ -40,32 +40,32 @@ object Frontier: IFrontier{
         return jedis.lpos(DEFAULT_PATH, host) != null
     }
 
-    private fun updateQueue(host: String, formattedURL: FormattedURL) {
-        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, formattedURL.value)
+    private fun updateQueue(host: String, hashedUrlPair: HashedUrlPair) {
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        jedis.rpush(path, hashedUrlPair.value)
     }
 
-    private fun createQueue(host: String, formattedURL: FormattedURL) {
+    private fun createQueue(host: String, hashedUrlPair: HashedUrlPair) {
         logger.info ("created queue with host: $host")
         jedis.lpush(DEFAULT_PATH, host)
 
-        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, formattedURL.value)
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        jedis.rpush(path, hashedUrlPair.value)
         communicationManager.requestCrawlerInitialization(host)
     }
 
-    override fun pullURL(host: String): FormattedURL {
+    override fun pullURL(host: String): HashedUrlPair {
         mutex.lock()
         try{
-            val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            return FormattedURL(jedis.lpop(path))
+            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+            return HashedUrlPair(jedis.lpop(path))
         } finally {
             mutex.unlock()
         }
     }
 
     fun isQueueEmpty(host: String): Boolean{
-        val path = storageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         val isEmpty = jedis.lrange(path, 0 , 1).size == 0
         if(isEmpty){
             deleteQueue(host)

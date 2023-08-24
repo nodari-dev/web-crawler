@@ -1,6 +1,6 @@
 package parser
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.regex.Pattern
@@ -49,7 +49,7 @@ class ParserUtilsTest {
     @Test
     fun `transforms list of string to list of FormattedURLs`(){
         val list = listOf("url1", "url2")
-        val expectedResult = listOf(FormattedURL(list[0]), FormattedURL(list[1]))
+        val expectedResult = listOf(HashedUrlPair(list[0]), HashedUrlPair(list[1]))
         val result = parserUtils.transformToFormattedURLs(list)
 
         Assertions.assertEquals(expectedResult, result)

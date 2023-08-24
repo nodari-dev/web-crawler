@@ -1,17 +1,16 @@
 package parser.urlparser
 
-import dto.FormattedURL
+import dto.HashedUrlPair
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import parser.urlparser.URLParser
 
 class URLParserTest {
     private val urlParser = URLParser()
 
     @Test
     fun `returns filtered urls from html`() {
-        val url1 = FormattedURL("http://www.host.com")
-        val url2 = FormattedURL("http://www.host1.com")
+        val url1 = HashedUrlPair("http://www.host.com")
+        val url2 = HashedUrlPair("http://www.host1.com")
         val expectedResult = listOf(url1, url2)
         val html = "<div>" +
                 "<a href='http://www.host.com'>link</a>" +
