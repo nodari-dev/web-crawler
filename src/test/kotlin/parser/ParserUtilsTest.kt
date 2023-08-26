@@ -13,17 +13,18 @@ class ParserUtilsTest {
         val html = """
             <html>
                 <body>
-                    <div>Item 1</div>
-                    <div>Item 2</div>
+                    <div><p>Item 1</p></div>
+                    <div><p>Item 2</p></div>
                     <div>Item 3</div>
                 </body>
             </html>
         """
 
         val pattern = Pattern.compile("""<div>(.*?)</div>""")
+        val removingPattern = GlobalPatterns.NESTED_TAGS
         val groupIndex = 1
         val expectedResult = listOf("Item 1", "Item 2", "Item 3")
-        val result = parserUtils.parseValues(html, pattern, groupIndex)
+        val result = parserUtils.parseValues(html, removingPattern, pattern, groupIndex)
 
         Assertions.assertEquals(expectedResult, result)
     }

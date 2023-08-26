@@ -54,7 +54,7 @@ class Crawler(
     }
 
     private fun fetchHTML(hashedUrlPair: HashedUrlPair) {
-        val html = fetcher.getPageContent(hashedUrlPair.url)
+        val html = fetcher.getPageHTML(hashedUrlPair.url)
         html?.let {
             val urls = urlParser.getURLs(html)
 //            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)

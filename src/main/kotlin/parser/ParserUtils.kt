@@ -4,28 +4,39 @@ import dto.HashedUrlPair
 import interfaces.IParserUtils
 import java.util.regex.Pattern
 
-class ParserUtils: IParserUtils {
+class ParserUtils : IParserUtils {
 
-    override fun parseValues(html: String, pattern: Pattern, groupIndex: Int): List<String>{
+    override fun parseValues(
+        html: String,
+        removingPattern: Pattern,
+        extractionPattern: Pattern,
+        groupIndex: Int
+    ): List<String> {
         val values = mutableListOf<String>()
 
-        val matcher = pattern.matcher(html)
-        while(matcher.find()){
-            values.add(matcher.group(groupIndex))
-        }
+        val matcher = extractionPattern.matcher(html)
 
+        while (matcher.find()) {
+            val clearText = removeTextFromRemovingPattern(removingPattern, matcher.group(groupIndex))
+            values.add(clearText.trim())
+        }
         return values
     }
 
-    override fun parseSingleValue(html: String, pattern: Pattern, groupIndex: Int): String?{
+    private fun removeTextFromRemovingPattern(removingPattern: Pattern, fondText: String): String{
+        val matcher = removingPattern.matcher(fondText)
+        return matcher.replaceAll("")
+    }
+
+    override fun parseSingleValue(html: String, pattern: Pattern, groupIndex: Int): String? {
         val matcher = pattern.matcher(html)
-        if(matcher.find()){
+        if (matcher.find()) {
             return matcher.group(groupIndex)
         }
         return null
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<HashedUrlPair>{
+    override fun transformToFormattedURLs(list: List<String>): List<HashedUrlPair> {
         return list.map { element -> HashedUrlPair(element) }
     }
 }

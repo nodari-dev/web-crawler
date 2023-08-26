@@ -15,7 +15,7 @@ class Fetcher : IFetcher {
     private val logger = KotlinLogging.logger("Fetcher")
     private val counter = Counter
 
-    override fun getPageContent(url: String): String? {
+    override fun getPageHTML(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)
         return parseDocument(url)
     }

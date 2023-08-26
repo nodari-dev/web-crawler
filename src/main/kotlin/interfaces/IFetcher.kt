@@ -1,5 +1,5 @@
 package interfaces
 
 interface IFetcher {
-    fun getPageContent(url: String): String?
+    fun getPageHTML(url: String): String?
 }

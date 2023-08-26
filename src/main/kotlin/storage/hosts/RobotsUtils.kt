@@ -16,6 +16,6 @@ class RobotsUtils : IRobotsUtils {
 
     private fun getRobotsTxtDocument(host: String): String? {
         val robotsURL = "$host/robots.txt"
-        return fetcher.getPageContent(robotsURL)
+        return fetcher.getPageHTML(robotsURL)
     }
 }

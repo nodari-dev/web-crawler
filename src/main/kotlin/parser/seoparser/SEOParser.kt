@@ -12,14 +12,27 @@ import parser.seoparser.SEOPatterns.META_OG_DESCRIPTION
 import parser.seoparser.SEOPatterns.META_OG_DESCRIPTION_GROUP_INDEX
 import parser.seoparser.SEOPatterns.META_OG_TITLE
 import parser.seoparser.SEOPatterns.META_OG_TITLE_GROUP_INDEX
+import parser.seoparser.SEOPatterns.PARAGRAPH
+import parser.seoparser.SEOPatterns.PARAGRAPH_GROUP_INDEX
 import parser.seoparser.SEOPatterns.TITLE
 import parser.seoparser.SEOPatterns.TITLE_GROUP_INDEX
+import parser.seoparser.SEOPatterns.HEADING
+import parser.seoparser.SEOPatterns.HEADING_GROUP_INDEX
+import parser.GlobalPatterns.NESTED_TAGS
 
 class SEOParser: ISEOParser {
     private val parserUtils = ParserUtils()
 
     override fun getTitle(document: String): String? {
         return parserUtils.parseSingleValue(document, TITLE, TITLE_GROUP_INDEX)
+    }
+
+    fun getHeadings(document: String): List<String>{
+        return parserUtils.parseValues(document, NESTED_TAGS, HEADING, HEADING_GROUP_INDEX)
+    }
+
+    fun getParagraphs(document: String): List<String>{
+        return parserUtils.parseValues(document, NESTED_TAGS, PARAGRAPH, PARAGRAPH_GROUP_INDEX)
     }
 
     override fun getMetaDescription(document: String): String? {
@@ -35,11 +48,11 @@ class SEOParser: ISEOParser {
     }
 
     override fun getImageAlts(document: String): List<String> {
-        return parserUtils.parseValues(document, IMAGE_ALT, IMAGE_ALT_GROUP_INDEX)
+        return parserUtils.parseValues(document, NESTED_TAGS, IMAGE_ALT, IMAGE_ALT_GROUP_INDEX)
     }
 
     override fun getMetaKeywords(document: String): List<String> {
-        val keywords = parserUtils.parseValues(document, META_KEYWORDS, META_KEYWORDS_GROUP_INDEX)
+        val keywords = parserUtils.parseValues(document, NESTED_TAGS, META_KEYWORDS, META_KEYWORDS_GROUP_INDEX)
         return if(keywords.isEmpty()) {
             emptyList()
         } else{
