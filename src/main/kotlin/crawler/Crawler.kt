@@ -6,35 +6,31 @@ import fetcher.Fetcher
 import interfaces.ICrawler
 import mu.KotlinLogging
 import parser.urlparser.URLParser
-import robots.RobotsUtils
+import storage.visitedurls.VisitedURLsStorage
 
 class Crawler(
     override val primaryHost: String,
 ) : ICrawler, Thread() {
     private val logger = KotlinLogging.logger("Crawler $primaryHost")
     private val fetcher = Fetcher()
-    private val robotsUtils = RobotsUtils()
     private val urlValidator = URLValidator()
     private val urlParser = URLParser()
-    private val communicationManager = CommunicationManager
-    private val counter = Counter
     private var canProceedCrawling = true
 
+    /**
+     * Starts crawler as a Thread
+     * Provides host data to hosts storage
+     * Crawler will be alive until canProceedCrawling is true
+     */
     override fun run() {
         logger.info("Started")
-        processRobotsTxt()
         while (canProceedCrawling) {
             communicateWithFrontier()
         }
     }
 
-    private fun processRobotsTxt() {
-        val disallowedURLs = robotsUtils.getDisallowedURLs(primaryHost)
-        communicationManager.addHostData(primaryHost, disallowedURLs)
-    }
-
     private fun communicateWithFrontier() {
-        if (communicationManager.checkFrontierQueueEmptiness(primaryHost)) {
+        if (CommunicationManager.isFrontierQueueEmpty(primaryHost)) {
             sendKillRequest()
         } else {
             processNewFrontierRecord()
@@ -42,23 +38,23 @@ class Crawler(
     }
 
     private fun sendKillRequest() {
-        communicationManager.requestCrawlerTermination(this)
+        CommunicationManager.requestCrawlerTermination(this)
         canProceedCrawling = false
         logger.info("Stopped")
         return
     }
 
     private fun processNewFrontierRecord() {
-        val pulledURL = communicationManager.requestFrontierURL(primaryHost)
+        val pulledURL = CommunicationManager.requestURLFromFrontier(primaryHost)
         if (urlValidator.canProcessInternalURL(primaryHost, pulledURL)) {
-            counter.increment()
-            communicationManager.addVisitedURL(pulledURL.getHash())
+            Counter.increment()
+            VisitedURLsStorage.add(pulledURL.getHash())
             fetchHTML(pulledURL)
         }
     }
 
     private fun fetchHTML(hashedUrlPair: HashedUrlPair) {
-        val html = fetcher.getPageContent(hashedUrlPair.value)
+        val html = fetcher.getPageContent(hashedUrlPair.url)
         html?.let {
             val urls = urlParser.getURLs(html)
 //            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
@@ -67,11 +63,11 @@ class Crawler(
     }
 
     private fun processFetchedURLs(urls: List<HashedUrlPair>) {
-        val uniqueFormattedURLs = urls.toSet()
-        uniqueFormattedURLs.forEach { formattedURL ->
-            val host = urlParser.getHostWithProtocol(formattedURL.value)
-            if (urlValidator.canProcessExternalURL(host, formattedURL)) {
-                communicationManager.sendNewURLToFrontier(host, formattedURL)
+        val uniqueHashedUrlPairs = urls.toSet()
+        uniqueHashedUrlPairs.forEach { hashedUrlPair ->
+            val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
+            if (urlValidator.canProcessExternalURL(host, hashedUrlPair)) {
+                CommunicationManager.sendURLToFrontierQueue(host, hashedUrlPair)
             }
         }
     }

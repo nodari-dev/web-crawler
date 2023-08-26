@@ -22,7 +22,7 @@ class URLValidator {
         }
 
         val isNew = visitedURLsStorage.doesNotExist(hashedUrlPair.getHash())
-        val isAllowed = hostsStorage.isURLAllowed(host, hashedUrlPair.value)
+        val isAllowed = hostsStorage.isURLAllowed(host, hashedUrlPair.url)
         return isNew && isAllowed
     }
 }

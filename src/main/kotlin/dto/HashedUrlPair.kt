@@ -1,13 +1,13 @@
 package dto
 
-data class HashedUrlPair(var value: String){
+data class HashedUrlPair(var url: String){
     init {
-        if(!value.endsWith("/")){
-            value = "$value/"
+        if(!url.endsWith("/")){
+            url = "$url/"
         }
     }
 
     fun getHash(): Int{
-        return value.hashCode()
+        return url.hashCode()
     }
 }

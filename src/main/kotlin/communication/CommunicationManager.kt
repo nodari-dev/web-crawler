@@ -1,12 +1,9 @@
 package communication
 
-import configuration.Configuration.CONTINUE_FROM_CACHED_DATA
 import crawler.CrawlersFactory
 import dto.HashedUrlPair
 import frontier.Frontier
 import interfaces.ICommunicationManager
-import storage.hosts.HostsStorage
-import storage.visitedurls.VisitedURLsStorage
 import parser.urlparser.URLParser
 import redis.RedisConnector
 
@@ -16,22 +13,13 @@ object CommunicationManager: ICommunicationManager {
     private val urlParser = URLParser()
     private val startingPoints = mutableListOf<String>()
     private val jedis = RedisConnector.getJedis()
-    private val visitedURLsStorage = VisitedURLsStorage
-    private val hostsStorage = HostsStorage
 
-    override fun start(){
-        if(CONTINUE_FROM_CACHED_DATA){
-            proceedWithExistingData()
-        } else{
-            startFromScratch()
-        }
-    }
-
-    private fun proceedWithExistingData(){
-        println("will be soon")
-    }
-
-    private fun startFromScratch(){
+    /**
+     * Sends starting points to frontier
+     * Flushes all data from redis
+     * @param seeds List of starting points
+     */
+    override fun startCrawling(seeds: List<String>){
         jedis.flushAll()
         startingPoints.forEach { seed ->
             val host = urlParser.getHostWithProtocol(seed)
@@ -39,35 +27,29 @@ object CommunicationManager: ICommunicationManager {
         }
     }
 
-    override fun addStartingPointURLs(seeds: List<String>) {
-        startingPoints.addAll(seeds)
-    }
-
+    /**
+     * CrawlersFactory
+     */
     override fun requestCrawlerTermination(crawler: Thread){
         crawlersFactory.killCrawler(crawler)
     }
 
     override fun requestCrawlerInitialization(host: String){
-        crawlersFactory.processQueue(host)
+        crawlersFactory.createCrawler(host)
     }
 
-    fun requestFrontierURL(host: String): HashedUrlPair{
+    /**
+     * Frontier
+     */
+    override fun requestURLFromFrontier(host: String): HashedUrlPair{
         return frontier.pullURL(host)
     }
 
-    fun checkFrontierQueueEmptiness(host: String): Boolean{
+    override fun isFrontierQueueEmpty(host: String): Boolean{
         return frontier.isQueueEmpty(host)
     }
 
-    fun sendNewURLToFrontier(host: String, hashedUrlPair: HashedUrlPair){
+    override fun sendURLToFrontierQueue(host: String, hashedUrlPair: HashedUrlPair){
         return frontier.updateOrCreateQueue(host, hashedUrlPair)
-    }
-
-    fun addVisitedURL(hash: Int){
-        visitedURLsStorage.add(hash)
-    }
-
-    fun addHostData(host: String, bannedURLs: List<HashedUrlPair>){
-        hostsStorage.provideHost(host, bannedURLs)
     }
 }

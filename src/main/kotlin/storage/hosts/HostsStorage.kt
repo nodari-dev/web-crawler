@@ -13,27 +13,33 @@ object HostsStorage: IHostsStorage {
     private val mutex = ReentrantLock()
     private val jedis = RedisConnector.getJedis()
     private val redisStorageUtils = RedisStorageUtils()
+    private val robotsUtils = RobotsUtils()
 
     init {
         jedis.set(HOSTS_KEY, HOSTS_LIST_KEY)
     }
 
-    override fun provideHost(host: String, bannedURLs: List<HashedUrlPair>){
+    override fun provideHost(host: String){
         if(isHostNew(host)){
-            createHost(host, bannedURLs)
+            createHost(host)
         }
     }
 
-    private fun createHost(host: String, bannedURLs: List<HashedUrlPair>){
+    private fun createHost(host: String){
         mutex.lock()
         try{
             jedis.lpush(DEFAULT_PATH, host)
-            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            bannedURLs.forEach{formattedURL ->
-                jedis.rpush(path, formattedURL.value)
-            }
+            setRobotsForHost(host)
         } finally {
             mutex.unlock()
+        }
+    }
+
+    private fun setRobotsForHost(host: String){
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+        val bannedURLs = robotsUtils.getDisallowedURLs(host)
+        bannedURLs.forEach{formattedURL ->
+            jedis.rpush(path, formattedURL.url)
         }
     }
 

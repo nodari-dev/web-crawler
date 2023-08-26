@@ -1,4 +1,4 @@
-package robots
+package storage.hosts
 
 import dto.HashedUrlPair
 import fetcher.Fetcher

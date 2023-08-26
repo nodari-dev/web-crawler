@@ -23,6 +23,11 @@ object Frontier: IFrontier{
         jedis.set(FRONTIER_KEY, QUEUES_KEY)
     }
 
+    /**
+     * Sends a new URL to the frontier queue for the specified host.
+     * @param host The host to which the URL belongs.
+     * @param hashedUrlPair The HashedUrlPair to be added to the queue.
+     */
     override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedUrlPair) {
         mutex.lock()
         try {
@@ -42,7 +47,7 @@ object Frontier: IFrontier{
 
     private fun updateQueue(host: String, hashedUrlPair: HashedUrlPair) {
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, hashedUrlPair.value)
+        jedis.rpush(path, hashedUrlPair.url)
     }
 
     private fun createQueue(host: String, hashedUrlPair: HashedUrlPair) {
@@ -50,10 +55,15 @@ object Frontier: IFrontier{
         jedis.lpush(DEFAULT_PATH, host)
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, hashedUrlPair.value)
+        jedis.rpush(path, hashedUrlPair.url)
         communicationManager.requestCrawlerInitialization(host)
     }
 
+    /**
+     * Requests a URL from the frontier for the specified host.
+     * @param host The host for which to request a URL.
+     * @return The pulled HashedUrlPair.
+     */
     override fun pullURL(host: String): HashedUrlPair {
         mutex.lock()
         try{
@@ -64,6 +74,11 @@ object Frontier: IFrontier{
         }
     }
 
+    /**
+     * Checks if the frontier queue for the specified host is empty.
+     * @param host The host for which to check the queue emptiness.
+     * @return `true` if the queue is empty, `false` otherwise.
+     */
     fun isQueueEmpty(host: String): Boolean{
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         val isEmpty = jedis.lrange(path, 0 , 1).size == 0
