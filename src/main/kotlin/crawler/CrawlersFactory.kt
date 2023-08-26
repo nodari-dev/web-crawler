@@ -21,7 +21,9 @@ object CrawlersFactory {
      */
     fun killCrawler(crawler: Thread) {
         activeCrawlers.remove(crawler)
-        generateNewCrawlers()
+        if(hostsToProcess.isNotEmpty()){
+            generateNewCrawlers()
+        }
     }
 
     private fun generateNewCrawlers() {

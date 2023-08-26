@@ -11,12 +11,10 @@ import redis.RedisConnector
 import storage.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
-
 object Frontier: IFrontier{
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
     private val redisStorageUtils = RedisStorageUtils()
-    private val communicationManager = CommunicationManager
     private val jedis = RedisConnector.getJedis()
 
     init {
@@ -56,7 +54,7 @@ object Frontier: IFrontier{
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, hashedUrlPair.url)
-        communicationManager.requestCrawlerInitialization(host)
+        CommunicationManager.requestCrawlerInitialization(host)
     }
 
     /**

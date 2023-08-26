@@ -4,15 +4,16 @@ import crawler.CrawlersFactory
 import dto.HashedUrlPair
 import frontier.Frontier
 import interfaces.ICommunicationManager
+import mu.KotlinLogging
 import parser.urlparser.URLParser
 import redis.RedisConnector
 
 object CommunicationManager: ICommunicationManager {
     private val frontier = Frontier
     private val crawlersFactory = CrawlersFactory
-    private val urlParser = URLParser()
-    private val startingPoints = mutableListOf<String>()
     private val jedis = RedisConnector.getJedis()
+    private val urlParser = URLParser()
+    private val logger = KotlinLogging.logger("CommunicationManager")
 
     /**
      * Sends starting points to frontier
@@ -20,10 +21,14 @@ object CommunicationManager: ICommunicationManager {
      * @param seeds List of starting points
      */
     override fun startCrawling(seeds: List<String>){
-        jedis.flushAll()
-        startingPoints.forEach { seed ->
-            val host = urlParser.getHostWithProtocol(seed)
-            frontier.updateOrCreateQueue(host, HashedUrlPair(seed))
+        if(seeds.isNotEmpty()){
+            jedis.flushAll()
+            seeds.forEach { seed ->
+                val host = urlParser.getHostWithProtocol(seed)
+                frontier.updateOrCreateQueue(host, HashedUrlPair(seed))
+            }
+        } else{
+            logger.error("Provide seed urls")
         }
     }
 
