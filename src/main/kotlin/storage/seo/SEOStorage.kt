@@ -1,6 +1,6 @@
 package storage.seo
 
-import analyzer.DataAnalyzer
+import analyzer.SEODataAnalyzer
 import interfaces.ISEOStorage
 import redis.RedisConnector
 import storage.RedisStorageUtils
@@ -10,7 +10,7 @@ import storage.seo.Configuration.SEO_LIST_KEY
 import java.util.concurrent.locks.ReentrantLock
 
 object SEOStorage: ISEOStorage{
-    private val dataAnalyzer = DataAnalyzer()
+    private val SEODataAnalyzer = SEODataAnalyzer()
     private val mutex = ReentrantLock()
     private val redisStorageUtils = RedisStorageUtils()
     private val jedis = RedisConnector.getJedis()

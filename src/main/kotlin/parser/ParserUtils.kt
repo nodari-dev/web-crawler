@@ -39,4 +39,9 @@ class ParserUtils : IParserUtils {
     override fun transformToFormattedURLs(list: List<String>): List<HashedUrlPair> {
         return list.map { element -> HashedUrlPair(element) }
     }
+
+    override fun isExisting(html: String, pattern: Pattern): Boolean {
+        val matcher = pattern.matcher(html.lowercase())
+        return matcher.groupCount() != 0
+    }
 }

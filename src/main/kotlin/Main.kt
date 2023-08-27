@@ -1,10 +1,10 @@
-import analyzer.DataAnalyzer
+import analyzer.SEODataAnalyzer
 import fetcher.Fetcher
 
 fun main() {
 //    CommunicationManager.startCrawling(listOf("https://ecospace.org.ua"))
-    val html = Fetcher().getPageHTML("https://ecospace.org.ua/sea")
+    val html = Fetcher().getPageHTML("https://magecloud.agency")
     if(html != null){
-        DataAnalyzer().test(html)
+        SEODataAnalyzer().test(html)
     }
 }

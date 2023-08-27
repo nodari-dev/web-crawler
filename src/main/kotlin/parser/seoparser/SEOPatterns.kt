@@ -26,6 +26,4 @@ object SEOPatterns {
 
     val PARAGRAPH: Pattern = Pattern.compile("<p>(.*?)<\\/p>")
     const val PARAGRAPH_GROUP_INDEX: Int = 1
-
-    val NESTED_TAGS: Pattern = Pattern.compile("<[^>]+>")
 }
