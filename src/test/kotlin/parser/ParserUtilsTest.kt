@@ -48,6 +48,23 @@ class ParserUtilsTest {
     }
 
     @Test
+    fun `parses and returns null in element is empty`() {
+        val html = """
+            <html>
+                <body>
+                    <p></p>
+                </body>
+            </html>
+        """
+
+        val pattern =  Pattern.compile("""<p>(.*?)</p>""")
+        val groupIndex = 1
+        val result = parserUtils.parseSingleValue(html, pattern, groupIndex)
+
+        Assertions.assertEquals(null, result)
+    }
+
+    @Test
     fun `transforms list of string to list of FormattedURLs`(){
         val list = listOf("url1", "url2")
         val expectedResult = listOf(HashedUrlPair(list[0]), HashedUrlPair(list[1]))

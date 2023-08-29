@@ -8,20 +8,26 @@ class SEODataAnalyzer : IDataAnalyzer {
     private val seoParser = SEOParser()
     private val keywordGenerator = KeywordGenerator()
 
-    fun generateSEOData(html: String, url: String): SEOContent{
+    fun generateSEOData(html: String, url: String): SEOContent?{
         val sentences = generateSentences(html)
         val keywords = keywordGenerator.generateKeywords(sentences)
-        return SEOContent(getTitle(html), getDescription(html), url, keywords)
+        return processSEOData(SEOContent(prepareTitle(html), prepareDescription(html), url, keywords))
     }
 
-    private fun getTitle(html: String): String?{
+    private fun processSEOData(seoContent: SEOContent): SEOContent? {
+        return if (seoContent.keywords.isEmpty()) {
+            null
+        } else seoContent
+    }
+
+    private fun prepareTitle(html: String): String?{
         val title = seoParser.getTitle(html)
         val ogTitle = seoParser.getOgTitle(html)
 
         return listOfNotNull(title, ogTitle).firstOrNull()
     }
 
-    private fun getDescription(html: String): String?{
+    private fun prepareDescription(html: String): String?{
         val metaDescription = seoParser.getMetaDescription(html)
         val ogMetaDescription = seoParser.getOMetaOgDescription(html)
 

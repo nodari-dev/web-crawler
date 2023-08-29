@@ -31,7 +31,9 @@ class ParserUtils : IParserUtils {
     override fun parseSingleValue(html: String, pattern: Pattern, groupIndex: Int): String? {
         val matcher = pattern.matcher(html)
         if (matcher.find()) {
-            return matcher.group(groupIndex)
+            return matcher.group(groupIndex).ifEmpty {
+                null
+            }
         }
         return null
     }
