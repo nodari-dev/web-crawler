@@ -2,7 +2,7 @@ package interfaces
 
 import dto.HashedUrlPair
 
-interface ICommunicationManager {
+interface ICrawlingManager {
     fun startCrawling(seeds: List<String>)
     fun requestCrawlerInitialization(host: String)
     fun requestCrawlerTermination(crawler: Thread)

@@ -1,5 +1,6 @@
 package analyzer
 
+import dataExtractor.analyzer.SEODataAnalyzer
 import dto.SEOContent
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -29,8 +30,7 @@ class SEODataAnalyzerTest {
     @Test
     fun `returns null if keywords are empty`() {
         val result = seoDataAnalyzer.generateSEOData(
-            MockedData.emptyHTML, "someurl.com" +
-                    ""
+            MockedData.emptyHTML, "someurl.com"
         )
         Assertions.assertEquals(null, result)
     }

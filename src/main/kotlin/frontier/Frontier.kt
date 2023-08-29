@@ -1,6 +1,6 @@
 package frontier
 
-import communication.CommunicationManager
+import crawlingManager.CrawlingManager
 import dto.HashedUrlPair
 import frontier.Configuration.DEFAULT_PATH
 import frontier.Configuration.FRONTIER_KEY
@@ -12,6 +12,7 @@ import storage.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier{
+    private val crawlingManager = CrawlingManager
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
     private val redisStorageUtils = RedisStorageUtils()
@@ -54,7 +55,7 @@ object Frontier: IFrontier{
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, hashedUrlPair.url)
-        CommunicationManager.requestCrawlerInitialization(host)
+        crawlingManager.requestCrawlerInitialization(host)
     }
 
     /**
@@ -74,16 +75,22 @@ object Frontier: IFrontier{
 
     /**
      * Checks if the frontier queue for the specified host is empty.
+     * Deletes queue if it is empty
      * @param host The host for which to check the queue emptiness.
      * @return `true` if the queue is empty, `false` otherwise.
      */
     fun isQueueEmpty(host: String): Boolean{
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        val isEmpty = jedis.lrange(path, 0 , 1).size == 0
-        if(isEmpty){
-            deleteQueue(host)
+        mutex.lock()
+        try{
+            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
+            val isEmpty = jedis.lrange(path, 0 , 1).size == 0
+            if(isEmpty){
+                deleteQueue(host)
+            }
+            return isEmpty
+        } finally {
+            mutex.unlock()
         }
-        return isEmpty
     }
 
     private fun deleteQueue(host: String){

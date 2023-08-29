@@ -1,4 +1,4 @@
-package analyzer
+package dataExtractor.analyzer
 
 import mu.KotlinLogging
 import parser.contentparser.ContentParser

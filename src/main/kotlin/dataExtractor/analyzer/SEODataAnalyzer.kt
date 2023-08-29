@@ -1,4 +1,4 @@
-package analyzer
+package dataExtractor.analyzer
 
 import dto.SEOContent
 import interfaces.IDataAnalyzer

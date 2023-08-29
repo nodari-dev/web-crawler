@@ -1,5 +1,5 @@
-import communication.CommunicationManager
+import crawlingManager.CrawlingManager
 
 fun main() {
-    CommunicationManager.startCrawling(listOf("https://ecospace.org.ua"))
+    CrawlingManager.startCrawling(listOf("https://ecospace.org.ua"))
 }

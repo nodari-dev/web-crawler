@@ -1,6 +1,6 @@
 package crawler
 
-import communication.CommunicationManager
+import crawlingManager.CrawlingManager
 import dto.HashedUrlPair
 import fetcher.Fetcher
 import interfaces.ICrawler
@@ -15,6 +15,7 @@ class Crawler(
     private val fetcher = Fetcher()
     private val urlValidator = URLValidator()
     private val urlParser = URLParser()
+    private val crawlingManager = CrawlingManager
     private var canProceedCrawling = true
 
     /**
@@ -30,7 +31,7 @@ class Crawler(
     }
 
     private fun communicateWithFrontier() {
-        if (CommunicationManager.isFrontierQueueEmpty(primaryHost)) {
+        if (crawlingManager.isFrontierQueueEmpty(primaryHost)) {
             sendKillRequest()
         } else {
             processNewFrontierRecord()
@@ -38,14 +39,14 @@ class Crawler(
     }
 
     private fun sendKillRequest() {
-        CommunicationManager.requestCrawlerTermination(this)
+        crawlingManager.requestCrawlerTermination(this)
         canProceedCrawling = false
         logger.info("Stopped")
         return
     }
 
     private fun processNewFrontierRecord() {
-        val pulledURL = CommunicationManager.requestURLFromFrontier(primaryHost)
+        val pulledURL = crawlingManager.requestURLFromFrontier(primaryHost)
         if (urlValidator.canProcessInternalURL(primaryHost, pulledURL)) {
             Counter.increment()
             VisitedURLsStorage.add(pulledURL.getHash())
@@ -56,9 +57,8 @@ class Crawler(
     private fun fetchHTML(hashedUrlPair: HashedUrlPair) {
         val html = fetcher.getPageHTML(hashedUrlPair.url)
         html?.let {
-            val urls = urlParser.getURLs(html)
-//            SEOStorage.updateOrCreateSEORecord(primaryHost, url, html)
-            processFetchedURLs(urls)
+            crawlingManager.extractSEOData(html, hashedUrlPair.url)
+            processFetchedURLs(urlParser.getURLs(html))
         }
     }
 
@@ -67,7 +67,7 @@ class Crawler(
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
             if (urlValidator.canProcessExternalURL(host, hashedUrlPair)) {
-                CommunicationManager.sendURLToFrontierQueue(host, hashedUrlPair)
+                crawlingManager.sendURLToFrontierQueue(host, hashedUrlPair)
             }
         }
     }

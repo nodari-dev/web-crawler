@@ -1,19 +1,21 @@
-package communication
+package crawlingManager
 
 import crawler.CrawlersFactory
+import dataExtractor.DataExtractor
 import dto.HashedUrlPair
 import frontier.Frontier
-import interfaces.ICommunicationManager
+import interfaces.ICrawlingManager
 import mu.KotlinLogging
 import parser.urlparser.URLParser
 import redis.RedisConnector
 
-object CommunicationManager: ICommunicationManager {
+object CrawlingManager: ICrawlingManager {
     private val frontier = Frontier
     private val crawlersFactory = CrawlersFactory
     private val jedis = RedisConnector.getJedis()
     private val urlParser = URLParser()
-    private val logger = KotlinLogging.logger("CommunicationManager")
+    private val dataExtractor = DataExtractor()
+    private val logger = KotlinLogging.logger("CrawlingManager")
 
     /**
      * Sends starting points to frontier
@@ -21,8 +23,8 @@ object CommunicationManager: ICommunicationManager {
      * @param seeds List of starting points
      */
     override fun startCrawling(seeds: List<String>){
+        jedis.flushAll()
         if(seeds.isNotEmpty()){
-            jedis.flushAll()
             seeds.forEach { seed ->
                 val host = urlParser.getHostWithProtocol(seed)
                 frontier.updateOrCreateQueue(host, HashedUrlPair(seed))
@@ -56,5 +58,9 @@ object CommunicationManager: ICommunicationManager {
 
     override fun sendURLToFrontierQueue(host: String, hashedUrlPair: HashedUrlPair){
         return frontier.updateOrCreateQueue(host, hashedUrlPair)
+    }
+
+    fun extractSEOData(html: String, url: String){
+        dataExtractor.extractSEODataToFile(html, url)
     }
 }
