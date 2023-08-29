@@ -42,6 +42,6 @@ class ParserUtils : IParserUtils {
 
     override fun isExisting(html: String, pattern: Pattern): Boolean {
         val matcher = pattern.matcher(html.lowercase())
-        return matcher.groupCount() != 0
+        return matcher.find()
     }
 }
