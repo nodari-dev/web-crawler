@@ -1,14 +1,14 @@
 package dataExtractor.analyzer
 
 import dto.SEOContent
-import interfaces.IDataAnalyzer
+import interfaces.ISEODataAnalyzer
 import parser.seoparser.SEOParser
 
-class SEODataAnalyzer : IDataAnalyzer {
+class SEODataAnalyzer : ISEODataAnalyzer {
     private val seoParser = SEOParser()
     private val keywordGenerator = KeywordGenerator()
 
-    fun generateSEOData(html: String, url: String): SEOContent?{
+    override fun generateSEOData(html: String, url: String): SEOContent?{
         val sentences = generateSentences(html)
         val keywords = keywordGenerator.generateKeywords(sentences)
         return processSEOData(SEOContent(prepareTitle(html), prepareDescription(html), url, keywords))

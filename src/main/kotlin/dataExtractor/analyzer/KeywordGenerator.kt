@@ -1,23 +1,25 @@
 package dataExtractor.analyzer
 
+import interfaces.IKeywordGenerator
 import mu.KotlinLogging
 import parser.contentparser.ContentParser
 
-class KeywordGenerator {
+class KeywordGenerator : IKeywordGenerator {
     private val contentParser = ContentParser()
     private val logger = KotlinLogging.logger("KeywordGenerator")
 
-    fun generateKeywords(sentences: List<String>): Map<String, Int> {
-        return when(sentences.isEmpty()){
+    override fun generateKeywords(sentences: List<String>): Map<String, Int> {
+        return when (sentences.isEmpty()) {
             true -> processEmptySentences()
             else -> processSentences(sentences)
         }
     }
 
-    private fun processEmptySentences(): Map<String, Int>{
+    private fun processEmptySentences(): Map<String, Int> {
         logger.error("no content to generate keywords from")
         return emptyMap()
     }
+
     private fun processSentences(sentences: List<String>): Map<String, Int> {
         val keywords = HashMap<String, Int>()
         for (sentence in sentences) {
@@ -26,7 +28,7 @@ class KeywordGenerator {
                 if (canProcessWord(word)) {
                     val formattedWord = word.trim().lowercase()
                     keywords[formattedWord] =
-                        keywords.getOrDefault(formattedWord, 0) + getNumberForPriority(formattedWord)
+                        keywords.getOrDefault(formattedWord, 0) + generatePriorityNumber(formattedWord)
                 }
             }
         }
@@ -34,11 +36,11 @@ class KeywordGenerator {
         return getSortedKeywordsByFrequency(keywords)
     }
 
-    private fun canProcessWord(word: String): Boolean{
+    private fun canProcessWord(word: String): Boolean {
         return word.isNotBlank() || word.isNotEmpty()
     }
 
-    private fun getNumberForPriority(word: String): Int {
+    private fun generatePriorityNumber(word: String): Int {
         return if (contentParser.isCommonContent(word)) 0 else 1
     }
 

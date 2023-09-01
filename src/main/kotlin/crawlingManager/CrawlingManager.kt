@@ -60,7 +60,7 @@ object CrawlingManager: ICrawlingManager {
         return frontier.updateOrCreateQueue(host, hashedUrlPair)
     }
 
-    fun extractSEOData(html: String, url: String){
+    override fun extractSEOData(html: String, url: String){
         dataExtractor.extractSEODataToFile(html, url)
     }
 }
