@@ -25,11 +25,15 @@ class FrontierTest {
     private val mockCrawlersFactory = mock(CrawlersFactory::class.java)
     private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
 
+
+    init{
+        frontier.crawlersFactory = mockCrawlersFactory
+        frontier.logger = mockLogger
+    }
+
     @BeforeEach
     fun `flush all`() {
         jedis.flushAll()
-        frontier.crawlersFactory = mockCrawlersFactory
-        frontier.logger = mockLogger
     }
 
     @Test

@@ -12,30 +12,37 @@ object HostsStorage: IHostsStorage {
     private val mutex = ReentrantLock()
     private val jedis = RedisConnector.getJedis()
     private val redisStorageUtils = RedisStorageUtils()
-    private val robotsUtils = RobotsUtils()
+    var robotsUtils = RobotsUtils()
 
     init {
         jedis.set(HOSTS_KEY, HOSTS_LIST_KEY)
     }
 
     override fun provideHost(host: String){
-        if(isHostNew(host)){
-            createHost(host)
-        }
-    }
-
-    override fun deleteHost(host: String){
-        jedis.lrem(DEFAULT_PATH, 1 , host)
-    }
-
-    private fun createHost(host: String){
         mutex.lock()
         try{
-            jedis.lpush(DEFAULT_PATH, host)
-            setRobotsForHost(host)
+            if(isHostNew(host)){
+                createHost(host)
+            }
         } finally {
             mutex.unlock()
         }
+    }
+
+    private fun createHost(host: String){
+        jedis.lpush(DEFAULT_PATH, host)
+        setRobotsForHost(host)
+    }
+
+    override fun deleteHost(host: String){
+        mutex.lock()
+        try{
+            jedis.del(redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host)))
+            jedis.lrem(DEFAULT_PATH, 1 , host)
+        } finally {
+            mutex.unlock()
+        }
+
     }
 
     private fun setRobotsForHost(host: String){
@@ -54,7 +61,7 @@ object HostsStorage: IHostsStorage {
             }
 
             val bannedURLs = getBannedURls(host)
-            return bannedURLs.any{bannedURL -> !url.contains(bannedURL) }
+            return bannedURLs.any{bannedURL -> !url.contains(bannedURL, true) }
 
         } finally {
             mutex.unlock()
