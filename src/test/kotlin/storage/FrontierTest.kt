@@ -102,5 +102,7 @@ class FrontierTest {
         frontier.deleteQueue(anotherHost)
         Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
         Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
+
+        verify(mockLogger).info("removed queue with host: $anotherHost")
     }
 }
