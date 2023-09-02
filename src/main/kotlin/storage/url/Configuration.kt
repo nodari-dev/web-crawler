@@ -1,4 +1,4 @@
-package storage.visitedurls
+package storage.url
 
 object Configuration {
     const val VISITED_KEY: String = "visited"

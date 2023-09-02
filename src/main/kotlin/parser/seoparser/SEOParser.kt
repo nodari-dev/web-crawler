@@ -39,11 +39,11 @@ class SEOParser: ISEOParser {
         return parserUtils.parseSingleValue(document, META_OG_DESCRIPTION, META_OG_DESCRIPTION_GROUP_INDEX)
     }
 
-    fun getHeadings(document: String): List<String>{
+    override fun getHeadings(document: String): List<String>{
         return parserUtils.parseValues(document, NESTED_TAGS, HEADING, HEADING_GROUP_INDEX)
     }
 
-    fun getParagraphs(document: String): List<String>{
+    override fun getParagraphs(document: String): List<String>{
         return parserUtils.parseValues(document, NESTED_TAGS, PARAGRAPH, PARAGRAPH_GROUP_INDEX)
     }
 
@@ -58,9 +58,5 @@ class SEOParser: ISEOParser {
         } else{
             keywords[0].split(",").map { it.trim() }
         }
-    }
-
-    fun getSEOContent(){
-
     }
 }

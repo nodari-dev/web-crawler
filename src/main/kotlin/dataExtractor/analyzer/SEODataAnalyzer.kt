@@ -8,6 +8,12 @@ class SEODataAnalyzer : ISEODataAnalyzer {
     private val seoParser = SEOParser()
     private val keywordGenerator = KeywordGenerator()
 
+    /**
+     * Generates SEO data from HTML content and a URL
+     * @param html The HTML content to analyze
+     * @param url The URL associated with the HTML content
+     * @return An SEOContent object containing SEO data, or null if no data could be generated
+     */
     override fun generateSEOData(html: String, url: String): SEOContent?{
         val sentences = generateSentences(html)
         val keywords = keywordGenerator.generateKeywords(sentences)
@@ -45,7 +51,6 @@ class SEODataAnalyzer : ISEODataAnalyzer {
         val alts = seoParser.getImageAlts(html)
 
         val notNullContent = listOfNotNull(title, ogTitle, metaDescription, ogMetaDescription)
-
         return listOf(notNullContent, metaKeywords, headings, paragraphs, alts).flatten()
     }
 }

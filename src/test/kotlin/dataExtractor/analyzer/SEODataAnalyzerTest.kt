@@ -1,6 +1,6 @@
-package analyzer
+package dataExtractor.analyzer
 
-import dataExtractor.analyzer.SEODataAnalyzer
+import dataExtractor.MockedData
 import dto.SEOContent
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

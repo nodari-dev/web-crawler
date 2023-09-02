@@ -8,6 +8,11 @@ class KeywordGenerator : IKeywordGenerator {
     private val contentParser = ContentParser()
     private val logger = KotlinLogging.logger("KeywordGenerator")
 
+    /**
+     * Generates keywords from a list of sentences.
+     * @param sentences The list of sentences to analyze.
+     * @return A map containing keywords and their associated frequencies.
+     */
     override fun generateKeywords(sentences: List<String>): Map<String, Int> {
         return when (sentences.isEmpty()) {
             true -> processEmptySentences()

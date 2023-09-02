@@ -1,6 +1,5 @@
 package storage.hosts
 
-import dto.HashedUrlPair
 import interfaces.IHostsStorage
 import redis.RedisConnector
 import storage.RedisStorageUtils
@@ -23,6 +22,10 @@ object HostsStorage: IHostsStorage {
         if(isHostNew(host)){
             createHost(host)
         }
+    }
+
+    override fun deleteHost(host: String){
+        jedis.lrem(DEFAULT_PATH, 1 , host)
     }
 
     private fun createHost(host: String){

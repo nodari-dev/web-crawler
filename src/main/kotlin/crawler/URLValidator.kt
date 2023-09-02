@@ -1,22 +1,20 @@
 package crawler
 
 import dto.HashedUrlPair
+import interfaces.IURLValidator
 import storage.hosts.HostsStorage
-import storage.visitedurls.VisitedURLsStorage
+import storage.url.URLStorage
 
-class URLValidator {
+class URLValidator: IURLValidator {
     private val hostsStorage = HostsStorage
-    private val visitedURLsStorage = VisitedURLsStorage
+    private val visitedURLsStorage = URLStorage
 
-    fun canProcessInternalURL(host: String, hashedUrlPair: HashedUrlPair): Boolean{
-        return isURLValid(host, hashedUrlPair)
-    }
-
-    fun canProcessExternalURL(host: String, hashedUrlPair: HashedUrlPair?): Boolean{
-        return isURLValid(host, hashedUrlPair)
-    }
-
-    private fun isURLValid(host: String, hashedUrlPair: HashedUrlPair?): Boolean{
+    /**
+     * Checks if URL can be processed by crawler
+     * @param host to call hostsStorage
+     * @param hashedUrlPair the actual URL with hash to check if it was visited or was banned by robots.txt
+     */
+    override fun canProcessURL(host: String, hashedUrlPair: HashedUrlPair?): Boolean{
         if(hashedUrlPair == null){
             return false
         }

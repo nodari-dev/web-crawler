@@ -1,4 +1,4 @@
-package frontier
+package storage.frontier
 
 class Prioritizer {
 

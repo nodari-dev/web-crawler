@@ -7,4 +7,6 @@ interface ISEOParser {
     fun getOMetaOgDescription(document: String): String?
     fun getMetaKeywords(document: String): List<String>
     fun getImageAlts(document: String): List<String>
+    fun getHeadings(document: String): List<String>
+    fun getParagraphs(document: String): List<String>
 }

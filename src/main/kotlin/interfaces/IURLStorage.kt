@@ -1,6 +1,6 @@
 package interfaces
 
-interface IURLHashStorage {
-    fun add(hash: Int)
+interface IURLStorage {
+    fun provideURL(hash: Int)
     fun doesNotExist(hash: Int): Boolean
 }

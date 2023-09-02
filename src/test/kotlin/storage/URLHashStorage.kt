@@ -1,19 +1,18 @@
 package storage
 
-import storage.visitedurls.VisitedURLsStorage
+import storage.url.URLStorage
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class VisitedURLsTest {
 
-    private val urlHashStorage = VisitedURLsStorage
+    private val urlHashStorage = URLStorage
 
     @Test
     fun `adds new hash and allows to check if it exist`(){
         val url = "test"
         val hash = url.hashCode()
-        urlHashStorage.add(hash)
+        urlHashStorage.provideURL(hash)
 
         val result = urlHashStorage.doesNotExist(hash)
         Assertions.assertEquals(false, result)

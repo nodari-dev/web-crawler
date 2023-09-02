@@ -7,7 +7,7 @@ import parser.contentparser.ContentPatterns.COMMON_WORDS
 class ContentParser: IContentParser {
     private val parserUtils = ParserUtils()
 
-    override fun isCommonContent(html: String): Boolean {
-        return parserUtils.isExisting(html, COMMON_WORDS)
+    override fun isCommonContent(content: String): Boolean {
+        return parserUtils.isExisting(content, COMMON_WORDS)
     }
 }

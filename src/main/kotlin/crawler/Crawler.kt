@@ -6,7 +6,9 @@ import fetcher.Fetcher
 import interfaces.ICrawler
 import mu.KotlinLogging
 import parser.urlparser.URLParser
-import storage.visitedurls.VisitedURLsStorage
+import storage.frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 
 class Crawler(
     override val primaryHost: String,
@@ -16,6 +18,10 @@ class Crawler(
     private val urlValidator = URLValidator()
     private val urlParser = URLParser()
     private val crawlingManager = CrawlingManager
+    private val crawlersFactory = CrawlersFactory
+    private val hostsStorage = HostsStorage
+    private val urlStorage = URLStorage
+    private val frontier = Frontier
     private var canProceedCrawling = true
 
     /**
@@ -31,7 +37,7 @@ class Crawler(
     }
 
     private fun communicateWithFrontier() {
-        if (crawlingManager.isFrontierQueueEmpty(primaryHost)) {
+        if (frontier.isQueueEmpty(primaryHost)) {
             sendKillRequest()
         } else {
             processNewFrontierRecord()
@@ -39,35 +45,40 @@ class Crawler(
     }
 
     private fun sendKillRequest() {
-        crawlingManager.requestCrawlerTermination(this)
+        crawlersFactory.removeTerminatedCrawler(this)
+        deleteHostRelatedData()
         canProceedCrawling = false
         logger.info("Stopped")
         return
     }
 
+    private fun deleteHostRelatedData(){
+        hostsStorage.deleteHost(primaryHost)
+        frontier.deleteQueue(primaryHost)
+    }
+
     private fun processNewFrontierRecord() {
-        val pulledURL = crawlingManager.requestURLFromFrontier(primaryHost)
-        if (urlValidator.canProcessInternalURL(primaryHost, pulledURL)) {
-            Counter.increment()
-            VisitedURLsStorage.add(pulledURL.getHash())
-            fetchHTML(pulledURL)
+        val pulledURL = frontier.pullURL(primaryHost)
+        if (urlValidator.canProcessURL(primaryHost, pulledURL)) {
+            urlStorage.provideURL(pulledURL.getHash())
+            val html = fetcher.getPageHTML(pulledURL.url)
+            processHTML(html, pulledURL)
         }
     }
 
-    private fun fetchHTML(hashedUrlPair: HashedUrlPair) {
-        val html = fetcher.getPageHTML(hashedUrlPair.url)
+    private fun processHTML(html: String?, pulledURL: HashedUrlPair) {
         html?.let {
-            crawlingManager.extractSEOData(html, hashedUrlPair.url)
-            processFetchedURLs(urlParser.getURLs(html))
+            crawlingManager.extractSEOData(html, pulledURL.url)
+            processChildURLs(urlParser.getURLs(html))
         }
     }
 
-    private fun processFetchedURLs(urls: List<HashedUrlPair>) {
+    private fun processChildURLs(urls: List<HashedUrlPair>) {
         val uniqueHashedUrlPairs = urls.toSet()
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
-            if (urlValidator.canProcessExternalURL(host, hashedUrlPair)) {
-                crawlingManager.sendURLToFrontierQueue(host, hashedUrlPair)
+            if (urlValidator.canProcessURL(host, hashedUrlPair)) {
+                frontier.updateOrCreateQueue(host, hashedUrlPair)
             }
         }
     }

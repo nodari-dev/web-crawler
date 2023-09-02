@@ -1,13 +1,13 @@
-package storage.visitedurls
+package storage.url
 
-import interfaces.IURLHashStorage
+import interfaces.IURLStorage
 import redis.RedisConnector
-import storage.visitedurls.Configuration.DEFAULT_PATH
-import storage.visitedurls.Configuration.VISITED_KEY
-import storage.visitedurls.Configuration.VISITED_URLS_LIST_KEY
+import storage.url.Configuration.DEFAULT_PATH
+import storage.url.Configuration.VISITED_KEY
+import storage.url.Configuration.VISITED_URLS_LIST_KEY
 import java.util.concurrent.locks.ReentrantLock
 
-object VisitedURLsStorage: IURLHashStorage{
+object URLStorage: IURLStorage{
     private val mutex = ReentrantLock()
     private val jedis = RedisConnector.getJedis()
 
@@ -15,7 +15,7 @@ object VisitedURLsStorage: IURLHashStorage{
         jedis.set(VISITED_KEY, VISITED_URLS_LIST_KEY)
     }
 
-    override fun add(hash: Int){
+    override fun provideURL(hash: Int){
         mutex.lock()
         try{
             jedis.rpush(DEFAULT_PATH, hash.toString())

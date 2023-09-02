@@ -1,5 +1,5 @@
 package interfaces
 
 interface IContentParser {
-    fun isCommonContent(html: String): Boolean
+    fun isCommonContent(content: String): Boolean
 }

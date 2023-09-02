@@ -12,7 +12,7 @@ val postgresVersion = "42.5.1"
 val jooqVersion = "3.15.3"
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.9.10"
     application
     id("org.flywaydb.flyway") version "9.11.0"
 //    id("nu.studer.jooq") version "6.0.1"
@@ -27,14 +27,14 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.16.1")
     implementation("org.flywaydb:flyway-core:9.11.0")
     implementation("org.postgresql:postgresql:$postgresVersion")
-//    jooqGenerator("org.postgresql:postgresql:$postgresVersion")
 //    api("org.jooq:jooq:$jooqVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("org.slf4j:slf4j-simple:1.7.9")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("redis.clients:jedis:4.3.1")
 
-    testImplementation ("org.mockito:mockito-core:3.+")
+    testImplementation ("org.mockito:mockito-core:2.7.5")
+    testImplementation ("org.mockito:mockito-inline:2.13.0")
     testImplementation(kotlin("test"))
 }
 

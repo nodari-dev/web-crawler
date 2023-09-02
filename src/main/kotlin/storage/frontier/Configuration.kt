@@ -1,4 +1,4 @@
-package frontier
+package storage.frontier
 
 object Configuration {
     const val FRONTIER_KEY: String = "frontier"

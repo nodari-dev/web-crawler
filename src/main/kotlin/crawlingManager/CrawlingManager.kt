@@ -1,9 +1,9 @@
 package crawlingManager
 
-import crawler.CrawlersFactory
+import configuration.Configuration.SAVE_FILE_LOCATION
 import dataExtractor.DataExtractor
 import dto.HashedUrlPair
-import frontier.Frontier
+import storage.frontier.Frontier
 import interfaces.ICrawlingManager
 import mu.KotlinLogging
 import parser.urlparser.URLParser
@@ -11,7 +11,6 @@ import redis.RedisConnector
 
 object CrawlingManager: ICrawlingManager {
     private val frontier = Frontier
-    private val crawlersFactory = CrawlersFactory
     private val jedis = RedisConnector.getJedis()
     private val urlParser = URLParser()
     private val dataExtractor = DataExtractor()
@@ -30,37 +29,16 @@ object CrawlingManager: ICrawlingManager {
                 frontier.updateOrCreateQueue(host, HashedUrlPair(seed))
             }
         } else{
-            logger.error("Provide seed urls")
+            logger.error("No seed urls provided")
         }
     }
 
     /**
-     * CrawlersFactory
+     * Calls data extractor to save txt file
+     * @param html to generate seo data from
+     * @param url to specific page
      */
-    override fun requestCrawlerTermination(crawler: Thread){
-        crawlersFactory.killCrawler(crawler)
-    }
-
-    override fun requestCrawlerInitialization(host: String){
-        crawlersFactory.createCrawler(host)
-    }
-
-    /**
-     * Frontier
-     */
-    override fun requestURLFromFrontier(host: String): HashedUrlPair{
-        return frontier.pullURL(host)
-    }
-
-    override fun isFrontierQueueEmpty(host: String): Boolean{
-        return frontier.isQueueEmpty(host)
-    }
-
-    override fun sendURLToFrontierQueue(host: String, hashedUrlPair: HashedUrlPair){
-        return frontier.updateOrCreateQueue(host, hashedUrlPair)
-    }
-
-    override fun extractSEOData(html: String, url: String){
-        dataExtractor.extractSEODataToFile(html, url)
+    override fun extractSEOData(html: String, url: String) {
+        dataExtractor.extractSEODataToFile(html, url, SAVE_FILE_LOCATION)
     }
 }

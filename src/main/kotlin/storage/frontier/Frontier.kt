@@ -1,10 +1,10 @@
-package frontier
+package storage.frontier
 
-import crawlingManager.CrawlingManager
+import crawler.CrawlersFactory
 import dto.HashedUrlPair
-import frontier.Configuration.DEFAULT_PATH
-import frontier.Configuration.FRONTIER_KEY
-import frontier.Configuration.QUEUES_KEY
+import storage.frontier.Configuration.DEFAULT_PATH
+import storage.frontier.Configuration.FRONTIER_KEY
+import storage.frontier.Configuration.QUEUES_KEY
 import interfaces.IFrontier
 import mu.KotlinLogging
 import redis.RedisConnector
@@ -12,7 +12,7 @@ import storage.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier{
-    private val crawlingManager = CrawlingManager
+    private val crawlersFactory = CrawlersFactory
     private val mutex = ReentrantLock()
     private val logger = KotlinLogging.logger("Frontier")
     private val redisStorageUtils = RedisStorageUtils()
@@ -55,7 +55,7 @@ object Frontier: IFrontier{
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, hashedUrlPair.url)
-        crawlingManager.requestCrawlerInitialization(host)
+        crawlersFactory.requestCrawlerInitialization(host)
     }
 
     /**
@@ -75,26 +75,27 @@ object Frontier: IFrontier{
 
     /**
      * Checks if the frontier queue for the specified host is empty.
-     * Deletes queue if it is empty
      * @param host The host for which to check the queue emptiness.
      * @return `true` if the queue is empty, `false` otherwise.
      */
-    fun isQueueEmpty(host: String): Boolean{
+    override fun isQueueEmpty(host: String): Boolean{
         mutex.lock()
-        try{
+        try {
             val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            val isEmpty = jedis.lrange(path, 0 , 1).size == 0
-            if(isEmpty){
-                deleteQueue(host)
-            }
-            return isEmpty
+            return jedis.lrange(path, 0, 1).size == 0
         } finally {
             mutex.unlock()
         }
     }
 
-    private fun deleteQueue(host: String){
-        logger.info("removed queue with host: $host")
-        jedis.lrem(DEFAULT_PATH, 1 , host)
+    override fun deleteQueue(host: String){
+        mutex.lock()
+        try {
+            logger.info("removed queue with host: $host")
+            jedis.del(redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host)))
+            jedis.lrem(DEFAULT_PATH, 1 , host)
+        } finally {
+            mutex.unlock()
+        }
     }
 }

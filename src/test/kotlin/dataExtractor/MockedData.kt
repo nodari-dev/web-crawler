@@ -1,4 +1,4 @@
-package analyzer
+package dataExtractor
 
 object MockedData {
     const val title = "Simple HTML Example"
@@ -13,7 +13,7 @@ object MockedData {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>${title}</title>
+            <title>$title</title>
             <meta name="description" content="$metaDescription">
             <meta name="keywords" content="$keywords">
         </head>
