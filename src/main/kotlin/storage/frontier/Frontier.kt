@@ -12,11 +12,11 @@ import storage.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier{
-    private val crawlersFactory = CrawlersFactory
     private val mutex = ReentrantLock()
-    private val logger = KotlinLogging.logger("Frontier")
     private val redisStorageUtils = RedisStorageUtils()
     private val jedis = RedisConnector.getJedis()
+    var logger = KotlinLogging.logger("Frontier")
+    var crawlersFactory = CrawlersFactory
 
     init {
         jedis.set(FRONTIER_KEY, QUEUES_KEY)

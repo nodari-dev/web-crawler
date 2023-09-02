@@ -2,6 +2,7 @@ package storage
 
 import crawler.CrawlersFactory
 import dto.HashedUrlPair
+import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,17 +22,19 @@ class FrontierTest {
     private val anotherHost = "https://hell.com"
     private val anotherUrl = HashedUrlPair("$anotherHost/hello")
 
-
-    private lateinit var crawlersFactory: CrawlersFactory
+    private val mockCrawlersFactory = mock(CrawlersFactory::class.java)
+    private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
 
     @BeforeEach
     fun `flush all`() {
-        crawlersFactory = mock(CrawlersFactory::class.java)
         jedis.flushAll()
+        frontier.crawlersFactory = mockCrawlersFactory
+        frontier.logger = mockLogger
     }
 
     @Test
     fun `creates queue and adds url`() {
+
         frontier.updateOrCreateQueue(host, hashedUrlPair)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl)
 
@@ -46,6 +49,11 @@ class FrontierTest {
             mutableListOf(anotherUrl.url),
             testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost)
         )
+
+        verify(mockCrawlersFactory).requestCrawlerInitialization(host)
+        verify(mockCrawlersFactory).requestCrawlerInitialization(anotherHost)
+        verify(mockLogger).info("created queue with host: $host")
+        verify(mockLogger).info("created queue with host: $anotherHost")
     }
 
     @Test
