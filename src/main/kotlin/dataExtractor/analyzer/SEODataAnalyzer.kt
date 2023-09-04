@@ -35,7 +35,7 @@ class SEODataAnalyzer : ISEODataAnalyzer {
 
     private fun prepareDescription(html: String): String?{
         val metaDescription = seoParser.getMetaDescription(html)
-        val ogMetaDescription = seoParser.getOMetaOgDescription(html)
+        val ogMetaDescription = seoParser.getOgMetaOgDescription(html)
 
         return listOfNotNull(metaDescription, ogMetaDescription).firstOrNull()
     }
@@ -44,7 +44,7 @@ class SEODataAnalyzer : ISEODataAnalyzer {
         val title = seoParser.getTitle(html)
         val ogTitle = seoParser.getOgTitle(html)
         val metaDescription = seoParser.getMetaDescription(html)
-        val ogMetaDescription = seoParser.getOMetaOgDescription(html)
+        val ogMetaDescription = seoParser.getOgMetaOgDescription(html)
         val metaKeywords = seoParser.getMetaKeywords(html)
         val headings = seoParser.getHeadings(html)
         val paragraphs = seoParser.getParagraphs(html)

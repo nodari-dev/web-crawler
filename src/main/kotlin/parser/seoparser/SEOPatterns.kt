@@ -21,7 +21,7 @@ object SEOPatterns {
     val IMAGE_ALT: Pattern =  Pattern.compile("<img\\s+src=\"([^\"]*)\"\\s+alt=\"([^\"]*)\"\\s*>")
     const val IMAGE_ALT_GROUP_INDEX: Int = 2
 
-    val HEADING: Pattern = Pattern.compile("<h[1-5]>(.*?)<\\/h[1-5]>")
+    val HEADING: Pattern = Pattern.compile("<h[1-6]>(.*?)<\\/h[1-6]>")
     const val HEADING_GROUP_INDEX: Int = 1
 
     val PARAGRAPH: Pattern = Pattern.compile("<p>(.*?)<\\/p>")

@@ -9,13 +9,13 @@ class URLParserTest {
 
     @Test
     fun `returns filtered urls from html`() {
-        val url1 = HashedUrlPair("http://www.host.com")
-        val url2 = HashedUrlPair("http://www.host1.com")
+        val url1 = HashedUrlPair("https://www.host.com")
+        val url2 = HashedUrlPair("https://www.host1.com")
         val expectedResult = listOf(url1, url2)
         val html = "<div>" +
-                "<a href='http://www.host.com'>link</a>" +
-                "<a href='http://www.host1.com'>link</a>" +
-                "<a href='http://www.host2.com/file.cpp'>link</a>" +
+                "<a href='https://www.host.com'>link</a>" +
+                "<a href='https://www.host1.com'>link</a>" +
+                "<a href='https://www.host2.com/file.cpp'>link</a>" +
                 "</div>"
 
         val result = urlParser.getURLs(html)

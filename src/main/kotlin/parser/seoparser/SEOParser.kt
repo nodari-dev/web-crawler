@@ -18,7 +18,6 @@ import parser.seoparser.SEOPatterns.TITLE
 import parser.seoparser.SEOPatterns.TITLE_GROUP_INDEX
 import parser.seoparser.SEOPatterns.HEADING
 import parser.seoparser.SEOPatterns.HEADING_GROUP_INDEX
-import parser.GlobalPatterns.NESTED_TAGS
 
 class SEOParser: ISEOParser {
     private val parserUtils = ParserUtils()
@@ -27,36 +26,36 @@ class SEOParser: ISEOParser {
         return parserUtils.parseSingleValue(document, TITLE, TITLE_GROUP_INDEX)
     }
 
-    override fun getMetaDescription(document: String): String? {
-        return parserUtils.parseSingleValue(document, META_DESCRIPTION, META_DESCRIPTION_GROUP_INDEX)
-    }
-
     override fun getOgTitle(document: String): String? {
         return parserUtils.parseSingleValue(document, META_OG_TITLE, META_OG_TITLE_GROUP_INDEX)
     }
 
-    override fun getOMetaOgDescription(document: String): String? {
+    override fun getMetaDescription(document: String): String? {
+        return parserUtils.parseSingleValue(document, META_DESCRIPTION, META_DESCRIPTION_GROUP_INDEX)
+    }
+
+    override fun getOgMetaOgDescription(document: String): String? {
         return parserUtils.parseSingleValue(document, META_OG_DESCRIPTION, META_OG_DESCRIPTION_GROUP_INDEX)
     }
 
-    override fun getHeadings(document: String): List<String>{
-        return parserUtils.parseValues(document, NESTED_TAGS, HEADING, HEADING_GROUP_INDEX)
-    }
-
-    override fun getParagraphs(document: String): List<String>{
-        return parserUtils.parseValues(document, NESTED_TAGS, PARAGRAPH, PARAGRAPH_GROUP_INDEX)
-    }
-
-    override fun getImageAlts(document: String): List<String> {
-        return parserUtils.parseValues(document, NESTED_TAGS, IMAGE_ALT, IMAGE_ALT_GROUP_INDEX)
-    }
-
     override fun getMetaKeywords(document: String): List<String> {
-        val keywords = parserUtils.parseValues(document, NESTED_TAGS, META_KEYWORDS, META_KEYWORDS_GROUP_INDEX)
+        val keywords = parserUtils.parseValues(document, META_KEYWORDS, META_KEYWORDS_GROUP_INDEX)
         return if(keywords.isEmpty()) {
             emptyList()
         } else{
             keywords[0].split(",").map { it.trim() }
         }
+    }
+
+    override fun getHeadings(document: String): List<String>{
+        return parserUtils.parseValues(document, HEADING, HEADING_GROUP_INDEX)
+    }
+
+    override fun getParagraphs(document: String): List<String>{
+        return parserUtils.parseValues(document, PARAGRAPH, PARAGRAPH_GROUP_INDEX)
+    }
+
+    override fun getImageAlts(document: String): List<String> {
+        return parserUtils.parseValues(document, IMAGE_ALT, IMAGE_ALT_GROUP_INDEX)
     }
 }

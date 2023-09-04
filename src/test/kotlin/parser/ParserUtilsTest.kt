@@ -9,7 +9,7 @@ class ParserUtilsTest {
     private val parserUtils = ParserUtils()
 
     @Test
-    fun `parses multiple values from document`() {
+    fun `parses multiple values from document with removed nested tags`() {
         val html = """
             <html>
                 <body>
@@ -21,20 +21,19 @@ class ParserUtilsTest {
         """
 
         val pattern = Pattern.compile("""<div>(.*?)</div>""")
-        val removingPattern = GlobalPatterns.NESTED_TAGS
         val groupIndex = 1
         val expectedResult = listOf("Item 1", "Item 2", "Item 3")
-        val result = parserUtils.parseValues(html, removingPattern, pattern, groupIndex)
+        val result = parserUtils.parseValues(html, pattern, groupIndex)
 
         Assertions.assertEquals(expectedResult, result)
     }
 
     @Test
-    fun `parses single value from document`() {
+    fun `parses single value from document and removes nested tags`() {
         val html = """
             <html>
                 <body>
-                    <p>Hello world!</p>
+                    <p><strong>Hello world!</strong></p>
                 </body>
             </html>
         """

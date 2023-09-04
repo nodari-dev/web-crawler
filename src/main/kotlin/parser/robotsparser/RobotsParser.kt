@@ -12,7 +12,6 @@ class RobotsParser: IRobotsParser {
 
     override fun getRobotsDisallowed(document: String): List<HashedUrlPair> {
         val urls = parserUtils.parseValues(document,
-            NESTED_TAGS,
             DISALLOW_KEYWORD,
             DISALLOW_KEYWORD_GROUP_INDEX
         )
