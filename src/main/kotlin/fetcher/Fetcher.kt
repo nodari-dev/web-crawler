@@ -11,21 +11,18 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class Fetcher : IFetcher {
-    private val logger = KotlinLogging.logger("Fetcher")
+    private val responseParser = ResponseParser()
+    var logger = KotlinLogging.logger("Fetcher")
 
     override fun getPageHTML(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)
-        return parseDocument(url)
-    }
-
-    private fun parseDocument(url: String): String? {
         val response = getResponse(url)
-        return response?.let { toOneLineHTML(response.parse().toString()) }
+        return responseParser.parseDocument(response)
     }
 
     private fun getResponse(url: String): Response? {
         return try {
-            logger.info("downloaded $url")
+            logger.info("downloading $url")
             Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: Exception) {
             when (exception) {
@@ -34,18 +31,14 @@ class Fetcher : IFetcher {
                 is IllegalArgumentException,
                 is SocketTimeoutException,
                 is FetchingFailedException -> {
-                    logger.error { "Fetching of $url failed" }
+                    logger.error ("Fetching of $url failed")
                     null
                 }
                 else -> {
-                    logger.error { "Something went wrong with $url" }
+                    logger.error ("Something went wrong with $url")
                     null
                 }
             }
         }
-    }
-
-    private fun toOneLineHTML(content: String): String {
-        return content.replace("\n", "")
     }
 }
