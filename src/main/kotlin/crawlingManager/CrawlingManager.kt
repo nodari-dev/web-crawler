@@ -16,11 +16,6 @@ object CrawlingManager: ICrawlingManager {
     var dataExtractor = DataExtractor()
     var frontier = Frontier
 
-    /**
-     * Sends starting points to frontier
-     * Flushes all data from redis
-     * @param seeds List of starting points
-     */
     override fun startCrawling(seeds: List<String>){
         jedis.flushAll()
         if(seeds.isNotEmpty()){
@@ -33,11 +28,6 @@ object CrawlingManager: ICrawlingManager {
         }
     }
 
-    /**
-     * Calls data extractor to save txt file
-     * @param html to generate seo data from
-     * @param url to specific page
-     */
     override fun extractSEOData(html: String, url: String) {
         dataExtractor.extractSEODataToFile(html, url, SAVE_FILE_LOCATION)
     }

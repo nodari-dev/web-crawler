@@ -7,20 +7,11 @@ object CrawlersFactory: ICrawlersFactory {
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
 
-    /**
-     * Requests the initialization of a crawler for a specific host.
-     * @param host The host to provide connection with frontier queue.
-     */
     override fun requestCrawlerInitialization(host: String) {
         hostsToProcess.add(host)
         generateNewCrawlers()
     }
 
-    /**
-     * Removes terminated crawler from list of active crawlers
-     * Requests initialization of new to proceed with new hosts
-     * @param crawler The crawler thread to be terminated.
-     */
     override fun removeTerminatedCrawler(crawler: Thread) {
         activeCrawlers.remove(crawler)
         if(hostsToProcess.isNotEmpty()){

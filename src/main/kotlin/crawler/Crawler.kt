@@ -24,11 +24,6 @@ class Crawler(
     private val frontier = Frontier
     private var canProceedCrawling = true
 
-    /**
-     * Starts crawler as a Thread
-     * Provides host data to hosts storage
-     * Crawler will be alive until canProceedCrawling is true
-     */
     override fun run() {
         logger.info("Started")
         while (canProceedCrawling) {

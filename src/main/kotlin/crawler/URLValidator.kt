@@ -9,11 +9,6 @@ class URLValidator: IURLValidator {
     var hostsStorage = HostsStorage
     var urlStorage = URLStorage
 
-    /**
-     * Checks if URL can be processed by crawler
-     * @param host to call hostsStorage
-     * @param hashedUrlPair the actual URL with hash to check if it was visited or was banned by robots.txt
-     */
     override fun canProcessURL(host: String, hashedUrlPair: HashedURLPair?): Boolean{
         if(hashedUrlPair == null){
             return false

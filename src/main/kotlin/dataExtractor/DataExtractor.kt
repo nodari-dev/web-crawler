@@ -10,12 +10,6 @@ import java.io.FileWriter
 class DataExtractor : IDataExtractor {
     private val seoDataAnalyzer = SEODataAnalyzer()
 
-    /**
-     * Extracts SEO data from HTML content and saves it to a file.
-     * @param html The HTML content to analyze.
-     * @param url The URL associated with the HTML content.
-     * @param saveLocation The directory where the SEO data file should be saved.
-     */
     override fun extractSEODataToFile(html: String, url: String, saveLocation: String) {
         val path = File(saveLocation)
         if (!path.exists()) {

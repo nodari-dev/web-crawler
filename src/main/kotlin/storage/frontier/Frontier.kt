@@ -22,11 +22,6 @@ object Frontier: IFrontier{
         jedis.set(FRONTIER_KEY, QUEUES_KEY)
     }
 
-    /**
-     * Sends a new URL to the frontier queue for the specified host.
-     * @param host The host to which the URL belongs.
-     * @param hashedUrlPair The HashedUrlPair to be added to the queue.
-     */
     override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedURLPair) {
         mutex.lock()
         try {
@@ -58,11 +53,6 @@ object Frontier: IFrontier{
         crawlersFactory.requestCrawlerInitialization(host)
     }
 
-    /**
-     * Requests a URL from the frontier for the specified host.
-     * @param host The host for which to request a URL.
-     * @return The pulled HashedUrlPair.
-     */
     override fun pullURL(host: String): HashedURLPair {
         mutex.lock()
         try{
@@ -73,11 +63,6 @@ object Frontier: IFrontier{
         }
     }
 
-    /**
-     * Checks if the frontier queue for the specified host is empty.
-     * @param host The host for which to check the queue emptiness.
-     * @return `true` if the queue is empty, `false` otherwise.
-     */
     override fun isQueueEmpty(host: String): Boolean{
         mutex.lock()
         try {
