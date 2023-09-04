@@ -1,7 +1,7 @@
 package storage.frontier
 
 import crawler.CrawlersFactory
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import storage.frontier.Configuration.DEFAULT_PATH
 import storage.frontier.Configuration.FRONTIER_KEY
 import storage.frontier.Configuration.QUEUES_KEY
@@ -27,7 +27,7 @@ object Frontier: IFrontier{
      * @param host The host to which the URL belongs.
      * @param hashedUrlPair The HashedUrlPair to be added to the queue.
      */
-    override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedUrlPair) {
+    override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedURLPair) {
         mutex.lock()
         try {
             if(isQueueDefinedForHost(host)){
@@ -44,12 +44,12 @@ object Frontier: IFrontier{
         return jedis.lpos(DEFAULT_PATH, host) != null
     }
 
-    private fun updateQueue(host: String, hashedUrlPair: HashedUrlPair) {
+    private fun updateQueue(host: String, hashedUrlPair: HashedURLPair) {
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         jedis.rpush(path, hashedUrlPair.url)
     }
 
-    private fun createQueue(host: String, hashedUrlPair: HashedUrlPair) {
+    private fun createQueue(host: String, hashedUrlPair: HashedURLPair) {
         logger.info ("created queue with host: $host")
         jedis.lpush(DEFAULT_PATH, host)
 
@@ -63,11 +63,11 @@ object Frontier: IFrontier{
      * @param host The host for which to request a URL.
      * @return The pulled HashedUrlPair.
      */
-    override fun pullURL(host: String): HashedUrlPair {
+    override fun pullURL(host: String): HashedURLPair {
         mutex.lock()
         try{
             val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            return HashedUrlPair(jedis.lpop(path))
+            return HashedURLPair(jedis.lpop(path))
         } finally {
             mutex.unlock()
         }

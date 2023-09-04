@@ -1,6 +1,6 @@
 package dto
 
-data class HashedUrlPair(var url: String){
+data class HashedURLPair(var url: String){
     init {
         if(!url.endsWith("/")){
             url = "$url/"

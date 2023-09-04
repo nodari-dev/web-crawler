@@ -1,7 +1,7 @@
 package interfaces
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 
 interface IRobotsParser {
-    fun getRobotsDisallowed(document: String): List<HashedUrlPair>
+    fun getRobotsDisallowed(document: String): List<HashedURLPair>
 }

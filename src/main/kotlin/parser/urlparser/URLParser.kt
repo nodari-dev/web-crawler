@@ -1,6 +1,6 @@
 package parser.urlparser
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import interfaces.IURLParser
 import parser.ParserUtils
 import parser.urlparser.URLPatterns.A_TAG
@@ -12,7 +12,7 @@ import parser.urlparser.URLPatterns.UNSUPPORTED_FILETYPES
 class URLParser: IURLParser {
     private val parserUtils = ParserUtils()
 
-    override fun getURLs(document: String): List<HashedUrlPair> {
+    override fun getURLs(document: String): List<HashedURLPair> {
         val urls = parserUtils.parseValues(document, A_TAG, A_TAG_GROUP_INDEX)
         val allowedURLs = getAllowedURLs(urls)
         return parserUtils.transformToFormattedURLs(allowedURLs)

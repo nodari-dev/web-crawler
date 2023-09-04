@@ -1,6 +1,6 @@
 package crawler
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import interfaces.IURLValidator
 import storage.hosts.HostsStorage
 import storage.url.URLStorage
@@ -14,7 +14,7 @@ class URLValidator: IURLValidator {
      * @param host to call hostsStorage
      * @param hashedUrlPair the actual URL with hash to check if it was visited or was banned by robots.txt
      */
-    override fun canProcessURL(host: String, hashedUrlPair: HashedUrlPair?): Boolean{
+    override fun canProcessURL(host: String, hashedUrlPair: HashedURLPair?): Boolean{
         if(hashedUrlPair == null){
             return false
         }

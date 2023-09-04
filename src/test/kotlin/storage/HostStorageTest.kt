@@ -1,6 +1,6 @@
 package storage
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import storage.hosts.HostsStorage
@@ -25,7 +25,7 @@ class HostStorageTest {
         hostStorage.robotsUtils = mockRobotsUtils
 
         `when`(mockRobotsUtils.getDisallowedURLs(Mockito.anyString()))
-            .thenAnswer { mutableListOf(HashedUrlPair(bannedURL)) }
+            .thenAnswer { mutableListOf(HashedURLPair(bannedURL)) }
     }
 
     @BeforeEach
@@ -37,7 +37,7 @@ class HostStorageTest {
     fun `adds new host to storage and setup robots`(){
         hostStorage.provideHost(host)
         Assertions.assertEquals(mutableListOf(host), testUtils.getDefaultPathContent(DEFAULT_PATH))
-        Assertions.assertEquals(mutableListOf(HashedUrlPair(bannedURL).url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
+        Assertions.assertEquals(mutableListOf(HashedURLPair(bannedURL).url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
     }
 
     @Test
@@ -45,7 +45,7 @@ class HostStorageTest {
         hostStorage.provideHost(host)
         hostStorage.provideHost(host)
         Assertions.assertEquals(mutableListOf(host), testUtils.getDefaultPathContent(DEFAULT_PATH))
-        Assertions.assertEquals(mutableListOf(HashedUrlPair(bannedURL).url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
+        Assertions.assertEquals(mutableListOf(HashedURLPair(bannedURL).url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
     }
 
 

@@ -1,7 +1,5 @@
 package interfaces
 
-import dto.HashedUrlPair
-
 interface IHostsStorage {
     fun provideHost(host: String)
     fun deleteHost(host: String)

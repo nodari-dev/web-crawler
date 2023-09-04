@@ -1,7 +1,7 @@
 package crawler
 
 import crawlingManager.CrawlingManager
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import fetcher.Fetcher
 import interfaces.ICrawler
 import mu.KotlinLogging
@@ -66,14 +66,14 @@ class Crawler(
         }
     }
 
-    private fun processHTML(html: String?, pulledURL: HashedUrlPair) {
+    private fun processHTML(html: String?, pulledURL: HashedURLPair) {
         html?.let {
             crawlingManager.extractSEOData(html, pulledURL.url)
             processChildURLs(urlParser.getURLs(html))
         }
     }
 
-    private fun processChildURLs(urls: List<HashedUrlPair>) {
+    private fun processChildURLs(urls: List<HashedURLPair>) {
         val uniqueHashedUrlPairs = urls.toSet()
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)

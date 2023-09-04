@@ -1,6 +1,6 @@
 package parser
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import interfaces.IParserUtils
 import parser.GlobalPatterns.NESTED_TAGS
 import java.util.regex.Pattern
@@ -41,8 +41,8 @@ class ParserUtils : IParserUtils {
         return matcher.replaceAll("")
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<HashedUrlPair> {
-        return list.map { element -> HashedUrlPair(element) }
+    override fun transformToFormattedURLs(list: List<String>): List<HashedURLPair> {
+        return list.map { element -> HashedURLPair(element) }
     }
 
     override fun isExisting(html: String, pattern: Pattern): Boolean {

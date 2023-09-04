@@ -1,6 +1,6 @@
 package parser.urlparser
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -9,8 +9,8 @@ class URLParserTest {
 
     @Test
     fun `returns filtered urls from html`() {
-        val url1 = HashedUrlPair("https://www.host.com")
-        val url2 = HashedUrlPair("https://www.host1.com")
+        val url1 = HashedURLPair("https://www.host.com")
+        val url2 = HashedURLPair("https://www.host1.com")
         val expectedResult = listOf(url1, url2)
         val html = "<div>" +
                 "<a href='https://www.host.com'>link</a>" +

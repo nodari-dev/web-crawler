@@ -1,7 +1,7 @@
 package storage
 
 import crawler.CrawlersFactory
-import dto.HashedUrlPair
+import dto.HashedURLPair
 import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -16,11 +16,11 @@ class FrontierTest {
     private val jedis = RedisConnector.getJedis()
     private val testUtils = TestUtils()
     private val host = "https://host.com"
-    private val hashedUrlPair = HashedUrlPair("$host/demon/")
-    private val hashedUrlPairTwo = HashedUrlPair("$host/hell/")
+    private val hashedUrlPair = HashedURLPair("$host/demon/")
+    private val hashedURLPairTwo = HashedURLPair("$host/hell/")
 
     private val anotherHost = "https://hell.com"
-    private val anotherUrl = HashedUrlPair("$anotherHost/hello")
+    private val anotherUrl = HashedURLPair("$anotherHost/hello")
 
     private val mockCrawlersFactory = mock(CrawlersFactory::class.java)
     private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
@@ -63,14 +63,14 @@ class FrontierTest {
     @Test
     fun `updates current queue`() {
         frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(host, hashedUrlPairTwo)
+        frontier.updateOrCreateQueue(host, hashedURLPairTwo)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl)
 
         Assertions.assertEquals(2, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
         Assertions.assertEquals(mutableListOf(anotherHost, host), testUtils.getDefaultPathContent(DEFAULT_PATH))
 
         Assertions.assertEquals(
-            mutableListOf(hashedUrlPair.url, hashedUrlPairTwo.url),
+            mutableListOf(hashedUrlPair.url, hashedURLPairTwo.url),
             testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)
         )
 
@@ -83,12 +83,12 @@ class FrontierTest {
     @Test
     fun `returns url from queue`() {
         frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(host, hashedUrlPairTwo)
+        frontier.updateOrCreateQueue(host, hashedURLPairTwo)
 
         Assertions.assertEquals(2, testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)!!.size)
         Assertions.assertEquals(hashedUrlPair, frontier.pullURL(host))
         Assertions.assertEquals(1, testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)!!.size)
-        Assertions.assertEquals(mutableListOf(hashedUrlPairTwo.url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
+        Assertions.assertEquals(mutableListOf(hashedURLPairTwo.url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
     }
 
     @Test

@@ -1,7 +1,7 @@
 package interfaces
 
-import dto.HashedUrlPair
+import dto.HashedURLPair
 
 interface IURLValidator {
-    fun canProcessURL(host: String, hashedUrlPair: HashedUrlPair?): Boolean
+    fun canProcessURL(host: String, hashedUrlPair: HashedURLPair?): Boolean
 }
