@@ -6,8 +6,8 @@ import storage.hosts.HostsStorage
 import storage.url.URLStorage
 
 class URLValidator: IURLValidator {
-    private val hostsStorage = HostsStorage
-    private val visitedURLsStorage = URLStorage
+    var hostsStorage = HostsStorage
+    var urlStorage = URLStorage
 
     /**
      * Checks if URL can be processed by crawler
@@ -19,7 +19,7 @@ class URLValidator: IURLValidator {
             return false
         }
 
-        val isNew = visitedURLsStorage.doesNotExist(hashedUrlPair.getHash())
+        val isNew = urlStorage.doesNotExist(hashedUrlPair.getHash())
         val isAllowed = hostsStorage.isURLAllowed(host, hashedUrlPair.url)
         return isNew && isAllowed
     }
