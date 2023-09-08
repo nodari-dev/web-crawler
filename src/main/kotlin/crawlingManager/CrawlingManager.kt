@@ -12,7 +12,7 @@ import redis.RedisConnector
 
 object CrawlingManager: ICrawlingManager {
     private val urlParser = URLParser()
-    var jedis = RedisConnector.getJedis()
+    private val jedis = RedisConnector.getJedis()
     var logger = KotlinLogging.logger("CrawlingManager")
     var dataExtractor = DataExtractor()
     var frontier = Frontier

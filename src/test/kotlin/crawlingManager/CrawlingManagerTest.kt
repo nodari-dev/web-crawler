@@ -5,9 +5,7 @@ import dto.HashedURLPair
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import redis.RedisConnector
 import storage.frontier.Frontier
 
 class CrawlingManagerTest {
@@ -16,13 +14,11 @@ class CrawlingManagerTest {
     private val mockFrontier = Mockito.mock(Frontier::class.java)
     private val mockDataExtractor = Mockito.mock(DataExtractor::class.java)
     private val mockLogger = Mockito.mock(KotlinLogging.logger("CrawlingManager")::class.java)
-    private val mockJedis = Mockito.mock(RedisConnector::class.java).getJedis()
 
     init {
         crawlingManager.frontier = mockFrontier
         crawlingManager.dataExtractor = mockDataExtractor
         crawlingManager.logger = mockLogger
-        crawlingManager.jedis = mockJedis
     }
 
     @Test
