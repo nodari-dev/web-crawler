@@ -33,8 +33,8 @@ object CrawlersFactory: ICrawlersFactory {
                 val crawler = Crawler(
                     hostsToProcess[i],
                     KotlinLogging.logger("Crawler ${hostsToProcess[i]}"),
-                    Fetcher(),
-                    URLValidator(),
+                    Fetcher(KotlinLogging.logger("Fetcher"),),
+                    URLValidator(HostsStorage, URLStorage),
                     URLParser(),
                     CrawlersFactory,
                     CrawlingManager,

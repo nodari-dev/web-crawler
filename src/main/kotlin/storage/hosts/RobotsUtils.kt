@@ -3,10 +3,11 @@ package storage.hosts
 import dto.HashedURLPair
 import fetcher.Fetcher
 import interfaces.IRobotsUtils
+import mu.KotlinLogging
 import parser.robotsparser.RobotsParser
 
 class RobotsUtils : IRobotsUtils {
-    private val fetcher = Fetcher()
+    private val fetcher = Fetcher(KotlinLogging.logger("Fetсher"))
     private val robotsParser = RobotsParser()
 
     override fun getDisallowedURLs(host: String): List<HashedURLPair> {

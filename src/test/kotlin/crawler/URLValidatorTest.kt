@@ -8,15 +8,9 @@ import storage.hosts.HostsStorage
 import storage.url.URLStorage
 
 class URLValidatorTest {
-    private val urlValidator = URLValidator()
-
     private val mockHostsStorage = Mockito.mock(HostsStorage::class.java)
     private val mockUrlStorage = Mockito.mock(URLStorage::class.java)
-
-    init {
-        urlValidator.hostsStorage = mockHostsStorage
-        urlValidator.urlStorage = mockUrlStorage
-    }
+    private val urlValidator = URLValidator(mockHostsStorage, mockUrlStorage)
 
     @Test
     fun `returns false when hashedUrlPair is null`() {

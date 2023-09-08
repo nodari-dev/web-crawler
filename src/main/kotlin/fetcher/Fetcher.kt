@@ -1,18 +1,17 @@
 package fetcher
 
 import interfaces.IFetcher
-import mu.KotlinLogging
 import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import configuration.Configuration.TIME_BETWEEN_FETCHING
 import exceptions.FetchingFailedException
+import mu.KLogger
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class Fetcher : IFetcher {
+class Fetcher(override val logger: KLogger) : IFetcher {
     private val responseParser = ResponseParser()
-    var logger = KotlinLogging.logger("Fetcher")
 
     override fun getPageHTML(url: String): String? {
         Thread.sleep(TIME_BETWEEN_FETCHING)

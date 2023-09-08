@@ -7,13 +7,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 
 class FetcherTest {
-    private val fetcher = Fetcher()
-
     private val mockLogger = Mockito.mock(KotlinLogging.logger("Fetcher")::class.java)
-
-    init {
-        fetcher.logger = mockLogger
-    }
+    private val fetcher = Fetcher(mockLogger)
 
     @Test
     fun `returns page html`() {

@@ -5,12 +5,13 @@ import interfaces.IURLValidator
 import storage.hosts.HostsStorage
 import storage.url.URLStorage
 
-class URLValidator: IURLValidator {
-    var hostsStorage = HostsStorage
-    var urlStorage = URLStorage
+class URLValidator(
+    override val hostsStorage: HostsStorage,
+    override val urlStorage: URLStorage
+) : IURLValidator {
 
-    override fun canProcessURL(host: String, hashedUrlPair: HashedURLPair?): Boolean{
-        if(hashedUrlPair == null){
+    override fun canProcessURL(host: String, hashedUrlPair: HashedURLPair?): Boolean {
+        if (hashedUrlPair == null) {
             return false
         }
 
