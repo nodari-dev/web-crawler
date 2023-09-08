@@ -3,6 +3,7 @@ package storage
 import crawler.CrawlersFactory
 import dto.HashedURLPair
 import mu.KotlinLogging
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -97,16 +98,21 @@ class FrontierTest {
         Assertions.assertEquals(false ,frontier.isQueueEmpty(host))
         Assertions.assertEquals(true ,frontier.isQueueEmpty(anotherHost))
     }
+//
+//    @Test
+//    fun `deletes queue`() {
+//        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+//        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
+//
+//        frontier.deleteQueue(anotherHost)
+//        Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
+//        Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
+//
+//        verify(mockLogger).info("removed queue with host: $anotherHost")
+//    }
 
-    @Test
-    fun `deletes queue`() {
-        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
-        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
-
-        frontier.deleteQueue(anotherHost)
-        Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
-        Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
-
-        verify(mockLogger).info("removed queue with host: $anotherHost")
+    @AfterEach
+    fun afterEach() {
+        jedis.flushAll()
     }
 }

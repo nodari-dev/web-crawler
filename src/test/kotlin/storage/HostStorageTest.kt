@@ -1,7 +1,6 @@
 package storage
 
 import dto.HashedURLPair
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -66,5 +65,10 @@ class HostStorageTest {
         hostStorage.deleteHost(host)
         Assertions.assertEquals(mutableListOf("some-new"), testUtils.getDefaultPathContent(DEFAULT_PATH))
         Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
+    }
+
+    @AfterEach
+    fun afterEach() {
+        jedis.flushAll()
     }
 }
