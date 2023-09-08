@@ -12,7 +12,7 @@ object HostsStorage: IHostsStorage {
     private val mutex = ReentrantLock()
     private val jedis = RedisConnector.getJedis()
     private val redisStorageUtils = RedisStorageUtils()
-    var robotsUtils = RobotsUtils()
+    private var robotsUtils = RobotsUtils()
 
     init {
         jedis.set(HOSTS_KEY, HOSTS_LIST_KEY)
@@ -75,5 +75,9 @@ object HostsStorage: IHostsStorage {
     private fun getBannedURls(host: String): List<String>{
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
         return jedis.lrange(path, 0, -1)
+    }
+
+    fun setUpTest(mockRobotsUtils: RobotsUtils){
+        robotsUtils = mockRobotsUtils
     }
  }

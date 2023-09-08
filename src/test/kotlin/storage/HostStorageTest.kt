@@ -1,6 +1,8 @@
 package storage
 
 import dto.HashedURLPair
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import storage.hosts.HostsStorage
@@ -19,10 +21,10 @@ class HostStorageTest {
     private val host = "host"
     private val bannedURL = "banned-url"
 
-    private val  mockRobotsUtils = Mockito.mock(RobotsUtils::class.java)
+    private val mockRobotsUtils = Mockito.mock(RobotsUtils::class.java)
 
     init {
-        hostStorage.robotsUtils = mockRobotsUtils
+        hostStorage.setUpTest(mockRobotsUtils)
 
         `when`(mockRobotsUtils.getDisallowedURLs(Mockito.anyString()))
             .thenAnswer { mutableListOf(HashedURLPair(bannedURL)) }

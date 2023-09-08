@@ -27,7 +27,6 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.16.1")
     implementation("org.flywaydb:flyway-core:9.11.0")
     implementation("org.postgresql:postgresql:$postgresVersion")
-//    api("org.jooq:jooq:$jooqVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("org.slf4j:slf4j-simple:1.7.9")
     implementation("com.zaxxer:HikariCP:5.0.1")

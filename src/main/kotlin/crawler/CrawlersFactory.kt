@@ -1,7 +1,14 @@
 package crawler
 
 import configuration.Configuration
+import crawlingManager.CrawlingManager
+import fetcher.Fetcher
 import interfaces.ICrawlersFactory
+import mu.KotlinLogging
+import parser.urlparser.URLParser
+import storage.frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 
 object CrawlersFactory: ICrawlersFactory {
     private val activeCrawlers = mutableListOf<Thread>()
@@ -25,6 +32,15 @@ object CrawlersFactory: ICrawlersFactory {
             if (activeCrawlers.size < Configuration.MAX_NUMBER_OF_CRAWLERS) {
                 val crawler = Crawler(
                     hostsToProcess[i],
+                    KotlinLogging.logger("Crawler ${hostsToProcess[i]}"),
+                    Fetcher(),
+                    URLValidator(),
+                    URLParser(),
+                    CrawlersFactory,
+                    CrawlingManager,
+                    HostsStorage,
+                    URLStorage,
+                    Frontier
                 )
                 activeCrawlers.add(crawler)
                 crawler.start()

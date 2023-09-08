@@ -4,7 +4,7 @@ import crawlingManager.CrawlingManager
 import dto.HashedURLPair
 import fetcher.Fetcher
 import interfaces.ICrawler
-import mu.KotlinLogging
+import mu.KLogger
 import parser.urlparser.URLParser
 import storage.frontier.Frontier
 import storage.hosts.HostsStorage
@@ -12,16 +12,16 @@ import storage.url.URLStorage
 
 class Crawler(
     override val primaryHost: String,
+    override var logger: KLogger,
+    override val fetcher: Fetcher,
+    override val urlValidator: URLValidator,
+    override val urlParser: URLParser,
+    override val crawlersFactory: CrawlersFactory,
+    override val crawlingManager: CrawlingManager,
+    override val hostsStorage: HostsStorage,
+    override val urlStorage: URLStorage,
+    override val frontier: Frontier,
 ) : ICrawler, Thread() {
-    private val logger = KotlinLogging.logger("Crawler $primaryHost")
-    private val fetcher = Fetcher()
-    private val urlValidator = URLValidator()
-    private val urlParser = URLParser()
-    private val crawlingManager = CrawlingManager
-    private val crawlersFactory = CrawlersFactory
-    private val hostsStorage = HostsStorage
-    private val urlStorage = URLStorage
-    private val frontier = Frontier
     private var canProceedCrawling = true
 
     override fun run() {
@@ -47,7 +47,7 @@ class Crawler(
         return
     }
 
-    private fun deleteHostRelatedData(){
+    private fun deleteHostRelatedData() {
         hostsStorage.deleteHost(primaryHost)
         frontier.deleteQueue(primaryHost)
     }
@@ -73,7 +73,7 @@ class Crawler(
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
             if (urlValidator.canProcessURL(host, hashedUrlPair)) {
-                frontier.updateOrCreateQueue(host, hashedUrlPair)
+                frontier.updateOrCreateQueue(host, hashedUrlPair.url)
             }
         }
     }

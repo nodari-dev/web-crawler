@@ -31,8 +31,8 @@ class CrawlingManagerTest {
         crawlingManager.startCrawling(seeds)
 
 //        verify(mockJedis.flushAll(), times(1))
-        verify(mockFrontier).updateOrCreateQueue("https://fucking-internet.com", HashedURLPair(seeds[0]))
-        verify(mockFrontier).updateOrCreateQueue("https://good-internet.com", HashedURLPair(seeds[1]))
+        verify(mockFrontier).updateOrCreateQueue("https://fucking-internet.com", HashedURLPair(seeds[0]).url)
+        verify(mockFrontier).updateOrCreateQueue("https://good-internet.com", HashedURLPair(seeds[1]).url)
     }
 
     @Test

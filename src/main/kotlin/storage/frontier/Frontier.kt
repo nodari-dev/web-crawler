@@ -22,13 +22,13 @@ object Frontier: IFrontier{
         jedis.set(FRONTIER_KEY, QUEUES_KEY)
     }
 
-    override fun updateOrCreateQueue(host: String, hashedUrlPair: HashedURLPair) {
+    override fun updateOrCreateQueue(host: String, url: String) {
         mutex.lock()
         try {
             if(isQueueDefinedForHost(host)){
-                updateQueue(host, hashedUrlPair)
+                updateQueue(host, url)
             } else{
-                createQueue(host, hashedUrlPair)
+                createQueue(host, url)
             }
         } finally {
             mutex.unlock()
@@ -39,17 +39,17 @@ object Frontier: IFrontier{
         return jedis.lpos(DEFAULT_PATH, host) != null
     }
 
-    private fun updateQueue(host: String, hashedUrlPair: HashedURLPair) {
+    private fun updateQueue(host: String, url: String) {
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, hashedUrlPair.url)
+        jedis.rpush(path, url)
     }
 
-    private fun createQueue(host: String, hashedUrlPair: HashedURLPair) {
+    private fun createQueue(host: String, url: String) {
         logger.info ("created queue with host: $host")
         jedis.lpush(DEFAULT_PATH, host)
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, hashedUrlPair.url)
+        jedis.rpush(path, url)
         crawlersFactory.requestCrawlerInitialization(host)
     }
 

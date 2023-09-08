@@ -39,8 +39,8 @@ class FrontierTest {
     @Test
     fun `creates queue and adds url`() {
 
-        frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(anotherHost, anotherUrl)
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         Assertions.assertEquals(2, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
         Assertions.assertEquals(mutableListOf(anotherHost, host), testUtils.getDefaultPathContent(DEFAULT_PATH))
@@ -62,9 +62,9 @@ class FrontierTest {
 
     @Test
     fun `updates current queue`() {
-        frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(host, hashedURLPairTwo)
-        frontier.updateOrCreateQueue(anotherHost, anotherUrl)
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+        frontier.updateOrCreateQueue(host, hashedURLPairTwo.url)
+        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         Assertions.assertEquals(2, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
         Assertions.assertEquals(mutableListOf(anotherHost, host), testUtils.getDefaultPathContent(DEFAULT_PATH))
@@ -82,8 +82,8 @@ class FrontierTest {
 
     @Test
     fun `returns url from queue`() {
-        frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(host, hashedURLPairTwo)
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+        frontier.updateOrCreateQueue(host, hashedURLPairTwo.url)
 
         Assertions.assertEquals(2, testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)!!.size)
         Assertions.assertEquals(hashedUrlPair, frontier.pullURL(host))
@@ -93,15 +93,15 @@ class FrontierTest {
 
     @Test
     fun `checks if queue is empty`() {
-        frontier.updateOrCreateQueue(host, hashedUrlPair)
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
         Assertions.assertEquals(false ,frontier.isQueueEmpty(host))
         Assertions.assertEquals(true ,frontier.isQueueEmpty(anotherHost))
     }
 
     @Test
     fun `deletes queue`() {
-        frontier.updateOrCreateQueue(host, hashedUrlPair)
-        frontier.updateOrCreateQueue(anotherHost, anotherUrl)
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         frontier.deleteQueue(anotherHost)
         Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)

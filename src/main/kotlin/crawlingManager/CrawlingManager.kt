@@ -21,7 +21,7 @@ object CrawlingManager: ICrawlingManager {
         if(seeds.isNotEmpty()){
             seeds.forEach { seed ->
                 val host = urlParser.getHostWithProtocol(seed)
-                frontier.updateOrCreateQueue(host, HashedURLPair(seed))
+                frontier.updateOrCreateQueue(host, HashedURLPair(seed).url)
             }
         } else{
             logger.error("No seed urls provided")
