@@ -1,7 +1,7 @@
 package crawler
 
 import configuration.Configuration
-import crawlingManager.CrawlingManager
+import dataExtractor.DataExtractor
 import fetcher.Fetcher
 import interfaces.ICrawlersFactory
 import mu.KotlinLogging
@@ -37,7 +37,7 @@ object CrawlersFactory: ICrawlersFactory {
                     URLValidator(HostsStorage, URLStorage),
                     URLParser(),
                     CrawlersFactory,
-                    CrawlingManager,
+                    DataExtractor(),
                     HostsStorage,
                     URLStorage,
                     Frontier

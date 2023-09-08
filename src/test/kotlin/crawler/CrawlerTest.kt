@@ -1,6 +1,7 @@
 package crawler
 
-import crawlingManager.CrawlingManager
+import configuration.Configuration.SAVE_FILE_LOCATION
+import dataExtractor.DataExtractor
 import dto.HashedURLPair
 import fetcher.Fetcher
 import mu.KotlinLogging
@@ -22,7 +23,7 @@ class CrawlerTest {
     private val loggerMock = mock(KotlinLogging.logger("Crawler $host")::class.java)
     private val fetcherMock = mock(Fetcher::class.java)
     private val urlValidatorMock = mock(URLValidator::class.java)
-    private val crawlingManagerMock = mock(CrawlingManager::class.java)
+    private val dataExtractorMock = mock(DataExtractor::class.java)
     private val crawlersFactoryMock = mock(CrawlersFactory::class.java)
     private val hostsStorageMock = mock(HostsStorage::class.java)
     private val urlStorageMock = mock(URLStorage::class.java)
@@ -39,7 +40,7 @@ class CrawlerTest {
             urlValidatorMock,
             URLParser(),
             crawlersFactoryMock,
-            crawlingManagerMock,
+            dataExtractorMock,
             hostsStorageMock,
             urlStorageMock,
             frontierMock
@@ -80,7 +81,7 @@ class CrawlerTest {
 
         // assert
         verify(loggerMock).info("Started")
-        verify(crawlingManagerMock).extractSEOData(html, urlHashedPair.url)
+        verify(dataExtractorMock).extractSEODataToFile(html, urlHashedPair.url, SAVE_FILE_LOCATION)
         verify(urlStorageMock).provideURL(urlHashedPair.getHash())
         verify(frontierMock).updateOrCreateQueue(host, foundURL.url)
         verify(loggerMock).info("Stopped")
@@ -102,7 +103,7 @@ class CrawlerTest {
 
         // assert
         verify(loggerMock).info("Started")
-        verify(crawlingManagerMock, never()).extractSEOData(anyString(), anyString())
+        verify(dataExtractorMock, never()).extractSEODataToFile(anyString(), anyString(), anyString())
         verify(urlStorageMock).provideURL(urlHashedPair.getHash())
         verify(frontierMock, never()).updateOrCreateQueue(anyString(), anyString())
         verify(loggerMock).info("Stopped")
@@ -126,7 +127,7 @@ class CrawlerTest {
 
         // assert
         verify(loggerMock).info("Started")
-        verify(crawlingManagerMock).extractSEOData(html, urlHashedPair.url)
+        verify(dataExtractorMock).extractSEODataToFile(html, urlHashedPair.url, SAVE_FILE_LOCATION)
         verify(fetcherMock, never()).getPageHTML(urlHashedPairTwo.url)
         verify(urlStorageMock).provideURL(urlHashedPair.getHash())
         verify(urlStorageMock, never()).provideURL(urlHashedPairTwo.getHash())
@@ -155,7 +156,7 @@ class CrawlerTest {
 
         // assert
         verify(loggerMock).info("Started")
-        verify(crawlingManagerMock).extractSEOData(html, urlHashedPair.url)
+        verify(dataExtractorMock).extractSEODataToFile(html, urlHashedPair.url, SAVE_FILE_LOCATION)
         verify(fetcherMock, never()).getPageHTML(foundURL.url)
 
         verify(urlStorageMock).provideURL(urlHashedPair.getHash())

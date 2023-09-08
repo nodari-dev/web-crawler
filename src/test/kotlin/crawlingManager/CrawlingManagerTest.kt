@@ -12,12 +12,10 @@ class CrawlingManagerTest {
     private val crawlingManager = CrawlingManager
 
     private val mockFrontier = Mockito.mock(Frontier::class.java)
-    private val mockDataExtractor = Mockito.mock(DataExtractor::class.java)
     private val mockLogger = Mockito.mock(KotlinLogging.logger("CrawlingManager")::class.java)
 
     init {
         crawlingManager.frontier = mockFrontier
-        crawlingManager.dataExtractor = mockDataExtractor
         crawlingManager.logger = mockLogger
     }
 

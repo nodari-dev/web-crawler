@@ -1,6 +1,8 @@
 package crawler
 
+import configuration.Configuration.SAVE_FILE_LOCATION
 import crawlingManager.CrawlingManager
+import dataExtractor.DataExtractor
 import dto.HashedURLPair
 import fetcher.Fetcher
 import interfaces.ICrawler
@@ -17,7 +19,7 @@ class Crawler(
     override val urlValidator: URLValidator,
     override val urlParser: URLParser,
     override val crawlersFactory: CrawlersFactory,
-    override val crawlingManager: CrawlingManager,
+    override val dataExtractor: DataExtractor,
     override val hostsStorage: HostsStorage,
     override val urlStorage: URLStorage,
     override val frontier: Frontier,
@@ -63,7 +65,7 @@ class Crawler(
 
     private fun processHTML(html: String?, pulledURL: HashedURLPair) {
         html?.let {
-            crawlingManager.extractSEOData(html, pulledURL.url)
+            dataExtractor.extractSEODataToFile(html, pulledURL.url, SAVE_FILE_LOCATION)
             processChildURLs(urlParser.getURLs(html))
         }
     }

@@ -1,6 +1,5 @@
 package crawlingManager
 
-import configuration.Configuration.SAVE_FILE_LOCATION
 import configuration.Illustrations
 import dataExtractor.DataExtractor
 import dto.HashedURLPair
@@ -30,7 +29,7 @@ object CrawlingManager: ICrawlingManager {
         }
     }
 
-    override fun extractSEOData(html: String, url: String) {
-        dataExtractor.extractSEODataToFile(html, url, SAVE_FILE_LOCATION)
+    private fun setUpListeners(){
+        frontier
     }
 }
