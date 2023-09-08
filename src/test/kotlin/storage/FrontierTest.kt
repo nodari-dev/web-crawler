@@ -98,18 +98,18 @@ class FrontierTest {
         Assertions.assertEquals(false ,frontier.isQueueEmpty(host))
         Assertions.assertEquals(true ,frontier.isQueueEmpty(anotherHost))
     }
-//
-//    @Test
-//    fun `deletes queue`() {
-//        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
-//        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
-//
-//        frontier.deleteQueue(anotherHost)
-//        Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
-//        Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
-//
-//        verify(mockLogger).info("removed queue with host: $anotherHost")
-//    }
+
+    @Test
+    fun `deletes queue`() {
+        frontier.updateOrCreateQueue(host, hashedUrlPair.url)
+        frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
+
+        frontier.deleteQueue(anotherHost)
+        Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH)!!.size)
+        Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
+
+        verify(mockLogger).info("removed queue with host: $anotherHost")
+    }
 
     @AfterEach
     fun afterEach() {
