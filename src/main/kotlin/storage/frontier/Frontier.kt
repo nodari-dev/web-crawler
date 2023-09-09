@@ -9,7 +9,6 @@ import interfaces.IFrontier
 import mu.KotlinLogging
 import redis.RedisManager
 import redis.RedisStorageUtils
-import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier{
     private val redisStorageUtils = RedisStorageUtils()

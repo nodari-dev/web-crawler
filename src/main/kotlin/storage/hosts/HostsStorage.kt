@@ -6,7 +6,6 @@ import redis.RedisStorageUtils
 import storage.hosts.Configuration.DEFAULT_PATH
 import storage.hosts.Configuration.HOSTS_KEY
 import storage.hosts.Configuration.HOSTS_LIST_KEY
-import java.util.concurrent.locks.ReentrantLock
 
 object HostsStorage: IHostsStorage {
     private val jedis = RedisManager

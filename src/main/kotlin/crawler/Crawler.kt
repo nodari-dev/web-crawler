@@ -1,7 +1,6 @@
 package crawler
 
 import configuration.Configuration.SAVE_FILE_LOCATION
-import crawlingManager.CrawlingManager
 import dataExtractor.DataExtractor
 import dto.HashedURLPair
 import fetcher.Fetcher
