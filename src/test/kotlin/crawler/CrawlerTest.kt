@@ -83,6 +83,7 @@ class CrawlerTest {
         verify(loggerMock).info("Started")
         verify(dataExtractorMock).extractSEODataToFile(html, urlHashedPair.url, SAVE_FILE_LOCATION)
         verify(urlStorageMock).provideURL(urlHashedPair.getHash())
+        verify(hostsStorageMock).provideHost(host)
         verify(frontierMock).updateOrCreateQueue(host, foundURL.url)
         verify(loggerMock).info("Stopped")
     }

@@ -57,12 +57,13 @@ class Crawler(
         val pulledURL = frontier.pullURL(primaryHost)
         if (urlValidator.canProcessURL(primaryHost, pulledURL)) {
             urlStorage.provideURL(pulledURL.getHash())
-            val html = fetcher.getPageHTML(pulledURL.url)
-            processHTML(html, pulledURL)
+            hostsStorage.provideHost(primaryHost)
+            processHTML(pulledURL)
         }
     }
 
-    private fun processHTML(html: String?, pulledURL: HashedURLPair) {
+    private fun processHTML(pulledURL: HashedURLPair) {
+        val html = fetcher.getPageHTML(pulledURL.url)
         html?.let {
             dataExtractor.extractSEODataToFile(html, pulledURL.url, SAVE_FILE_LOCATION)
             processChildURLs(urlParser.getURLs(html))
