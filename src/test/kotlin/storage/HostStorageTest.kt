@@ -8,13 +8,13 @@ import storage.hosts.HostsStorage
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
-import redis.RedisConnector
+import redis.RedisManager
 import storage.hosts.Configuration.DEFAULT_PATH
 import storage.hosts.RobotsUtils
 
 class HostStorageTest {
     private val hostStorage = HostsStorage
-    private val jedis = RedisConnector.getJedis()
+    private val jedis = RedisManager
     private val testUtils = TestUtils()
 
     private val host = "host"
@@ -31,7 +31,7 @@ class HostStorageTest {
 
     @BeforeEach
     fun `set up`(){
-        jedis.flushAll()
+        jedis.clear()
     }
 
     @Test
@@ -69,6 +69,6 @@ class HostStorageTest {
 
     @AfterEach
     fun afterEach() {
-        jedis.flushAll()
+        jedis.clear()
     }
 }

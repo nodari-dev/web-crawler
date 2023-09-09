@@ -1,5 +1,5 @@
 package interfaces
 
 interface IRedisStorageUtils {
-    fun getEntryPath(defaultPath: String, entriesList: List<String>): String
+    fun getEntryPath(defaultPath: String, key: String): String
 }

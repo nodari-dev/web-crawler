@@ -1,15 +1,15 @@
 package storage
 
-import redis.RedisConnector
+import redis.RedisManager
 
 class TestUtils {
-    private val jedis = RedisConnector.getJedis()
+    private val jedis = RedisManager
 
-    fun getDefaultPathContent(path: String): MutableList<String>? {
-        return jedis.lrange(path ,0 , -1)
+    fun getDefaultPathContent(path: String): List<String> {
+        return jedis.getListOfEntryKeys(path)
     }
 
-    fun getDefaultPathChildContent(path: String, host: String): MutableList<String>? {
-        return jedis.lrange("$path:$host" ,0 , -1)
+    fun getDefaultPathChildContent(path: String, host: String): List<String>{
+        return jedis.getListOfEntryKeys("$path:$host")
     }
 }

@@ -9,14 +9,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import parser.urlparser.URLParser
-import redis.RedisConnector
+import redis.RedisManager
 import storage.frontier.Frontier
 import storage.hosts.HostsStorage
 import storage.url.URLStorage
 
 class CrawlerTest {
     private val host = "https://example.com"
-    private val jedis = RedisConnector.getJedis()
+    private val jedis = RedisManager
 
     private lateinit var crawler: Crawler
 
@@ -31,7 +31,7 @@ class CrawlerTest {
 
     @BeforeEach
     fun `set up`() {
-        jedis.flushAll()
+        jedis.clear()
 
         crawler = Crawler(
             host,

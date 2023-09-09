@@ -5,15 +5,15 @@ import storage.url.URLStorage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import redis.RedisConnector
+import redis.RedisManager
 
 class VisitedURLsTest {
     private val urlStorage = URLStorage
-    private val jedis = RedisConnector.getJedis()
+    private val jedis = RedisManager
 
     @BeforeEach
     fun setup(){
-        jedis.flushAll()
+        jedis.clear()
     }
 
     @Test
@@ -28,6 +28,6 @@ class VisitedURLsTest {
 
     @AfterEach
     fun afterEach() {
-        jedis.flushAll()
+        jedis.clear()
     }
 }

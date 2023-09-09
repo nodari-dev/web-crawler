@@ -7,80 +7,92 @@ import storage.frontier.Configuration.FRONTIER_KEY
 import storage.frontier.Configuration.QUEUES_KEY
 import interfaces.IFrontier
 import mu.KotlinLogging
-import redis.RedisConnector
-import storage.RedisStorageUtils
+import redis.RedisManager
+import redis.RedisStorageUtils
 import java.util.concurrent.locks.ReentrantLock
 
 object Frontier: IFrontier{
     private val mutex = ReentrantLock()
     private val redisStorageUtils = RedisStorageUtils()
-    private val jedis = RedisConnector.getJedis()
+    private val jedis = RedisManager
     var logger = KotlinLogging.logger("Frontier")
     var crawlersFactory = CrawlersFactory
 
     init {
-        jedis.set(FRONTIER_KEY, QUEUES_KEY)
+        jedis.createEntry(FRONTIER_KEY, QUEUES_KEY)
     }
 
     override fun updateOrCreateQueue(host: String, url: String) {
-        mutex.lock()
-        try {
-            if(isQueueDefinedForHost(host)){
-                updateQueue(host, url)
-            } else{
-                createQueue(host, url)
-            }
-        } finally {
-            mutex.unlock()
+//        mutex.lock()
+//        try {
+//            if(isQueueDefinedForHost(host)){
+//                updateQueue(host, url)
+//            } else{
+//                createQueue(host, url)
+//            }
+//        } finally {
+//            mutex.unlock()
+//        }
+        if(isQueueDefinedForHost(host)){
+            updateQueue(host, url)
+        } else{
+            createQueue(host, url)
         }
     }
 
     private fun isQueueDefinedForHost(host: String): Boolean{
-        return jedis.lpos(DEFAULT_PATH, host) != null
+        return jedis.isEntryKeyDefined(DEFAULT_PATH, host)
     }
 
     private fun updateQueue(host: String, url: String) {
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, url)
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+        jedis.updateEntry(path, url)
     }
 
     private fun createQueue(host: String, url: String) {
         logger.info ("created queue with host: $host")
-        jedis.lpush(DEFAULT_PATH, host)
+        jedis.createEntry(DEFAULT_PATH, host)
 
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-        jedis.rpush(path, url)
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+        jedis.updateEntry(path, url)
         crawlersFactory.requestCrawlerInitialization(host)
     }
 
     override fun pullURL(host: String): HashedURLPair {
-        mutex.lock()
-        try{
-            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            return HashedURLPair(jedis.lpop(path))
-        } finally {
-            mutex.unlock()
-        }
+//        mutex.lock()
+//        try{
+//            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+//            return HashedURLPair(jedis.getFirstEntryItem(path))
+//        } finally {
+//            mutex.unlock()
+//        }
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+        return HashedURLPair(jedis.getFirstEntryItem(path))
     }
 
     override fun isQueueEmpty(host: String): Boolean{
-        mutex.lock()
-        try {
-            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host))
-            return jedis.lrange(path, 0, 1).size == 0
-        } finally {
-            mutex.unlock()
-        }
+//        mutex.lock()
+//        try {
+//            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+//            return jedis.checkEntryEmptiness(path)
+//        } finally {
+//            mutex.unlock()
+//        }
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+        return jedis.checkEntryEmptiness(path)
     }
 
     override fun deleteQueue(host: String){
-        mutex.lock()
-        try {
-            logger.info("removed queue with host: $host")
-            jedis.del(redisStorageUtils.getEntryPath(DEFAULT_PATH, listOf(host)))
-            jedis.lrem(DEFAULT_PATH, 1 , host)
-        } finally {
-            mutex.unlock()
-        }
+//        mutex.lock()
+//        try {
+//            logger.info("removed queue with host: $host")
+//            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+//            jedis.deleteEntry(DEFAULT_PATH, path ,host)
+//        } finally {
+//            mutex.unlock()
+//        }
+        logger.info("removed queue with host: $host")
+        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
+        jedis.deleteEntry(DEFAULT_PATH, path ,host)
     }
 }
