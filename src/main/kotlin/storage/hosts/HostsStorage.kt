@@ -9,7 +9,6 @@ import storage.hosts.Configuration.HOSTS_LIST_KEY
 import java.util.concurrent.locks.ReentrantLock
 
 object HostsStorage: IHostsStorage {
-    private val mutex = ReentrantLock()
     private val jedis = RedisManager
     private val redisStorageUtils = RedisStorageUtils()
     private var robotsUtils = RobotsUtils()
@@ -19,14 +18,6 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun provideHost(host: String){
-//        mutex.lock()
-//        try{
-//            if(isHostNew(host)){
-//                createHost(host)
-//            }
-//        } finally {
-//            mutex.unlock()
-//        }
         if(isHostNew(host)){
             createHost(host)
         }
@@ -38,14 +29,6 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun deleteHost(host: String){
-//        mutex.lock()
-//        try{
-//            val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-//            jedis.deleteEntry(DEFAULT_PATH, path, host)
-//        } finally {
-//            mutex.unlock()
-//        }
-
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
         jedis.deleteEntry(DEFAULT_PATH, path, host)
     }
@@ -59,18 +42,6 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun isURLAllowed(host: String, url: String): Boolean{
-//        mutex.lock()
-//        try{
-//            if(isHostNew(host)){
-//                return true
-//            }
-//
-//            val bannedURLs = getBannedURls(host)
-//            return bannedURLs.any{bannedURL -> !url.contains(bannedURL, true) }
-//
-//        } finally {
-//            mutex.unlock()
-//        }
         if(isHostNew(host)){
             return true
         }

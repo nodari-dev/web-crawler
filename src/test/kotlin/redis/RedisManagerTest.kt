@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import redis.clients.jedis.JedisPool
+import java.util.concurrent.locks.ReentrantLock
 
 class RedisManagerTest {
     private val redisManager = RedisManager
     private val jedisMock = mock(JedisPool("localhost", 6379).resource::class.java)
+    private val mutexMock = mock(ReentrantLock::class.java)
 
     private val primaryPath = "primaryPath"
     private val path = "path"
@@ -15,32 +17,38 @@ class RedisManagerTest {
     private val key = "key"
 
     init{
-        redisManager.setupTest(jedisMock)
+        redisManager.setupTest(jedisMock, mutexMock)
     }
 
     @Test
     fun `createEntry works correct`(){
         redisManager.createEntry(path, key)
 
+        verify(mutexMock).lock()
         verify(jedisMock).lpush(path, key)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
     fun `updateEntry works correct`(){
         redisManager.updateEntry(path, key)
 
+        verify(mutexMock).lock()
         verify(jedisMock).rpush(path, key)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
     fun `deleteEntry works correct`(){
         redisManager.deleteEntry(primaryPath, path, key)
 
+        verify(mutexMock).lock()
         verify(jedisMock).del(path)
         verify(jedisMock).lrem(primaryPath, 1, key)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
@@ -50,8 +58,10 @@ class RedisManagerTest {
         val result = redisManager.getFirstEntryItem(path)
 
         Assertions.assertEquals("something", result)
+        verify(mutexMock).lock()
         verify(jedisMock).lpop(path)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
@@ -61,8 +71,10 @@ class RedisManagerTest {
         val result = redisManager.getListOfEntryKeys(path)
 
         Assertions.assertEquals(listOf("one", "two"), result)
+        verify(mutexMock).lock()
         verify(jedisMock).lrange(path, 0, -1)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
@@ -76,9 +88,11 @@ class RedisManagerTest {
         Assertions.assertEquals(false, result)
         Assertions.assertEquals(true, resultTwo)
 
+        verify(mutexMock, times(2)).lock()
         verify(jedisMock).lrange(path, 0, -1)
         verify(jedisMock).lrange(secondPath, 0, -1)
         verify(jedisMock, times(2)).close()
+        verify(mutexMock, times(2)).unlock()
     }
 
     @Test
@@ -89,15 +103,19 @@ class RedisManagerTest {
 
         Assertions.assertEquals(true, result)
 
+        verify(mutexMock).lock()
         verify(jedisMock).lpos(path, key)
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 
     @Test
     fun `clear works correct`(){
         redisManager.clear()
 
+        verify(mutexMock).lock()
         verify(jedisMock).flushAll()
         verify(jedisMock).close()
+        verify(mutexMock).unlock()
     }
 }

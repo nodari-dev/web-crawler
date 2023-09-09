@@ -6,7 +6,7 @@ import redis.clients.jedis.JedisPool
 import java.util.concurrent.locks.ReentrantLock
 
 object RedisManager: IRedisManager {
-    private val mutex = ReentrantLock()
+    private var mutex = ReentrantLock()
     private var jedis = JedisPool("localhost", 6379).resource
 
     override fun createEntry(path: String, key: String){
@@ -18,7 +18,6 @@ object RedisManager: IRedisManager {
         } finally {
             mutex.unlock()
         }
-
     }
 
     override fun updateEntry(path: String, key: String){
@@ -101,7 +100,8 @@ object RedisManager: IRedisManager {
         }
     }
 
-    fun setupTest(mockJedis: Jedis){
+    fun setupTest(mockJedis: Jedis, mockMutex: ReentrantLock){
         jedis = mockJedis
+        mutex = mockMutex
     }
 }
