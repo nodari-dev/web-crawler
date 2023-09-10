@@ -2,12 +2,9 @@
 
 ## Table of Contents
 
-- [About](#about)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- 
+  
 ## Features
 
 - Multithread, each crawler instanse is a thread which works with specific frontier queue
