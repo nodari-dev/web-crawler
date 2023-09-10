@@ -1,20 +1,19 @@
 package seedsManager
 
 import configuration.Illustrations
-import dataExtractor.DataExtractor
 import dto.HashedURLPair
 import storage.frontier.Frontier
 import interfaces.ICrawlingManager
+import mu.KLogger
 import mu.KotlinLogging
 import parser.urlparser.URLParser
 import redis.RedisManager
 
 object SeedsManager: ICrawlingManager {
     private val urlParser = URLParser()
-    private val jedis = RedisManager
-    var logger = KotlinLogging.logger("CrawlingManager")
-    var dataExtractor = DataExtractor()
-    var frontier = Frontier
+    private var jedis = RedisManager
+    private var logger = KotlinLogging.logger("CrawlingManager")
+    private var frontier = Frontier
 
     override fun startCrawling(seeds: List<String>){
         jedis.clear()
@@ -27,5 +26,11 @@ object SeedsManager: ICrawlingManager {
         } else{
             logger.error("No seed urls provided")
         }
+    }
+
+    fun setup(loggerMock: KLogger, frontierMock: Frontier, jedisMock: RedisManager){
+        logger = loggerMock
+        frontier = frontierMock
+        jedis = jedisMock
     }
 }

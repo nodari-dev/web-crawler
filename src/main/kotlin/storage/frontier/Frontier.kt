@@ -13,9 +13,9 @@ import redis.RedisStorageUtils
 
 object Frontier: IFrontier{
     private val redisStorageUtils = RedisStorageUtils()
-    var jedis = RedisManager
-    var logger = KotlinLogging.logger("Frontier")
-    var crawlersManager = CrawlersManager
+    private var jedis = RedisManager
+    private var logger = KotlinLogging.logger("Frontier")
+    private var crawlersManager = CrawlersManager
 
     init {
         jedis.createEntry(FRONTIER_KEY, QUEUES_KEY)

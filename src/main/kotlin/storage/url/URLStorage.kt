@@ -5,7 +5,6 @@ import redis.RedisManager
 import storage.url.Configuration.DEFAULT_PATH
 import storage.url.Configuration.VISITED_KEY
 import storage.url.Configuration.VISITED_URLS_LIST_KEY
-import java.util.concurrent.locks.ReentrantLock
 
 object URLStorage: IURLStorage{
     private var jedis = RedisManager
