@@ -1,42 +1,24 @@
-# Project Name
-
-Brief description of your project.
+# Web crawler
 
 ## Table of Contents
 
 - [About](#about)
 - [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
-## About
-
-Provide a brief introduction to your project. Explain its purpose, what problem it solves, and any relevant background information.
-
+- 
 ## Features
 
-List the key features of your project.
+- Multithread, each crawler instanse is a thread which works with specific frontier queue
+- Redis storage for frontier, hots data and visited urls
+- SEO data stores in a specific file in project folder
+- Fast data processing by regex
+- You can configure:
+  - Time between fething
+  - Max number of crawlers
+  - Save file location
 
-- Feature 1
-- Feature 2
-- ...
+## Prerequisites
 
-## Getting Started
-
-Explain how to get started with your project. Provide clear and concise steps for installation and configuration.
-
-### Prerequisites
-
-List any prerequisites or dependencies required to use your project. Include links to external resources or documentation if necessary.
-
-### Installation
-
-Provide installation instructions for your project. You can include code snippets, commands, or links to more detailed installation guides.
-
-```bash
-# Example installation command
-npm install your-package-name
+You should have installed redis-server which will be running on port 6379
