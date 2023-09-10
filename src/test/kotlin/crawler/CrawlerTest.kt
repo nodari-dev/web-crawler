@@ -24,7 +24,7 @@ class CrawlerTest {
     private val fetcherMock = mock(Fetcher::class.java)
     private val urlValidatorMock = mock(URLValidator::class.java)
     private val dataExtractorMock = mock(DataExtractor::class.java)
-    private val crawlersFactoryMock = mock(CrawlersFactory::class.java)
+    private val crawlersFactoryMock = mock(CrawlersManager::class.java)
     private val hostsStorageMock = mock(HostsStorage::class.java)
     private val urlStorageMock = mock(URLStorage::class.java)
     private val frontierMock = mock(Frontier::class.java)

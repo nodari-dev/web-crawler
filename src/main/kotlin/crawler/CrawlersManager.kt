@@ -1,42 +1,28 @@
 package crawler
 
-import configuration.Configuration
 import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
 import dataExtractor.DataExtractor
 import fetcher.Fetcher
-import interfaces.ICrawlersFactory
+import interfaces.ICrawlersManager
 import mu.KotlinLogging
 import parser.urlparser.URLParser
 import storage.frontier.Frontier
 import storage.hosts.HostsStorage
 import storage.url.URLStorage
-import java.util.concurrent.locks.ReentrantLock
 
-object CrawlersFactory: ICrawlersFactory {
+object CrawlersManager: ICrawlersManager {
     private val activeCrawlers = mutableListOf<Thread>()
     private val hostsToProcess = mutableListOf<String>()
-    private var mutex = ReentrantLock()
 
     override fun requestCrawlerInitialization(host: String) {
-        mutex.lock()
-        try{
-            hostsToProcess.add(host)
-            generateNewCrawlers()
-        } finally {
-            mutex.unlock()
-        }
-
+        hostsToProcess.add(host)
+        generateNewCrawlers()
     }
 
     override fun removeTerminatedCrawler(crawler: Thread) {
-        mutex.lock()
-        try{
-            activeCrawlers.remove(crawler)
-            if(hostsToProcess.isNotEmpty() && activeCrawlers.size != MAX_NUMBER_OF_CRAWLERS){
-                generateNewCrawlers()
-            }
-        } finally {
-            mutex.unlock()
+        activeCrawlers.remove(crawler)
+        if(hostsToProcess.isNotEmpty() && activeCrawlers.size != MAX_NUMBER_OF_CRAWLERS){
+            generateNewCrawlers()
         }
     }
 
@@ -50,7 +36,7 @@ object CrawlersFactory: ICrawlersFactory {
                     Fetcher(KotlinLogging.logger("Fetcher")),
                     URLValidator(HostsStorage, URLStorage),
                     URLParser(),
-                    CrawlersFactory,
+                    CrawlersManager,
                     DataExtractor(),
                     HostsStorage,
                     URLStorage,

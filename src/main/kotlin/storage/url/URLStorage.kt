@@ -8,8 +8,7 @@ import storage.url.Configuration.VISITED_URLS_LIST_KEY
 import java.util.concurrent.locks.ReentrantLock
 
 object URLStorage: IURLStorage{
-    private val mutex = ReentrantLock()
-    private val jedis = RedisManager
+    private var jedis = RedisManager
 
     init {
         jedis.createEntry(VISITED_KEY, VISITED_URLS_LIST_KEY)
@@ -21,5 +20,9 @@ object URLStorage: IURLStorage{
 
     override fun doesNotExist(hash: Int): Boolean{
         return !jedis.isEntryKeyDefined(DEFAULT_PATH, hash.toString())
+    }
+
+    fun setup(jedisMock: RedisManager){
+        jedis = jedisMock
     }
 }

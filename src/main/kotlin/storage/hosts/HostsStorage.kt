@@ -8,8 +8,8 @@ import storage.hosts.Configuration.HOSTS_KEY
 import storage.hosts.Configuration.HOSTS_LIST_KEY
 
 object HostsStorage: IHostsStorage {
-    private val jedis = RedisManager
     private val redisStorageUtils = RedisStorageUtils()
+    private var jedis = RedisManager
     private var robotsUtils = RobotsUtils()
 
     init {
@@ -60,7 +60,8 @@ object HostsStorage: IHostsStorage {
 
     }
 
-    fun setUpTest(mockRobotsUtils: RobotsUtils){
+    fun setUpTest(mockRobotsUtils: RobotsUtils, mockJedis: RedisManager){
         robotsUtils = mockRobotsUtils
+        jedis = mockJedis
     }
  }

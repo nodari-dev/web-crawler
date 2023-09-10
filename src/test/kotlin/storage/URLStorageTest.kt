@@ -1,33 +1,34 @@
 package storage
 
-import org.junit.jupiter.api.AfterEach
 import storage.url.URLStorage
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.*
 import redis.RedisManager
+import storage.url.Configuration.DEFAULT_PATH
 
 class VisitedURLsTest {
     private val urlStorage = URLStorage
-    private val jedis = RedisManager
+    private val jedisMock = mock(RedisManager::class.java)
 
-    @BeforeEach
-    fun setup(){
-        jedis.clear()
+    init {
+        urlStorage.setup(jedisMock)
     }
 
     @Test
     fun `adds new hash and allows to check if hash already exist`(){
         val someHash = 1233
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, someHash.toString())).thenReturn(false, true, false)
 
+        val result = urlStorage.doesNotExist(someHash)
         urlStorage.provideURL(someHash)
+        val resultTwo = urlStorage.doesNotExist(someHash)
+        val resultThree = urlStorage.doesNotExist(33331)
 
-        Assertions.assertEquals(true, urlStorage.doesNotExist(33331))
-        Assertions.assertEquals(false, urlStorage.doesNotExist(someHash))
-    }
+        verify(jedisMock).updateEntry(DEFAULT_PATH, someHash.toString())
 
-    @AfterEach
-    fun afterEach() {
-        jedis.clear()
+        Assertions.assertEquals(true, result)
+        Assertions.assertEquals(false, resultTwo)
+        Assertions.assertEquals(true, resultThree)
     }
 }

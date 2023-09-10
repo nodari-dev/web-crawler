@@ -1,5 +1,7 @@
 package redis
 
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -8,6 +10,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 class RedisManagerTest {
     private val redisManager = RedisManager
+    private val jedis = RedisManager
     private val jedisMock = mock(JedisPool("localhost", 6379).resource::class.java)
     private val mutexMock = mock(ReentrantLock::class.java)
 
@@ -18,6 +21,11 @@ class RedisManagerTest {
 
     init{
         redisManager.setupTest(jedisMock, mutexMock)
+    }
+
+    @AfterEach
+    fun cleanup(){
+        jedis.clear()
     }
 
     @Test
@@ -117,5 +125,10 @@ class RedisManagerTest {
         verify(jedisMock).flushAll()
         verify(jedisMock).close()
         verify(mutexMock).unlock()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        jedis.clear()
     }
 }

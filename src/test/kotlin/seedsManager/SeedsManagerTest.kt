@@ -1,6 +1,5 @@
-package crawlingManager
+package seedsManager
 
-import dataExtractor.DataExtractor
 import dto.HashedURLPair
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
@@ -8,8 +7,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import storage.frontier.Frontier
 
-class CrawlingManagerTest {
-    private val crawlingManager = CrawlingManager
+class SeedsManagerTest {
+    private val crawlingManager = SeedsManager
 
     private val mockFrontier = Mockito.mock(Frontier::class.java)
     private val mockLogger = Mockito.mock(KotlinLogging.logger("CrawlingManager")::class.java)

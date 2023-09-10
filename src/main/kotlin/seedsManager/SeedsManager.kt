@@ -1,4 +1,4 @@
-package crawlingManager
+package seedsManager
 
 import configuration.Illustrations
 import dataExtractor.DataExtractor
@@ -9,7 +9,7 @@ import mu.KotlinLogging
 import parser.urlparser.URLParser
 import redis.RedisManager
 
-object CrawlingManager: ICrawlingManager {
+object SeedsManager: ICrawlingManager {
     private val urlParser = URLParser()
     private val jedis = RedisManager
     var logger = KotlinLogging.logger("CrawlingManager")

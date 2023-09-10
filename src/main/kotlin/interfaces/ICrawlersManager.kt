@@ -1,6 +1,6 @@
 package interfaces
 
-interface ICrawlersFactory {
+interface ICrawlersManager {
     fun requestCrawlerInitialization(host: String)
     fun removeTerminatedCrawler(crawler: Thread)
 }

@@ -1,20 +1,21 @@
 package storage.frontier
 
-import crawler.CrawlersFactory
+import crawler.CrawlersManager
 import dto.HashedURLPair
 import storage.frontier.Configuration.DEFAULT_PATH
 import storage.frontier.Configuration.FRONTIER_KEY
 import storage.frontier.Configuration.QUEUES_KEY
 import interfaces.IFrontier
+import mu.KLogger
 import mu.KotlinLogging
 import redis.RedisManager
 import redis.RedisStorageUtils
 
 object Frontier: IFrontier{
     private val redisStorageUtils = RedisStorageUtils()
-    private val jedis = RedisManager
+    var jedis = RedisManager
     var logger = KotlinLogging.logger("Frontier")
-    var crawlersFactory = CrawlersFactory
+    var crawlersManager = CrawlersManager
 
     init {
         jedis.createEntry(FRONTIER_KEY, QUEUES_KEY)
@@ -43,7 +44,7 @@ object Frontier: IFrontier{
 
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
         jedis.updateEntry(path, url)
-        crawlersFactory.requestCrawlerInitialization(host)
+        crawlersManager.requestCrawlerInitialization(host)
     }
 
     override fun pullURL(host: String): HashedURLPair {
@@ -60,5 +61,11 @@ object Frontier: IFrontier{
         logger.info("removed queue with host: $host")
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
         jedis.deleteEntry(DEFAULT_PATH, path ,host)
+    }
+
+    fun setupTest(jedisMock: RedisManager, loggerMock: KLogger, crawlersManagerMock: CrawlersManager){
+        jedis = jedisMock
+        logger = loggerMock
+        crawlersManager = crawlersManagerMock
     }
 }

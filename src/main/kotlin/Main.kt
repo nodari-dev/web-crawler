@@ -1,5 +1,5 @@
-import crawlingManager.CrawlingManager
+import seedsManager.SeedsManager
 
 fun main() {
-    CrawlingManager.startCrawling(listOf("https://en.wikipedia.org/wiki/Main_Page"))
+    SeedsManager.startCrawling(listOf("https://en.wikipedia.org/wiki/Main_Page"))
 }

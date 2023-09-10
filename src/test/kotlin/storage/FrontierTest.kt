@@ -1,6 +1,6 @@
 package storage
 
-import crawler.CrawlersFactory
+import crawler.CrawlersManager
 import dto.HashedURLPair
 import mu.KotlinLogging
 import org.junit.jupiter.api.AfterEach
@@ -14,8 +14,6 @@ import storage.frontier.Frontier
 
 class FrontierTest {
     private val frontier = Frontier
-    private val jedis = RedisManager
-    private val testUtils = TestUtils()
     private val host = "https://host.com"
     private val hashedUrlPair = HashedURLPair("$host/demon/")
     private val hashedURLPairTwo = HashedURLPair("$host/hell/")
@@ -23,96 +21,110 @@ class FrontierTest {
     private val anotherHost = "https://hell.com"
     private val anotherUrl = HashedURLPair("$anotherHost/hello")
 
-    private val mockCrawlersFactory = mock(CrawlersFactory::class.java)
+    private val mockCrawlersManager = mock(CrawlersManager::class.java)
     private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
+    private val jedisMock = mock(RedisManager::class.java)
 
 
     init{
-        frontier.crawlersFactory = mockCrawlersFactory
-        frontier.logger = mockLogger
-    }
-
-    @BeforeEach
-    fun `flush all`() {
-        jedis.clear()
+        frontier.setupTest(jedisMock, mockLogger, mockCrawlersManager)
     }
 
     @Test
     fun `creates queue and adds url`() {
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false)
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, anotherHost)).thenReturn(false)
 
         frontier.updateOrCreateQueue(host, hashedUrlPair.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
-        Assertions.assertEquals(2, testUtils.getDefaultPathContent(DEFAULT_PATH).size)
-        Assertions.assertEquals(mutableListOf(anotherHost, host), testUtils.getDefaultPathContent(DEFAULT_PATH))
-        Assertions.assertEquals(
-            mutableListOf(hashedUrlPair.url),
-            testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)
-        )
-
-        Assertions.assertEquals(
-            mutableListOf(anotherUrl.url),
-            testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost)
-        )
-
-        verify(mockCrawlersFactory).requestCrawlerInitialization(host)
-        verify(mockCrawlersFactory).requestCrawlerInitialization(anotherHost)
         verify(mockLogger).info("created queue with host: $host")
         verify(mockLogger).info("created queue with host: $anotherHost")
+
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
+
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", hashedUrlPair.url)
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$anotherHost", anotherUrl.url)
+
+        verify(mockCrawlersManager).requestCrawlerInitialization(host)
+        verify(mockCrawlersManager).requestCrawlerInitialization(anotherHost)
     }
 
     @Test
     fun `updates current queue`() {
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false, true)
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, anotherHost)).thenReturn(false)
+
         frontier.updateOrCreateQueue(host, hashedUrlPair.url)
         frontier.updateOrCreateQueue(host, hashedURLPairTwo.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
-        Assertions.assertEquals(2, testUtils.getDefaultPathContent(DEFAULT_PATH).size)
-        Assertions.assertEquals(mutableListOf(anotherHost, host), testUtils.getDefaultPathContent(DEFAULT_PATH))
 
-        Assertions.assertEquals(
-            mutableListOf(hashedUrlPair.url, hashedURLPairTwo.url),
-            testUtils.getDefaultPathChildContent(DEFAULT_PATH, host)
-        )
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", hashedUrlPair.url)
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", hashedURLPairTwo.url)
 
-        Assertions.assertEquals(
-            mutableListOf(anotherUrl.url),
-            testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost)
-        )
+        verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$anotherHost", anotherUrl.url)
     }
 
     @Test
     fun `returns url from queue`() {
+        val path = "$DEFAULT_PATH:$host"
+        `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false, true)
+        `when`(jedisMock.getFirstEntryItem(path)).thenReturn(hashedUrlPair.url, hashedURLPairTwo.url)
+
         frontier.updateOrCreateQueue(host, hashedUrlPair.url)
         frontier.updateOrCreateQueue(host, hashedURLPairTwo.url)
+        val result = frontier.pullURL(host)
+        val resultTwo = frontier.pullURL(host)
 
-        Assertions.assertEquals(2, testUtils.getDefaultPathChildContent(DEFAULT_PATH, host).size)
-        Assertions.assertEquals(hashedUrlPair, frontier.pullURL(host))
-        Assertions.assertEquals(1, testUtils.getDefaultPathChildContent(DEFAULT_PATH, host).size)
-        Assertions.assertEquals(mutableListOf(hashedURLPairTwo.url), testUtils.getDefaultPathChildContent(DEFAULT_PATH, host))
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).updateEntry(path, hashedUrlPair.url)
+        verify(jedisMock).updateEntry(path, hashedURLPairTwo.url)
+
+        verify(jedisMock, times(2)).getFirstEntryItem(path)
+
+        Assertions.assertEquals(hashedUrlPair, result)
+        Assertions.assertEquals(hashedURLPairTwo, resultTwo)
     }
 
     @Test
     fun `checks if queue is empty`() {
+        val path = "$DEFAULT_PATH:$host"
+        val pathTwo = "$DEFAULT_PATH:$anotherHost"
+        `when`(jedisMock.checkEntryEmptiness(path)).thenReturn(false)
+        `when`(jedisMock.checkEntryEmptiness(pathTwo)).thenReturn(true)
+
         frontier.updateOrCreateQueue(host, hashedUrlPair.url)
-        Assertions.assertEquals(false ,frontier.isQueueEmpty(host))
-        Assertions.assertEquals(true ,frontier.isQueueEmpty(anotherHost))
+        val result = frontier.isQueueEmpty(host)
+        val resultTwo = frontier.isQueueEmpty(anotherHost)
+
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", hashedUrlPair.url)
+
+        Assertions.assertEquals(false ,result)
+        Assertions.assertEquals(true, resultTwo)
     }
 
     @Test
     fun `deletes queue`() {
+        val path = "$DEFAULT_PATH:$host"
+        val pathTwo = "$DEFAULT_PATH:$anotherHost"
+
         frontier.updateOrCreateQueue(host, hashedUrlPair.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         frontier.deleteQueue(anotherHost)
-        Assertions.assertEquals(1, testUtils.getDefaultPathContent(DEFAULT_PATH).size)
-        Assertions.assertEquals(mutableListOf<String>(), testUtils.getDefaultPathChildContent(DEFAULT_PATH, anotherHost))
 
         verify(mockLogger).info("removed queue with host: $anotherHost")
-    }
 
-    @AfterEach
-    fun afterEach() {
-        jedis.clear()
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).updateEntry(path, hashedUrlPair.url)
+        verify(jedisMock).createEntry(DEFAULT_PATH, host)
+        verify(jedisMock).updateEntry(pathTwo, anotherUrl.url)
+
+        verify(jedisMock).deleteEntry(DEFAULT_PATH, pathTwo, anotherHost)
     }
 }

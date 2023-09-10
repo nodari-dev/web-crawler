@@ -17,7 +17,7 @@ class Crawler(
     override val fetcher: Fetcher,
     override val urlValidator: URLValidator,
     override val urlParser: URLParser,
-    override val crawlersFactory: CrawlersFactory,
+    override val crawlersFactory: CrawlersManager,
     override val dataExtractor: DataExtractor,
     override val hostsStorage: HostsStorage,
     override val urlStorage: URLStorage,

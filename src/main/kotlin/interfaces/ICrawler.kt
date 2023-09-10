@@ -1,6 +1,6 @@
 package interfaces
 
-import crawler.CrawlersFactory
+import crawler.CrawlersManager
 import crawler.URLValidator
 import dataExtractor.DataExtractor
 import fetcher.Fetcher
@@ -17,7 +17,7 @@ interface ICrawler {
     val urlValidator: URLValidator
     val urlParser: URLParser
     val dataExtractor: DataExtractor
-    val crawlersFactory: CrawlersFactory
+    val crawlersFactory: CrawlersManager
     val hostsStorage: HostsStorage
     val urlStorage: URLStorage
     val frontier: Frontier
