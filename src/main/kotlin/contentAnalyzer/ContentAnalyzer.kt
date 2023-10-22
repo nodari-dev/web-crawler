@@ -1,10 +1,10 @@
-package dataExtractor.analyzer
+package contentAnalyzer
 
 import dto.SEOContent
 import interfaces.ISEODataAnalyzer
 import parser.seoparser.SEOParser
 
-class SEODataAnalyzer : ISEODataAnalyzer {
+class ContentAnalyzer : ISEODataAnalyzer {
     private val seoParser = SEOParser()
     private val keywordGenerator = KeywordGenerator()
 

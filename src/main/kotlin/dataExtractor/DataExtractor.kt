@@ -1,6 +1,6 @@
 package dataExtractor
 
-import dataExtractor.analyzer.SEODataAnalyzer
+import contentAnalyzer.ContentAnalyzer
 import dto.SEOContent
 import exceptions.SaveFileException
 import interfaces.IDataExtractor
@@ -8,7 +8,7 @@ import java.io.File
 import java.io.FileWriter
 
 class DataExtractor : IDataExtractor {
-    private val seoDataAnalyzer = SEODataAnalyzer()
+    private val contentAnalyzer = ContentAnalyzer()
 
     override fun extractSEODataToFile(html: String, url: String, saveLocation: String) {
         val path = File(saveLocation)
@@ -16,7 +16,7 @@ class DataExtractor : IDataExtractor {
             path.mkdirs();
         }
 
-        val seoData = seoDataAnalyzer.generateSEOData(html, url)
+        val seoData = contentAnalyzer.generateSEOData(html, url)
         if (seoData != null) {
             val fileName = generateFileName(url)
             val file = File("$saveLocation/$fileName.txt")

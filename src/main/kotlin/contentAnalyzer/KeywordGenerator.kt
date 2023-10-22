@@ -1,4 +1,4 @@
-package dataExtractor.analyzer
+package contentAnalyzer
 
 import interfaces.IKeywordGenerator
 import mu.KotlinLogging

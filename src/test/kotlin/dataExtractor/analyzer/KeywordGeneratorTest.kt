@@ -1,5 +1,6 @@
 package dataExtractor.analyzer
 
+import contentAnalyzer.KeywordGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

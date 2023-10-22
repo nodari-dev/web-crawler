@@ -1,17 +1,18 @@
 package dataExtractor.analyzer
 
+import contentAnalyzer.ContentAnalyzer
 import dataExtractor.MockedData
 import dto.SEOContent
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class SEODataAnalyzerTest {
-    private val seoDataAnalyzer = SEODataAnalyzer()
+class ContentAnalyzerTest {
+    private val contentAnalyzer = ContentAnalyzer()
 
     @Test
     fun `generates SEOContent`() {
 
-        val result = seoDataAnalyzer.generateSEOData(MockedData.html, MockedData.url)
+        val result = contentAnalyzer.generateSEOData(MockedData.html, MockedData.url)
         val expectedResult =
             SEOContent(MockedData.title, MockedData.metaDescription, MockedData.url, MockedData.getKeyWords())
 
@@ -20,7 +21,7 @@ class SEODataAnalyzerTest {
 
     @Test
     fun `generates SEOContent when title and description and uses OG`() {
-        val result = seoDataAnalyzer.generateSEOData(MockedData.htmlOG, MockedData.url)
+        val result = contentAnalyzer.generateSEOData(MockedData.htmlOG, MockedData.url)
         val expectedResult =
             SEOContent(MockedData.OGtitle, null, MockedData.url, MockedData.getOgKeyWords())
 
@@ -29,7 +30,7 @@ class SEODataAnalyzerTest {
 
     @Test
     fun `returns null if keywords are empty`() {
-        val result = seoDataAnalyzer.generateSEOData(
+        val result = contentAnalyzer.generateSEOData(
             MockedData.emptyHTML, "someurl.com"
         )
         Assertions.assertEquals(null, result)
