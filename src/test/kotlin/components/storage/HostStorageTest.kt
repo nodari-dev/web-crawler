@@ -14,7 +14,7 @@ class HostStorageTest {
     private val hostStorage = HostsStorage
 
     private val host = "host"
-    private val bannedURLHashedPair = core.dto.HashedURLPair("banned-url")
+    private val bannedURLHashedPair = core.dto.WebLink("banned-url")
 
     private val mockRobotsUtils = Mockito.mock(RobotsUtils::class.java)
     private val mockJedis = Mockito.mock(RedisMemoryGateway::class.java)

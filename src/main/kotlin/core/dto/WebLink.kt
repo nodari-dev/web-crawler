@@ -1,6 +1,6 @@
 package core.dto
 
-data class HashedURLPair(var url: String){
+data class WebLink(var url: String){
     init {
         if(!url.endsWith("/")){
             url = "$url/"

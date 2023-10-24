@@ -65,7 +65,7 @@ class ParserUtilsTest {
     @Test
     fun `transforms list of string to list of FormattedURLs`(){
         val list = listOf("url1", "url2")
-        val expectedResult = listOf(core.dto.HashedURLPair(list[0]), core.dto.HashedURLPair(list[1]))
+        val expectedResult = listOf(core.dto.WebLink(list[0]), core.dto.WebLink(list[1]))
         val result = parserUtils.transformToFormattedURLs(list)
 
         Assertions.assertEquals(expectedResult, result)

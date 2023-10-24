@@ -20,7 +20,7 @@ object SeedsManager: ICrawlingManager {
             println(Illustrations.CrawlerStarted)
             seeds.forEach { seed ->
                 val host = urlParser.getHostWithProtocol(seed)
-                frontier.updateOrCreateQueue(host, core.dto.HashedURLPair(seed).url)
+                frontier.updateOrCreateQueue(host, core.dto.WebLink(seed).url)
             }
         } else{
             logger.error("No seed urls provided")

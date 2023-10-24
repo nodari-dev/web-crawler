@@ -11,7 +11,7 @@ import components.parser.urlparser.URLPatterns.UNSUPPORTED_FILETYPES
 class URLParser: IURLParser {
     private val parserUtils = ParserUtils()
 
-    override fun getURLs(document: String): List<core.dto.HashedURLPair> {
+    override fun getURLs(document: String): List<core.dto.WebLink> {
         val urls = parserUtils.parseValues(document, A_TAG, A_TAG_GROUP_INDEX)
         val allowedURLs = getAllowedURLs(urls)
         return parserUtils.transformToFormattedURLs(allowedURLs)

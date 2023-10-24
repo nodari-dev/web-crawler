@@ -1,7 +1,7 @@
 package core.interfaces.components
 
-import core.dto.HashedURLPair
+import core.dto.WebLink
 
 interface IRobotsParser {
-    fun getRobotsDisallowed(document: String): List<HashedURLPair>
+    fun getRobotsDisallowed(document: String): List<WebLink>
 }

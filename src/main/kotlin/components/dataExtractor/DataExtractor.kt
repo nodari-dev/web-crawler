@@ -1,5 +1,6 @@
 package components.dataExtractor
 
+import components.contentAnalyzer.ContentAnalyzer
 import components.dataExtractor.exceptions.SaveFileException
 import core.dto.SEOContent
 import core.interfaces.components.IDataExtractor
@@ -7,7 +8,7 @@ import java.io.File
 import java.io.FileWriter
 
 class DataExtractor : IDataExtractor {
-    private val contentAnalyzer = components.contentAnalyzer.ContentAnalyzer()
+    private val contentAnalyzer = ContentAnalyzer()
 
     override fun extractSEODataToFile(html: String, url: String, saveLocation: String) {
         val path = File(saveLocation)

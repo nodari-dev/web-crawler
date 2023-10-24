@@ -7,10 +7,10 @@ import components.storage.frontier.Frontier
 import components.storage.hosts.HostsStorage
 import components.storage.url.URLStorage
 import core.configuration.Configuration.SAVE_FILE_LOCATION
+import core.dto.WebLink
 import core.interfaces.components.ICrawler
 
 import mu.KLogger
-
 
 class Crawler(
     override val primaryHost: String,
@@ -63,7 +63,7 @@ class Crawler(
         }
     }
 
-    private fun processHTML(pulledURL: core.dto.HashedURLPair) {
+    private fun processHTML(pulledURL: WebLink) {
         val html = fetcher.getPageHTML(pulledURL.url)
         html?.let {
             dataExtractor.extractSEODataToFile(html, pulledURL.url, SAVE_FILE_LOCATION)
@@ -71,7 +71,7 @@ class Crawler(
         }
     }
 
-    private fun processChildURLs(urls: List<core.dto.HashedURLPair>) {
+    private fun processChildURLs(urls: List<WebLink>) {
         val uniqueHashedUrlPairs = urls.toSet()
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)

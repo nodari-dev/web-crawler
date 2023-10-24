@@ -9,13 +9,13 @@ class URLValidator(
     override val urlStorage: URLStorage
 ) : IURLValidator {
 
-    override fun canProcessURL(host: String, hashedUrlPair: core.dto.HashedURLPair?): Boolean {
-        if (hashedUrlPair == null) {
+    override fun canProcessURL(host: String, webLink: core.dto.WebLink?): Boolean {
+        if (webLink == null) {
             return false
         }
 
-        val isNew = urlStorage.doesNotExist(hashedUrlPair.getHash())
-        val isAllowed = hostsStorage.isURLAllowed(host, hashedUrlPair.url)
+        val isNew = urlStorage.doesNotExist(webLink.getHash())
+        val isAllowed = hostsStorage.isURLAllowed(host, webLink.url)
         return isNew && isAllowed
     }
 }

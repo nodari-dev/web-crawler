@@ -25,7 +25,7 @@ class URLValidatorTest {
         Mockito.`when`(mockHostsStorage.isURLAllowed(Mockito.anyString(), Mockito.anyString()))
             .thenAnswer { true }
 
-        val result = urlValidator.canProcessURL("something", core.dto.HashedURLPair("someURL"))
+        val result = urlValidator.canProcessURL("something", core.dto.WebLink("someURL"))
         Assertions.assertEquals(true, result)
     }
 
@@ -37,7 +37,7 @@ class URLValidatorTest {
         Mockito.`when`(mockHostsStorage.isURLAllowed(Mockito.anyString(), Mockito.anyString()))
             .thenAnswer { false }
 
-        val result = urlValidator.canProcessURL("something", core.dto.HashedURLPair("someURL"))
+        val result = urlValidator.canProcessURL("something", core.dto.WebLink("someURL"))
         Assertions.assertEquals(false, result)
     }
 
@@ -49,7 +49,7 @@ class URLValidatorTest {
         Mockito.`when`(mockHostsStorage.isURLAllowed(Mockito.anyString(), Mockito.anyString()))
             .thenAnswer { true }
 
-        val result = urlValidator.canProcessURL("something", core.dto.HashedURLPair("someURL"))
+        val result = urlValidator.canProcessURL("something", core.dto.WebLink("someURL"))
         Assertions.assertEquals(false, result)
     }
 }

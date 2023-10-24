@@ -47,9 +47,9 @@ object Frontier: IFrontier {
         crawlersManager.requestCrawlerInitialization(host)
     }
 
-    override fun pullURL(host: String): core.dto.HashedURLPair {
+    override fun pullURL(host: String): core.dto.WebLink {
         val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        return core.dto.HashedURLPair(jedis.getFirstEntryItem(path))
+        return core.dto.WebLink(jedis.getFirstEntryItem(path))
     }
 
     override fun isQueueEmpty(host: String): Boolean{

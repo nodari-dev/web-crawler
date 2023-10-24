@@ -64,8 +64,8 @@ class CrawlerTest {
 
     @Test
     fun `communicates with frontier while queue is not empty`() {
-        val urlHashedPair = core.dto.HashedURLPair("$host/test")
-        val foundURL = core.dto.HashedURLPair("$host/someNewUrl")
+        val urlHashedPair = core.dto.WebLink("$host/test")
+        val foundURL = core.dto.WebLink("$host/someNewUrl")
         val html = """<html><a href="${foundURL.url}">123</a></html>"""
 
         `when`(frontierMock.isQueueEmpty(host)).thenReturn(false, true)
@@ -89,7 +89,7 @@ class CrawlerTest {
 
     @Test
     fun `skips if html is null`() {
-        val urlHashedPair = core.dto.HashedURLPair("$host/test")
+        val urlHashedPair = core.dto.WebLink("$host/test")
         val html = null
 
         `when`(frontierMock.isQueueEmpty(host)).thenReturn(false, true)
@@ -111,8 +111,8 @@ class CrawlerTest {
 
     @Test
     fun `skips url from frontier if its not valid`() {
-        val urlHashedPair = core.dto.HashedURLPair("$host/test")
-        val urlHashedPairTwo = core.dto.HashedURLPair("$host/testTwo")
+        val urlHashedPair = core.dto.WebLink("$host/test")
+        val urlHashedPairTwo = core.dto.WebLink("$host/testTwo")
         val html = """<html>...</html>"""
 
         `when`(frontierMock.isQueueEmpty(host)).thenReturn(false, false, true)
@@ -137,8 +137,8 @@ class CrawlerTest {
 
     @Test
     fun `skips url from html if its not valid`() {
-        val urlHashedPair = core.dto.HashedURLPair("$host/test")
-        val foundURL = core.dto.HashedURLPair("$host/someNewUrl")
+        val urlHashedPair = core.dto.WebLink("$host/test")
+        val foundURL = core.dto.WebLink("$host/someNewUrl")
         val html = """<html><a href="${foundURL.url}">123</a></html>"""
 
 

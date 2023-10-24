@@ -1,8 +1,8 @@
 package core.interfaces.components
 
-import core.dto.HashedURLPair
+import core.dto.WebLink
 
 interface IURLParser {
-    fun getURLs(document: String): List<HashedURLPair>
+    fun getURLs(document: String): List<WebLink>
     fun getHostWithProtocol(document: String): String
 }
