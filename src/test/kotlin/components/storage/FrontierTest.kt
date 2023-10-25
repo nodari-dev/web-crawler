@@ -41,8 +41,8 @@ class FrontierTest {
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
         verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
 
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", webLink.url)
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$anotherHost", anotherUrl.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
 
         verify(mockCrawlersManager).requestCrawlerInitialization(host)
         verify(mockCrawlersManager).requestCrawlerInitialization(anotherHost)
@@ -59,11 +59,11 @@ class FrontierTest {
 
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", webLink.url)
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", webLinkTwo.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLinkTwo.url)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$anotherHost", anotherUrl.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
     }
 
     @Test
@@ -78,8 +78,8 @@ class FrontierTest {
         val resultTwo = frontier.pullURL(host)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(path, webLink.url)
-        verify(jedisMock).updateEntry(path, webLinkTwo.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLinkTwo.url)
 
         verify(jedisMock, times(2)).getFirstEntryItem(path)
 
@@ -99,7 +99,7 @@ class FrontierTest {
         val resultTwo = frontier.isQueueEmpty(anotherHost)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry("$DEFAULT_PATH:$host", webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
 
         Assertions.assertEquals(false ,result)
         Assertions.assertEquals(true, resultTwo)
@@ -118,9 +118,9 @@ class FrontierTest {
         verify(mockLogger).info("removed queue with host: $anotherHost")
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(path, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(pathTwo, anotherUrl.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
 
         verify(jedisMock).deleteEntry(DEFAULT_PATH, pathTwo, anotherHost)
     }

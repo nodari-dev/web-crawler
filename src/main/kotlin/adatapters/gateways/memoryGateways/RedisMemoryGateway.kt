@@ -1,6 +1,6 @@
 package adatapters.gateways.memoryGateways
 
-import core.interfaces.gateways.IMemoryGateway
+import adatapters.interfaces.IMemoryGateway
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import java.util.concurrent.locks.ReentrantLock
@@ -20,11 +20,11 @@ object RedisMemoryGateway: IMemoryGateway {
         }
     }
 
-    override fun updateEntry(path: String, key: String){
+    override fun updateEntry(path: String, key: String, value: String){
         mutex.lock()
         try{
             jedis.use { jedis ->
-                jedis.rpush(path, key)
+                jedis.rpush(getEntryPath(path, key), value)
             }
         } finally {
             mutex.unlock()
@@ -98,6 +98,10 @@ object RedisMemoryGateway: IMemoryGateway {
         } finally {
             mutex.unlock()
         }
+    }
+
+    private fun getEntryPath(path: String, key: String): String {
+        return "$path:$key"
     }
 
     fun setupTest(mockJedis: Jedis, mockMutex: ReentrantLock){

@@ -33,7 +33,7 @@ class HostStorageTest {
         hostStorage.provideHost(host)
 
         verify(mockJedis).createEntry(DEFAULT_PATH, host)
-        verify(mockJedis).updateEntry("$DEFAULT_PATH:$host", bannedURLHashedPair.url)
+        verify(mockJedis).updateEntry(DEFAULT_PATH, host, bannedURLHashedPair.url)
     }
 
     @Test
@@ -44,7 +44,7 @@ class HostStorageTest {
         hostStorage.provideHost(host)
 
         verify(mockJedis).createEntry(DEFAULT_PATH, host)
-        verify(mockJedis).updateEntry("$DEFAULT_PATH:$host", bannedURLHashedPair.url)
+        verify(mockJedis).updateEntry(DEFAULT_PATH, host,bannedURLHashedPair.url)
     }
 
 
@@ -55,7 +55,7 @@ class HostStorageTest {
         hostStorage.provideHost(host)
 
         verify(mockJedis).createEntry(DEFAULT_PATH, host)
-        verify(mockJedis).updateEntry("$DEFAULT_PATH:$host", bannedURLHashedPair.url)
+        verify(mockJedis).updateEntry(DEFAULT_PATH, host,bannedURLHashedPair.url)
 
         Assertions.assertEquals(false, hostStorage.isURLAllowed(host, "$host/banned-url/"))
         Assertions.assertEquals(true, hostStorage.isURLAllowed("some-new-host", "some-new-host/something"))
@@ -70,10 +70,10 @@ class HostStorageTest {
         hostStorage.provideHost(anotherHost)
 
         verify(mockJedis).createEntry(DEFAULT_PATH, host)
-        verify(mockJedis).updateEntry("$DEFAULT_PATH:$host", bannedURLHashedPair.url)
+        verify(mockJedis).updateEntry(DEFAULT_PATH, host,bannedURLHashedPair.url)
 
         verify(mockJedis).createEntry(DEFAULT_PATH, anotherHost)
-        verify(mockJedis).updateEntry("$DEFAULT_PATH:$anotherHost", bannedURLHashedPair.url)
+        verify(mockJedis).updateEntry(DEFAULT_PATH, anotherHost, bannedURLHashedPair.url)
 
         hostStorage.deleteHost(host)
 

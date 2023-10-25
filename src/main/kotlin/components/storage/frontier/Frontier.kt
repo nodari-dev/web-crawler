@@ -7,8 +7,6 @@ import adatapters.gateways.memoryGateways.RedisMemoryGateway
 import adatapters.gateways.memoryGateways.RedisStorageUtils
 import components.crawler.CrawlersManager
 import components.storage.frontier.Configuration.DEFAULT_PATH
-import components.storage.frontier.Configuration.FRONTIER_KEY
-import components.storage.frontier.Configuration.QUEUES_KEY
 import core.interfaces.components.IFrontier
 
 object Frontier: IFrontier {
@@ -16,10 +14,6 @@ object Frontier: IFrontier {
     private var jedis = RedisMemoryGateway
     private var logger = KotlinLogging.logger("Frontier")
     private var crawlersManager = CrawlersManager
-
-    init {
-        jedis.createEntry(FRONTIER_KEY, QUEUES_KEY)
-    }
 
     override fun updateOrCreateQueue(host: String, url: String) {
         if(isQueueDefinedForHost(host)){
@@ -34,16 +28,14 @@ object Frontier: IFrontier {
     }
 
     private fun updateQueue(host: String, url: String) {
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        jedis.updateEntry(path, url)
+        jedis.updateEntry(DEFAULT_PATH, host, url)
     }
 
     private fun createQueue(host: String, url: String) {
         logger.info ("created queue with host: $host")
         jedis.createEntry(DEFAULT_PATH, host)
 
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        jedis.updateEntry(path, url)
+        jedis.updateEntry(DEFAULT_PATH, host, url)
         crawlersManager.requestCrawlerInitialization(host)
     }
 

@@ -1,5 +1,5 @@
 import components.seedsManager.SeedsManager
 
 fun main() {
-    SeedsManager.startCrawling(listOf("https://en.wikipedia.org/wiki/Main_Page"))
+    SeedsManager.startCrawling(listOf("https://ecospace.org.ua"))
 }

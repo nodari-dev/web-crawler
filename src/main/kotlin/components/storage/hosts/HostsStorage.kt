@@ -3,18 +3,12 @@ package components.storage.hosts
 import adatapters.gateways.memoryGateways.RedisMemoryGateway
 import adatapters.gateways.memoryGateways.RedisStorageUtils
 import components.storage.hosts.Configuration.DEFAULT_PATH
-import components.storage.hosts.Configuration.HOSTS_KEY
-import components.storage.hosts.Configuration.HOSTS_LIST_KEY
 import core.interfaces.components.IHostsStorage
 
 object HostsStorage: IHostsStorage {
     private val redisStorageUtils = RedisStorageUtils()
     private var jedis = RedisMemoryGateway
     private var robotsUtils = RobotsUtils()
-
-    init {
-        jedis.createEntry(HOSTS_KEY, HOSTS_LIST_KEY)
-    }
 
     override fun provideHost(host: String){
         if(isHostNew(host)){
@@ -33,10 +27,9 @@ object HostsStorage: IHostsStorage {
     }
 
     private fun setRobotsForHost(host: String){
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
         val bannedURLs = robotsUtils.getDisallowedURLs(host)
         bannedURLs.forEach{formattedURL ->
-            jedis.updateEntry(path, formattedURL.url)
+            jedis.updateEntry(DEFAULT_PATH, host, formattedURL.url)
         }
     }
 

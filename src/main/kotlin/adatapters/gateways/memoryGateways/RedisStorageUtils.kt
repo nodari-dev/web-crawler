@@ -1,6 +1,6 @@
 package adatapters.gateways.memoryGateways
 
-import core.interfaces.gateways.IRedisStorageUtils
+import adatapters.interfaces.IRedisStorageUtils
 
 class RedisStorageUtils: IRedisStorageUtils {
     override fun getEntryPath(defaultPath: String, key: String): String {

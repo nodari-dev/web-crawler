@@ -18,6 +18,7 @@ class RedisMemoryGatewayTest {
     private val path = "path"
     private val secondPath = "secondPath"
     private val key = "key"
+    private val value = "value"
 
     init{
         redisManager.setupTest(jedisMock, mutexMock)
@@ -40,10 +41,10 @@ class RedisMemoryGatewayTest {
 
     @Test
     fun `updateEntry works correct`(){
-        redisManager.updateEntry(path, key)
+        redisManager.updateEntry(path, key, value)
 
         verify(mutexMock).lock()
-        verify(jedisMock).rpush(path, key)
+        verify(jedisMock).rpush("$path:$key", value)
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }
