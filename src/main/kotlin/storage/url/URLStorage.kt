@@ -1,9 +1,9 @@
-package application.storage.url
+package storage.url
 
 import infrastructure.memoryGateways.RedisMemoryGateway
-import application.storage.url.Configuration.DEFAULT_PATH
-import application.storage.url.Configuration.PATH_KEY
-import application.interfaces.IURLStorage
+import storage.url.Configuration.DEFAULT_PATH
+import storage.url.Configuration.PATH_KEY
+import storage.interfaces.IURLStorage
 
 object URLStorage: IURLStorage {
     private var jedis = RedisMemoryGateway

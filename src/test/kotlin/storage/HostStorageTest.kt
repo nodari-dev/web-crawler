@@ -1,4 +1,4 @@
-package application.storage
+package storage
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -6,9 +6,9 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import infrastructure.memoryGateways.RedisMemoryGateway
-import application.storage.hosts.Configuration.DEFAULT_PATH
-import application.storage.hosts.HostsStorage
-import application.storage.hosts.RobotsUtils
+import storage.hosts.Configuration.DEFAULT_PATH
+import storage.hosts.HostsStorage
+import storage.hosts.RobotsUtils
 
 class HostStorageTest {
     private val hostStorage = HostsStorage

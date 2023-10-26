@@ -1,7 +1,7 @@
 package application.crawler
 
-import application.storage.hosts.HostsStorage
-import application.storage.url.URLStorage
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 import application.validation.URLValidator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

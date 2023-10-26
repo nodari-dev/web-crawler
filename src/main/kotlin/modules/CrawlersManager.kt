@@ -3,10 +3,10 @@ package modules
 import application.crawler.Crawler
 import application.extractor.Extractor
 import components.fetcher.Fetcher
-import application.storage.frontier.Frontier
-import application.storage.hosts.HostsStorage
-import application.storage.mediator.StorageMediator
-import application.storage.url.URLStorage
+import storage.frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.mediator.StorageMediator
+import storage.url.URLStorage
 import application.validation.URLValidator
 import core.configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
 import components.interfaces.ICrawlersManager

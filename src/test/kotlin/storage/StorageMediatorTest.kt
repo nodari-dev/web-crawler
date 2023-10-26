@@ -1,10 +1,10 @@
-package application.storage
+package storage
 
-import application.interfaces.IFrontier
-import application.interfaces.IHostsStorage
-import application.interfaces.IURLStorage
-import application.storage.mediator.StorageMediator
-import application.storage.mediator.StorageActions.*
+import storage.interfaces.IFrontier
+import storage.interfaces.IHostsStorage
+import storage.interfaces.IURLStorage
+import storage.mediator.StorageMediator
+import storage.mediator.StorageActions.*
 import core.dto.WebLink
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

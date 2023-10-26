@@ -1,6 +1,6 @@
-package application.interfaces
+package storage.interfaces
 
-import application.storage.mediator.StorageActions
+import storage.mediator.StorageActions
 
 interface IMediator {
     fun <T> request(target: StorageActions, vararg args: Any): T

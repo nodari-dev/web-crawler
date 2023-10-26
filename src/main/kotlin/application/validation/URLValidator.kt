@@ -1,7 +1,7 @@
 package application.validation
 
-import application.storage.hosts.HostsStorage
-import application.storage.url.URLStorage
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 import application.interfaces.IURLValidator
 
 class URLValidator(

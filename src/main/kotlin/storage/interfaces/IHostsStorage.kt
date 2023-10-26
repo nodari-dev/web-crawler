@@ -1,4 +1,4 @@
-package application.interfaces
+package storage.interfaces
 
 interface IHostsStorage {
     fun provideHost(host: String)

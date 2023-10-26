@@ -5,7 +5,7 @@ import mu.KLogger
 import mu.KotlinLogging
 import infrastructure.memoryGateways.RedisMemoryGateway
 import components.parser.urlparser.URLParser
-import application.storage.frontier.Frontier
+import storage.frontier.Frontier
 import components.interfaces.ICrawlingManager
 
 object SeedsManager: ICrawlingManager {

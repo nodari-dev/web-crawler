@@ -1,12 +1,12 @@
-package application.storage
+package storage
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import infrastructure.memoryGateways.RedisMemoryGateway
-import application.storage.url.Configuration.DEFAULT_PATH
-import application.storage.url.Configuration.PATH_KEY
-import application.storage.url.URLStorage
+import storage.url.Configuration.DEFAULT_PATH
+import storage.url.Configuration.PATH_KEY
+import storage.url.URLStorage
 
 class VisitedURLsTest {
     private val urlStorage = URLStorage

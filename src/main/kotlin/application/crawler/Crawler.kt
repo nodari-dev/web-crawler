@@ -2,9 +2,9 @@ package application.crawler
 
 import application.extractor.Extractor
 import components.fetcher.Fetcher
-import application.storage.frontier.Frontier
-import application.storage.hosts.HostsStorage
-import application.storage.url.URLStorage
+import storage.frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 import modules.CrawlersManager
 import application.validation.URLValidator
 import core.dto.WebLink

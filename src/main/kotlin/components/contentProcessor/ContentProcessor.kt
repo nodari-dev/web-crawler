@@ -1,7 +1,7 @@
 package components.contentProcessor
 
 import application.interfaces.IDataExtractor
-import application.interfaces.IFrontier
+import storage.interfaces.IFrontier
 import application.interfaces.IURLValidator
 import components.interfaces.IContentProcessor
 import components.parser.urlparser.URLParser

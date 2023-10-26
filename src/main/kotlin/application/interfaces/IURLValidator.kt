@@ -1,7 +1,7 @@
 package application.interfaces
 
-import application.storage.hosts.HostsStorage
-import application.storage.url.URLStorage
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 import core.dto.WebLink
 
 interface IURLValidator {

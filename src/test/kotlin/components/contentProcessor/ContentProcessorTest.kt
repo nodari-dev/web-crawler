@@ -4,7 +4,7 @@ import core.configuration.Configuration.SAVE_FILE_LOCATION
 import core.dto.WebLink
 import core.dto.WebPage
 import application.interfaces.IDataExtractor
-import application.interfaces.IFrontier
+import storage.interfaces.IFrontier
 import components.interfaces.IURLParser
 import application.interfaces.IURLValidator
 import org.junit.jupiter.api.Test

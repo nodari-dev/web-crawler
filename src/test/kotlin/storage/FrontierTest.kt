@@ -1,4 +1,4 @@
-package application.storage
+package storage
 
 import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import infrastructure.memoryGateways.RedisMemoryGateway
 import modules.CrawlersManager
-import application.storage.frontier.Configuration.DEFAULT_PATH
-import application.storage.frontier.Frontier
+import storage.frontier.Configuration.DEFAULT_PATH
+import storage.frontier.Frontier
 
 class FrontierTest {
     private val frontier = Frontier

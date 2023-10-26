@@ -1,12 +1,12 @@
-package application.storage.frontier
+package storage.frontier
 
 
 import mu.KLogger
 import mu.KotlinLogging
 import infrastructure.memoryGateways.RedisMemoryGateway
 import modules.CrawlersManager
-import application.storage.frontier.Configuration.DEFAULT_PATH
-import application.interfaces.IFrontier
+import storage.frontier.Configuration.DEFAULT_PATH
+import storage.interfaces.IFrontier
 import core.dto.WebLink
 
 object Frontier: IFrontier {

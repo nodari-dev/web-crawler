@@ -1,4 +1,4 @@
-package application.interfaces
+package storage.interfaces
 
 import core.dto.WebLink
 

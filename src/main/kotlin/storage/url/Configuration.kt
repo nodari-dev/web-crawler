@@ -1,4 +1,4 @@
-package application.storage.url
+package storage.url
 
 object Configuration {
     const val DEFAULT_PATH: String = "visited"

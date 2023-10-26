@@ -1,4 +1,4 @@
-package application.storage.mediator
+package storage.mediator
 
 enum class StorageActions {
     FRONTIER_PULL,

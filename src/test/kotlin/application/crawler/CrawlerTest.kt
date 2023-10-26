@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import infrastructure.memoryGateways.RedisMemoryGateway
 import components.fetcher.Fetcher
-import application.storage.frontier.Frontier
-import application.storage.hosts.HostsStorage
-import application.storage.url.URLStorage
+import storage.frontier.Frontier
+import storage.hosts.HostsStorage
+import storage.url.URLStorage
 import application.validation.URLValidator
 import modules.CrawlersManager
 

@@ -1,4 +1,4 @@
-package application.interfaces
+package storage.interfaces
 
 interface IURLStorage {
     fun provideURL(hash: Int)

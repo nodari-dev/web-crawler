@@ -1,8 +1,8 @@
-package application.storage.hosts
+package storage.hosts
 
 import infrastructure.memoryGateways.RedisMemoryGateway
-import application.storage.hosts.Configuration.DEFAULT_PATH
-import application.interfaces.IHostsStorage
+import storage.hosts.Configuration.DEFAULT_PATH
+import storage.interfaces.IHostsStorage
 
 object HostsStorage: IHostsStorage {
     private var jedis = RedisMemoryGateway

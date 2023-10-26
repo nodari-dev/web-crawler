@@ -1,4 +1,4 @@
-package application.storage.hosts
+package storage.hosts
 
 import components.fetcher.Fetcher
 import components.parser.robotsparser.RobotsParser

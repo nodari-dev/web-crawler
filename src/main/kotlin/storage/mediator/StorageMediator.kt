@@ -1,10 +1,10 @@
-package application.storage.mediator
+package storage.mediator
 
-import application.interfaces.IFrontier
-import application.interfaces.IHostsStorage
-import application.interfaces.IMediator
-import application.interfaces.IURLStorage
-import application.storage.mediator.StorageActions.*
+import storage.interfaces.IFrontier
+import storage.interfaces.IHostsStorage
+import storage.interfaces.IMediator
+import storage.interfaces.IURLStorage
+import storage.mediator.StorageActions.*
 
 class StorageMediator(
     private val frontier: IFrontier,
