@@ -68,9 +68,8 @@ class FrontierTest {
 
     @Test
     fun `returns url from queue`() {
-        val path = "$DEFAULT_PATH:$host"
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false, true)
-        `when`(jedisMock.getFirstEntryItem(path)).thenReturn(webLink.url, webLinkTwo.url)
+        `when`(jedisMock.getFirstEntryItem(DEFAULT_PATH, host)).thenReturn(webLink.url, webLinkTwo.url)
 
         frontier.updateOrCreateQueue(host, webLink.url)
         frontier.updateOrCreateQueue(host, webLinkTwo.url)
@@ -81,7 +80,7 @@ class FrontierTest {
         verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
         verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLinkTwo.url)
 
-        verify(jedisMock, times(2)).getFirstEntryItem(path)
+        verify(jedisMock, times(2)).getFirstEntryItem(DEFAULT_PATH, host)
 
         Assertions.assertEquals(webLink, result)
         Assertions.assertEquals(webLinkTwo, resultTwo)
@@ -89,10 +88,8 @@ class FrontierTest {
 
     @Test
     fun `checks if queue is empty`() {
-        val path = "$DEFAULT_PATH:$host"
-        val pathTwo = "$DEFAULT_PATH:$anotherHost"
-        `when`(jedisMock.checkEntryEmptiness(path)).thenReturn(false)
-        `when`(jedisMock.checkEntryEmptiness(pathTwo)).thenReturn(true)
+        `when`(jedisMock.checkEntryEmptiness(DEFAULT_PATH, host)).thenReturn(false)
+        `when`(jedisMock.checkEntryEmptiness(DEFAULT_PATH, anotherHost)).thenReturn(true)
 
         frontier.updateOrCreateQueue(host, webLink.url)
         val result = frontier.isQueueEmpty(host)

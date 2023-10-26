@@ -20,6 +20,9 @@ class RedisMemoryGatewayTest {
     private val key = "key"
     private val value = "value"
 
+    private val combinedPath = "$path:$key"
+    private val secondCombinedPath = "$secondPath:$key"
+
     init{
         redisManager.setupTest(jedisMock, mutexMock)
     }
@@ -62,9 +65,9 @@ class RedisMemoryGatewayTest {
 
     @Test
     fun `getFirstEntryItem works correct`(){
-        `when`(jedisMock.lpop(path)).thenReturn("something")
+        `when`(jedisMock.lpop(combinedPath)).thenReturn("something")
 
-        val result = redisManager.getFirstEntryItem(path)
+        val result = redisManager.getFirstEntryItem(path, key)
 
         Assertions.assertEquals("something", result)
         verify(mutexMock).lock()
@@ -75,9 +78,9 @@ class RedisMemoryGatewayTest {
 
     @Test
     fun `getListOfEntryKeys works correct`(){
-        `when`(jedisMock.lrange(path, 0, -1)).thenReturn(listOf("one", "two"))
+        `when`(jedisMock.lrange(combinedPath, 0, -1)).thenReturn(listOf("one", "two"))
 
-        val result = redisManager.getListOfEntryKeys(path)
+        val result = redisManager.getListOfEntryKeys(path, key)
 
         Assertions.assertEquals(listOf("one", "two"), result)
         verify(mutexMock).lock()
@@ -88,11 +91,11 @@ class RedisMemoryGatewayTest {
 
     @Test
     fun `checkEntryEmptiness works correct`(){
-        `when`(jedisMock.lrange(path, 0, -1)).thenReturn(listOf("1", "2"))
-        `when`(jedisMock.lrange(secondPath, 0, -1)).thenReturn(emptyList())
+        `when`(jedisMock.lrange(combinedPath, 0, -1)).thenReturn(listOf("1", "2"))
+        `when`(jedisMock.lrange(secondCombinedPath, 0, -1)).thenReturn(emptyList())
 
-        val result = redisManager.checkEntryEmptiness(path)
-        val resultTwo = redisManager.checkEntryEmptiness(secondPath)
+        val result = redisManager.checkEntryEmptiness(path, key)
+        val resultTwo = redisManager.checkEntryEmptiness(secondPath, key)
 
         Assertions.assertEquals(false, result)
         Assertions.assertEquals(true, resultTwo)

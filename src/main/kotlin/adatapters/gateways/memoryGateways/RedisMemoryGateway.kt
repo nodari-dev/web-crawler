@@ -45,19 +45,18 @@ object RedisMemoryGateway: IMemoryGateway {
 
     }
 
-    override fun getFirstEntryItem(path: String): String{
+    override fun getFirstEntryItem(path: String, key: String): String{
         mutex.lock()
         try{
             return jedis.use { jedis ->
-                jedis.lpop(path)
+                jedis.lpop(getEntryPath(path, key))
             }
         } finally {
             mutex.unlock()
         }
-
     }
 
-    override fun getListOfEntryKeys(path: String): List<String>{
+    override fun getListOfEntryKeys(path: String, key: String): List<String>{
         mutex.lock()
         try{
             return jedis.use { jedis ->
@@ -68,7 +67,7 @@ object RedisMemoryGateway: IMemoryGateway {
         }
     }
 
-    override fun checkEntryEmptiness(path: String): Boolean{
+    override fun checkEntryEmptiness(path: String, key: String): Boolean{
         mutex.lock()
         try{
             return jedis.use { jedis ->

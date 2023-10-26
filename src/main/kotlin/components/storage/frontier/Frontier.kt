@@ -40,13 +40,11 @@ object Frontier: IFrontier {
     }
 
     override fun pullURL(host: String): core.dto.WebLink {
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        return core.dto.WebLink(jedis.getFirstEntryItem(path))
+        return core.dto.WebLink(jedis.getFirstEntryItem(DEFAULT_PATH, host))
     }
 
     override fun isQueueEmpty(host: String): Boolean{
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        return jedis.checkEntryEmptiness(path)
+        return jedis.checkEntryEmptiness(DEFAULT_PATH, host)
     }
 
     override fun deleteQueue(host: String){

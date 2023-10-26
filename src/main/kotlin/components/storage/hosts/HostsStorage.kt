@@ -48,9 +48,7 @@ object HostsStorage: IHostsStorage {
     }
 
     private fun getBannedURls(host: String): List<String>{
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        return jedis.getListOfEntryKeys(path)
-
+        return jedis.getListOfEntryKeys(DEFAULT_PATH, host)
     }
 
     fun setUpTest(mockRobotsUtils: RobotsUtils, mockJedis: RedisMemoryGateway){
