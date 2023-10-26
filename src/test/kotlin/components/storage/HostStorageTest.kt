@@ -77,6 +77,6 @@ class HostStorageTest {
 
         hostStorage.deleteHost(host)
 
-        verify(mockJedis).deleteEntry(DEFAULT_PATH, "$DEFAULT_PATH:$host", host)
+        verify(mockJedis).deleteEntry(DEFAULT_PATH, host)
     }
 }

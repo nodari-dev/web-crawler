@@ -32,12 +32,11 @@ object RedisMemoryGateway: IMemoryGateway {
 
     }
 
-    override fun deleteEntry(primaryPath: String, path: String, key: String){
+    override fun deleteEntry(path: String, key: String){
         mutex.lock()
         try{
             jedis.use{ jedis ->
-                jedis.del(path)
-                jedis.lrem(primaryPath, 1 , key)
+                jedis.del(getEntryPath(path, key))
             }
         } finally {
             mutex.unlock()

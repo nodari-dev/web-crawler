@@ -104,9 +104,6 @@ class FrontierTest {
 
     @Test
     fun `deletes queue`() {
-        val path = "$DEFAULT_PATH:$host"
-        val pathTwo = "$DEFAULT_PATH:$anotherHost"
-
         frontier.updateOrCreateQueue(host, webLink.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
@@ -119,6 +116,6 @@ class FrontierTest {
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
         verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
 
-        verify(jedisMock).deleteEntry(DEFAULT_PATH, pathTwo, anotherHost)
+        verify(jedisMock).deleteEntry(DEFAULT_PATH, anotherHost)
     }
 }

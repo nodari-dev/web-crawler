@@ -6,7 +6,7 @@ import components.parser.seoparser.SEOParser
 
 class ContentAnalyzer : ISEODataAnalyzer {
     private val seoParser = SEOParser()
-    private val keywordGenerator = components.contentAnalyzer.KeywordGenerator()
+    private val keywordGenerator = KeywordGenerator()
 
     override fun generateSEOData(html: String, url: String): SEOContent?{
         val sentences = generateSentences(html)

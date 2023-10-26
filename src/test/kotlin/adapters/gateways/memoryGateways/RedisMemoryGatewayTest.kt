@@ -54,11 +54,10 @@ class RedisMemoryGatewayTest {
 
     @Test
     fun `deleteEntry works correct`(){
-        redisManager.deleteEntry(primaryPath, path, key)
+        redisManager.deleteEntry(path, key)
 
         verify(mutexMock).lock()
-        verify(jedisMock).del(path)
-        verify(jedisMock).lrem(primaryPath, 1, key)
+        verify(jedisMock).del("$path:$key")
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }

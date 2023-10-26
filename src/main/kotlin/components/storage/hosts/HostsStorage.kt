@@ -1,12 +1,10 @@
 package components.storage.hosts
 
 import adatapters.gateways.memoryGateways.RedisMemoryGateway
-import adatapters.gateways.memoryGateways.RedisStorageUtils
 import components.storage.hosts.Configuration.DEFAULT_PATH
 import core.interfaces.components.IHostsStorage
 
 object HostsStorage: IHostsStorage {
-    private val redisStorageUtils = RedisStorageUtils()
     private var jedis = RedisMemoryGateway
     private var robotsUtils = RobotsUtils()
 
@@ -22,8 +20,7 @@ object HostsStorage: IHostsStorage {
     }
 
     override fun deleteHost(host: String){
-        val path = redisStorageUtils.getEntryPath(DEFAULT_PATH, host)
-        jedis.deleteEntry(DEFAULT_PATH, path, host)
+        jedis.deleteEntry(DEFAULT_PATH, host)
     }
 
     private fun setRobotsForHost(host: String){
