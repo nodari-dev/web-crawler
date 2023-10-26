@@ -4,8 +4,9 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import adatapters.gateways.memoryGateways.RedisMemoryGateway
-import components.storage.frontier.Frontier
+import infrastructure.memoryGateways.RedisMemoryGateway
+import application.storage.frontier.Frontier
+import modules.SeedsManager
 
 class SeedsManagerTest {
     private val crawlingManager = SeedsManager

@@ -1,6 +1,6 @@
 package components.parser.robotsparser
 
-import core.interfaces.components.IRobotsParser
+import components.interfaces.IRobotsParser
 import components.parser.ParserUtils
 import components.parser.robotsparser.RobotsPatterns.DISALLOW_KEYWORD
 import components.parser.robotsparser.RobotsPatterns.DISALLOW_KEYWORD_GROUP_INDEX

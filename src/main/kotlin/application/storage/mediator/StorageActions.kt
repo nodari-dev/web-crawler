@@ -1,0 +1,13 @@
+package application.storage.mediator
+
+enum class StorageActions {
+    FRONTIER_PULL,
+    FRONTIER_UPDATE,
+    FRONTIER_IS_QUEUE_EMPTY,
+    FRONTIER_DELETE_QUEUE,
+    HOSTS_PROVIDE_NEW,
+    HOSTS_DELETE,
+    HOSTS_IS_URL_ALLOWED,
+    URLS_UPDATE,
+    URLS_CHECK_EXISTENCE,
+}

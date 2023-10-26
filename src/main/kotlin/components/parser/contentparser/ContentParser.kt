@@ -2,7 +2,7 @@ package components.parser.contentparser
 
 import components.parser.ParserUtils
 import components.parser.contentparser.ContentPatterns.COMMON_WORDS
-import core.interfaces.components.IContentParser
+import components.interfaces.IContentParser
 
 class ContentParser: IContentParser {
     private val parserUtils = ParserUtils()

@@ -5,7 +5,7 @@ import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import core.configuration.Configuration.TIME_BETWEEN_FETCHING
-import core.interfaces.components.IFetcher
+import components.interfaces.IFetcher
 import mu.KLogger
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

@@ -1,7 +1,7 @@
 package components.parser
 
 import components.parser.GlobalPatterns.NESTED_TAGS
-import core.interfaces.components.IParserUtils
+import components.interfaces.IParserUtils
 import java.util.regex.Pattern
 
 class ParserUtils : IParserUtils {

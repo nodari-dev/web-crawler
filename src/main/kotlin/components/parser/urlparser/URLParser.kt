@@ -1,6 +1,6 @@
 package components.parser.urlparser
 
-import core.interfaces.components.IURLParser
+import components.interfaces.IURLParser
 import components.parser.ParserUtils
 import components.parser.urlparser.URLPatterns.A_TAG
 import components.parser.urlparser.URLPatterns.A_TAG_GROUP_INDEX

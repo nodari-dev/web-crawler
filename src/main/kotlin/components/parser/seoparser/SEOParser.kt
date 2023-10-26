@@ -1,6 +1,6 @@
 package components.parser.seoparser
 
-import core.interfaces.components.ISEOParser
+import components.interfaces.ISEOParser
 import components.parser.ParserUtils
 import components.parser.seoparser.SEOPatterns.IMAGE_ALT
 import components.parser.seoparser.SEOPatterns.IMAGE_ALT_GROUP_INDEX
