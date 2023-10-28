@@ -7,9 +7,9 @@ import storage.frontier.Frontier
 import storage.hosts.HostsStorage
 import storage.mediator.StorageMediator
 import storage.url.URLStorage
-import application.validation.URLValidator
 import core.configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
-import components.interfaces.ICrawlersManager
+import modules.interfaces.ICrawlersManager
+import components.parser.urlparser.URLParser
 import mu.KotlinLogging
 
 object CrawlersManager: ICrawlersManager {
@@ -37,9 +37,10 @@ object CrawlersManager: ICrawlersManager {
                     hostsToProcess[i],
                     KotlinLogging.logger("Crawler ${hostsToProcess[i]}"),
                     Fetcher(KotlinLogging.logger("Fetcher")),
-                    URLValidator(HostsStorage, URLStorage),
                     CrawlersManager,
-                    storageMediator
+                    storageMediator,
+                    URLParser(),
+                    Extractor()
                 )
                 activeCrawlers.add(crawler)
                 crawler.start()

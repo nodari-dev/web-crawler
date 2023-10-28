@@ -6,9 +6,9 @@ import mu.KotlinLogging
 import infrastructure.memoryGateways.RedisMemoryGateway
 import components.parser.urlparser.URLParser
 import storage.frontier.Frontier
-import components.interfaces.ICrawlingManager
+import modules.interfaces.ISeedsManager
 
-object SeedsManager: ICrawlingManager {
+object SeedsManager: ISeedsManager {
     private val urlParser = URLParser()
     private var jedis = RedisMemoryGateway
     private var logger = KotlinLogging.logger("CrawlingManager")

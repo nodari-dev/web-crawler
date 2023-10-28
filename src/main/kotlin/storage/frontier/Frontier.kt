@@ -1,6 +1,5 @@
 package storage.frontier
 
-
 import mu.KLogger
 import mu.KotlinLogging
 import infrastructure.memoryGateways.RedisMemoryGateway

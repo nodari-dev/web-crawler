@@ -4,7 +4,7 @@ import storage.interfaces.IFrontier
 import storage.interfaces.IHostsStorage
 import storage.interfaces.IURLStorage
 import storage.mediator.StorageMediator
-import storage.mediator.StorageActions.*
+import storage.mediator.Actions.*
 import core.dto.WebLink
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

@@ -1,4 +1,4 @@
-package components.interfaces
+package modules.interfaces
 
 interface ICrawlersManager {
     fun requestCrawlerInitialization(host: String)

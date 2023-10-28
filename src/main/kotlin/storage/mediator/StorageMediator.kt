@@ -2,16 +2,16 @@ package storage.mediator
 
 import storage.interfaces.IFrontier
 import storage.interfaces.IHostsStorage
-import storage.interfaces.IMediator
+import application.interfaces.IMediator
 import storage.interfaces.IURLStorage
-import storage.mediator.StorageActions.*
+import storage.mediator.Actions.*
 
 class StorageMediator(
     private val frontier: IFrontier,
     private val hostStorage: IHostsStorage,
     private val urlStorage: IURLStorage
 ): IMediator {
-    private val methodRegistry = hashMapOf<StorageActions, (Array<out Any>) -> Any>()
+    private val methodRegistry = hashMapOf<Actions, (Array<out Any>) -> Any>()
 
     init {
         methodRegistry[FRONTIER_PULL] = { args -> frontier.pullURL(args[0] as String) }
@@ -27,7 +27,7 @@ class StorageMediator(
         methodRegistry[URLS_CHECK_EXISTENCE] = { args -> urlStorage.doesNotExist(args[0] as Int) }
     }
 
-    override fun <T> request(target: StorageActions, vararg args: Any): T {
+    override fun <T> request(target: Actions, vararg args: Any): T {
         val method = methodRegistry[target]
         @Suppress("UNCHECKED_CAST")
         return method?.invoke(args) as T

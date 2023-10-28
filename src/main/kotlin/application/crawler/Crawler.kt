@@ -1,31 +1,29 @@
 package application.crawler
 
-import application.extractor.Extractor
-import components.fetcher.Fetcher
-import storage.frontier.Frontier
-import storage.hosts.HostsStorage
-import storage.url.URLStorage
-import modules.CrawlersManager
-import application.validation.URLValidator
 import core.dto.WebLink
 import application.interfaces.ICrawler
-import components.contentProcessor.ContentProcessor
+import application.interfaces.IDataExtractor
+import modules.interfaces.ICrawlersManager
+import components.interfaces.IFetcher
+import components.interfaces.IURLParser
+import core.configuration.Configuration
+import application.interfaces.IMediator
+import storage.mediator.Actions.*
 import core.dto.WebPage
 
 import mu.KLogger
 
+
 class Crawler(
     private val primaryHost: String,
     private var logger: KLogger,
-    private val fetcher: Fetcher,
-    private val urlValidator: URLValidator,
-    private val crawlersFactory: CrawlersManager,
-    private val hostsStorage: HostsStorage,
-    private val urlStorage: URLStorage,
-    private val frontier: Frontier,
+    private val fetcher: IFetcher,
+    private val crawlersManager: ICrawlersManager,
+    private val storageMediator: IMediator,
+    private val urlParser: IURLParser,
+    private val extractor: IDataExtractor
 ) : ICrawler, Thread() {
     private var canProceedCrawling = true
-    private val contentProcessor = ContentProcessor(Extractor(), frontier, urlValidator)
 
     override fun run() {
         logger.info("Started")
@@ -35,7 +33,7 @@ class Crawler(
     }
 
     private fun communicateWithFrontier() {
-        if (frontier.isQueueEmpty(primaryHost)) {
+        if (storageMediator.request(FRONTIER_IS_QUEUE_EMPTY, primaryHost)) {
             sendKillRequest()
         } else {
             processNewFrontierRecord()
@@ -43,7 +41,7 @@ class Crawler(
     }
 
     private fun sendKillRequest() {
-        CrawlersManager.removeTerminatedCrawler(this)
+        crawlersManager.removeTerminatedCrawler(this)
         deleteHostRelatedData()
         canProceedCrawling = false
         logger.info("Stopped")
@@ -51,15 +49,15 @@ class Crawler(
     }
 
     private fun deleteHostRelatedData() {
-        hostsStorage.deleteHost(primaryHost)
-        frontier.deleteQueue(primaryHost)
+        storageMediator.request<Unit>(HOSTS_DELETE, primaryHost)
+        storageMediator.request<Unit>(FRONTIER_DELETE_QUEUE, primaryHost)
     }
 
     private fun processNewFrontierRecord() {
-        val pulledURL = frontier.pullURL(primaryHost)
-        if (urlValidator.canProcessURL(primaryHost, pulledURL)) {
-            urlStorage.provideURL(pulledURL.getHash())
-            hostsStorage.provideHost(primaryHost)
+        val pulledURL = storageMediator.request<WebLink>(FRONTIER_PULL, primaryHost)
+        if (canProcessURL(primaryHost, pulledURL)) {
+            storageMediator.request<Unit>(URLS_UPDATE, pulledURL.getHash())
+            storageMediator.request<Unit>(HOSTS_PROVIDE_NEW, primaryHost)
             processURL(pulledURL)
         }
     }
@@ -68,9 +66,36 @@ class Crawler(
         val html = fetcher.getPageHTML(pulledURL.url)
         html?.let {
             val webPage = WebPage(pulledURL, html)
-            contentProcessor.processWebPage(webPage)
+            processWebPage(webPage)
         }
     }
 
+    private fun processWebPage(webPage: WebPage) {
+        if(webPage.html == null){
+            println("html is not correct")
+        } else{
+            extractor.extractSEODataToFile(webPage.html, webPage.link.url, Configuration.SAVE_FILE_LOCATION)
+            processChildURLs(urlParser.getURLs(webPage.html))
+        }
+    }
 
+    private fun processChildURLs(urls: List<WebLink>) {
+        val uniqueHashedUrlPairs = urls.toSet()
+        uniqueHashedUrlPairs.forEach { hashedUrlPair ->
+            val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
+            if (canProcessURL(host, hashedUrlPair)) {
+                storageMediator.request<Unit>(FRONTIER_UPDATE, host, hashedUrlPair.url)
+            }
+        }
+    }
+
+    private fun canProcessURL(host: String, webLink: core.dto.WebLink?): Boolean {
+        if (webLink == null) {
+            return false
+        }
+
+        val isNew = storageMediator.request<Boolean>(URLS_CHECK_EXISTENCE, webLink.getHash())
+        val isAllowed = storageMediator.request<Boolean>(HOSTS_IS_URL_ALLOWED, host, webLink.url)
+        return isNew && isAllowed
+    }
 }

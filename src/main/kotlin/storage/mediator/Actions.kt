@@ -1,6 +1,6 @@
 package storage.mediator
 
-enum class StorageActions {
+enum class Actions {
     FRONTIER_PULL,
     FRONTIER_UPDATE,
     FRONTIER_IS_QUEUE_EMPTY,
