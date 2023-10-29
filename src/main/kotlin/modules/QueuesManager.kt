@@ -2,13 +2,15 @@ package modules
 
 import modules.interfaces.ICrawlersManagerV2
 import modules.interfaces.IQueuesManager
-import storage.interfaces.IFrontier
+import storage.interfaces.IFrontierV2
 
 class QueuesManager(
     private val crawlersManagerV2: ICrawlersManagerV2,
-    private val frontier: IFrontier
+    private val frontier: IFrontierV2
 ): IQueuesManager {
     override fun startMonitoring() {
-        TODO("Not yet implemented")
+        // TODO: PERIODIC POLLING AND CHECKING FRONTIER
     }
+
+
 }

@@ -1,23 +1,28 @@
 package modules
 
 import application.crawler.CrawlerV2
+import application.crawler.entities.CrawlerConfig
 import application.interfaces.ICrawlerV2
 import modules.interfaces.ICrawlersManagerV2
-import storage.interfaces.IFrontier
+import storage.interfaces.IFrontierV2
 
-class CrawlersManagerV2(private val frontier: IFrontier): ICrawlersManagerV2 {
+class CrawlersManagerV2(private val frontier: IFrontierV2): ICrawlersManagerV2 {
     private val crawlers: MutableList<ICrawlerV2> = mutableListOf()
 
     override fun requestCrawlerInitialization(host: String): Int {
-        val crawlerId = generateCrawlerId()
-        val crawlerV2: ICrawlerV2 = CrawlerV2(crawlerId, host)
-        crawlers.add(crawlerV2)
-
-        val thread = Thread(crawlerV2 as Runnable)
+        val crawler = generateCrawler(host)
+        crawlers.add(crawler)
+        val thread = Thread(crawler as Runnable)
         thread.start()
         thread.join()
 
-        return crawlerId
+        return crawler.getConfig().id
+    }
+
+    private fun generateCrawler(host: String): ICrawlerV2{
+        val crawlerId = generateCrawlerId()
+        val config = CrawlerConfig(crawlerId, host)
+        return CrawlerV2(config, frontier)
     }
 
     private fun generateCrawlerId(): Int{
