@@ -9,7 +9,7 @@ class CrawlerV2(
     private val config: CrawlerConfig,
     private val frontier: IFrontierV2,
 ):Runnable, ICrawlerV2 {
-    private val status = CrawlerStatus(false, false)
+    private val status = CrawlerStatus(isAlive = false, isWorking = false)
 
     override fun getStatus(): CrawlerStatus {
         return status
