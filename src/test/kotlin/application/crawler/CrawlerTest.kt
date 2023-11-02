@@ -5,19 +5,19 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 
-import components.interfaces.IContentProcessor
+import application.interfaces.IContentProcessor
 import modules.interfaces.ICrawlersManager
-import components.interfaces.IFetcher
-import components.interfaces.IURLParser
+import application.interfaces.IFetcher
+import application.interfaces.IURLParser
 import core.dto.WebLink
 import application.interfaces.IMediator
 import storage.mediator.Actions.*
 
 class CrawlerTest {
     private val host = "https://example.com"
-    private val jedis = RedisMemoryGateway
+    private val jedis = RedisRepository
 
     private lateinit var crawler: Crawler
 

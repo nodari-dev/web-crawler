@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import modules.CrawlersManager
 import storage.frontier.Configuration.DEFAULT_PATH
 import storage.frontier.Frontier
@@ -20,7 +20,7 @@ class FrontierTest {
 
     private val mockCrawlersManager = mock(CrawlersManager::class.java)
     private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
-    private val jedisMock = mock(RedisMemoryGateway::class.java)
+    private val jedisMock = mock(RedisRepository::class.java)
 
 
     init{

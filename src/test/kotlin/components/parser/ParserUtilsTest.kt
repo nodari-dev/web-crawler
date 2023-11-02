@@ -1,5 +1,6 @@
 package components.parser
 
+import application.parser.ParserUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.regex.Pattern

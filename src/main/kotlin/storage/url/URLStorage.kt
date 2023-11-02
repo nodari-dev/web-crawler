@@ -1,12 +1,12 @@
 package storage.url
 
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import storage.url.Configuration.DEFAULT_PATH
 import storage.url.Configuration.PATH_KEY
 import storage.interfaces.IURLStorage
 
 object URLStorage: IURLStorage {
-    private var jedis = RedisMemoryGateway
+    private var jedis = RedisRepository
 
     override fun provideURL(hash: Int){
         jedis.updateEntry(DEFAULT_PATH, PATH_KEY, hash.toString())
@@ -16,7 +16,7 @@ object URLStorage: IURLStorage {
         return !jedis.isEntryKeyDefined(DEFAULT_PATH, hash.toString())
     }
 
-    fun setup(jedisMock: RedisMemoryGateway){
+    fun setup(jedisMock: RedisRepository){
         jedis = jedisMock
     }
 }

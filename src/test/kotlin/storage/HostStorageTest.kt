@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import storage.hosts.Configuration.DEFAULT_PATH
 import storage.hosts.HostsStorage
 import storage.hosts.RobotsUtils
@@ -17,7 +17,7 @@ class HostStorageTest {
     private val bannedURLHashedPair = core.dto.WebLink("banned-url")
 
     private val mockRobotsUtils = Mockito.mock(RobotsUtils::class.java)
-    private val mockJedis = Mockito.mock(RedisMemoryGateway::class.java)
+    private val mockJedis = Mockito.mock(RedisRepository::class.java)
 
     init {
         hostStorage.setUpTest(mockRobotsUtils, mockJedis)

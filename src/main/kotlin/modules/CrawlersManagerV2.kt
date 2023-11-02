@@ -9,7 +9,7 @@ import storage.interfaces.IFrontierV2
 class CrawlersManagerV2(private val frontier: IFrontierV2): ICrawlersManagerV2 {
     private val crawlers: MutableList<ICrawlerV2> = mutableListOf()
 
-    override fun requestCrawlerInitialization(host: String): Int {
+    override fun requestCrawlerInitializationAndGetId(host: String): Int {
         val crawler = generateCrawler(host)
         crawlers.add(crawler)
         val thread = Thread(crawler as Runnable)
@@ -34,11 +34,12 @@ class CrawlersManagerV2(private val frontier: IFrontierV2): ICrawlersManagerV2 {
     }
 
     override fun requestCrawlerTermination(id: Int) {
+        crawlers[id].terminate()
         crawlers.removeAt(id)
     }
 
     override fun requestCrawlerReassignToAnotherQueue(id: Int, host: String) {
-        TODO("Not yet implemented")
+        crawlers[id].reassign(host)
     }
 
     override fun requestAllCrawlers(): Int {

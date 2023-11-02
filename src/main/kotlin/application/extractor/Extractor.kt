@@ -1,6 +1,6 @@
 package application.extractor
 
-import components.htmlAnalyzer.HTMLAnalyzer
+import application.htmlAnalyzer.HTMLAnalyzer
 import application.extractor.exceptions.SaveFileException
 import core.dto.SEOContent
 import application.interfaces.IDataExtractor

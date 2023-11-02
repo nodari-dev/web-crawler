@@ -1,9 +1,8 @@
 package modules
 
-import core.interfaces.ISubscriber
+import application.interfaces.ISubscriber
 import modules.interfaces.ICrawlersManagerV2
 import modules.interfaces.IQueuesManager
-import storage.interfaces.IFrontierV2
 
 class QueuesManager(
     private val crawlersManagerV2: ICrawlersManagerV2,

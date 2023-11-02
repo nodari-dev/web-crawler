@@ -6,5 +6,6 @@ import application.crawler.entities.CrawlerStatus
 interface ICrawlerV2 {
     fun getStatus(): CrawlerStatus
     fun getConfig(): CrawlerConfig
+    fun reassign(newHost: String)
     fun terminate()
 }

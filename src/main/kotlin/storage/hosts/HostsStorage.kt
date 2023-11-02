@@ -1,11 +1,11 @@
 package storage.hosts
 
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import storage.hosts.Configuration.DEFAULT_PATH
 import storage.interfaces.IHostsStorage
 
 object HostsStorage: IHostsStorage {
-    private var jedis = RedisMemoryGateway
+    private var jedis = RedisRepository
     private var robotsUtils = RobotsUtils()
 
     override fun provideHost(host: String){
@@ -48,7 +48,7 @@ object HostsStorage: IHostsStorage {
         return jedis.getListOfEntryKeys(DEFAULT_PATH, host)
     }
 
-    fun setUpTest(mockRobotsUtils: RobotsUtils, mockJedis: RedisMemoryGateway){
+    fun setUpTest(mockRobotsUtils: RobotsUtils, mockJedis: RedisRepository){
         robotsUtils = mockRobotsUtils
         jedis = mockJedis
     }

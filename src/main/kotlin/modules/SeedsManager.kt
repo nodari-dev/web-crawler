@@ -3,14 +3,14 @@ package modules
 import core.configuration.Illustrations
 import mu.KLogger
 import mu.KotlinLogging
-import infrastructure.memoryGateways.RedisMemoryGateway
-import components.parser.urlparser.URLParser
+import infrastructure.repository.RedisRepository
+import application.parser.urlparser.URLParser
 import storage.frontier.Frontier
 import modules.interfaces.ISeedsManager
 
 object SeedsManager: ISeedsManager {
     private val urlParser = URLParser()
-    private var jedis = RedisMemoryGateway
+    private var jedis = RedisRepository
     private var logger = KotlinLogging.logger("CrawlingManager")
     private var frontier = Frontier
 
@@ -27,7 +27,7 @@ object SeedsManager: ISeedsManager {
         }
     }
 
-    fun setup(loggerMock: KLogger, frontierMock: Frontier, jedisMock: RedisMemoryGateway){
+    fun setup(loggerMock: KLogger, frontierMock: Frontier, jedisMock: RedisRepository){
         logger = loggerMock
         frontier = frontierMock
         jedis = jedisMock

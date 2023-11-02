@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import storage.frontier.Frontier
 import modules.SeedsManager
 
@@ -13,7 +13,7 @@ class SeedsManagerTest {
 
     private val mockFrontier = Mockito.mock(Frontier::class.java)
     private val mockLogger = Mockito.mock(KotlinLogging.logger("CrawlingManager")::class.java)
-    private val jedisMock = Mockito.mock(RedisMemoryGateway::class.java)
+    private val jedisMock = Mockito.mock(RedisRepository::class.java)
 
     init {
         crawlingManager.setup(mockLogger, mockFrontier, jedisMock)

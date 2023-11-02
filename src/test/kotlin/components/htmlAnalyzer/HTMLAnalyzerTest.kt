@@ -1,6 +1,7 @@
 package components.htmlAnalyzer
 
 import application.extractor.MockedData
+import application.htmlAnalyzer.HTMLAnalyzer
 import core.dto.SEOContent
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -1,5 +1,6 @@
 package components.fetcher
 
+import application.fetcher.Fetcher
 import mu.KotlinLogging
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

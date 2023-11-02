@@ -4,8 +4,8 @@ import application.interfaces.memoryGateways.IMemoryGateway
 import mu.KotlinLogging
 import storage.frontier.Configuration.DEFAULT_PATH
 import core.dto.WebLink
-import core.interfaces.IPublisher
-import core.interfaces.ISubscriber
+import application.interfaces.IPublisher
+import application.interfaces.ISubscriber
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(

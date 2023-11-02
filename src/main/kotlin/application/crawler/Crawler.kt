@@ -4,8 +4,8 @@ import core.dto.WebLink
 import application.interfaces.ICrawler
 import application.interfaces.IDataExtractor
 import modules.interfaces.ICrawlersManager
-import components.interfaces.IFetcher
-import components.interfaces.IURLParser
+import application.interfaces.IFetcher
+import application.interfaces.IURLParser
 import core.configuration.Configuration
 import application.interfaces.IMediator
 import storage.mediator.Actions.*

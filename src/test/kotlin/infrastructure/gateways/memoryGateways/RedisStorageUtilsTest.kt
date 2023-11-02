@@ -2,7 +2,7 @@ package infrastructure.gateways.memoryGateways
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import infrastructure.memoryGateways.RedisStorageUtils
+import infrastructure.repository.RedisStorageUtils
 
 class RedisStorageUtilsTest {
     @Test

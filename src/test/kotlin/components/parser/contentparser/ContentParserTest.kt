@@ -1,5 +1,6 @@
 package components.parser.contentparser
 
+import application.parser.contentparser.ContentParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

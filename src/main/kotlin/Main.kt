@@ -1,4 +1,4 @@
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import modules.CrawlersManagerV2
 import modules.QueuesManager
 import storage.frontier.FrontierV2
@@ -6,7 +6,7 @@ import storage.frontier.FrontierV2
 fun main() {
 //    SeedsManager.startCrawling(listOf("https://ecospace.org.ua"))
 
-    val redisGateway = RedisMemoryGateway
+    val redisGateway = RedisRepository
     val frontier = FrontierV2(redisGateway)
 
     // seed manager imitation
@@ -14,10 +14,14 @@ fun main() {
     frontier.updateOrCreateQueue("host", "url")
 
     val crawlersManagerV2 = CrawlersManagerV2(frontier)
-    val queuesManager = QueuesManager(crawlersManagerV2)
-    queuesManager.startMonitoring()
+    crawlersManagerV2.requestCrawlerInitializationAndGetId("host")
+//    crawlersManagerV2.requestCrawlerTermination(0)
+//    crawlersManagerV2.requestCrawlerReassignToAnotherQueue(0, "newHost")
 
-    frontier.register(queuesManager)
-    frontier.testMe()
-//    crawlersManagerV2.requestCrawlerInitialization("host")
+    val queuesManager = QueuesManager(crawlersManagerV2)
+
+//    queuesManager.startMonitoring()
+
+//    frontier.register(queuesManager)
+//    frontier.testMe()
 }

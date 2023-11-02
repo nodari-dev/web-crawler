@@ -2,14 +2,14 @@ package storage.frontier
 
 import mu.KLogger
 import mu.KotlinLogging
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import modules.CrawlersManager
 import storage.frontier.Configuration.DEFAULT_PATH
 import storage.interfaces.IFrontier
 import core.dto.WebLink
 
 object Frontier: IFrontier {
-    private var jedis = RedisMemoryGateway
+    private var jedis = RedisRepository
     private var logger = KotlinLogging.logger("Frontier")
     private var crawlersManager = CrawlersManager
 
@@ -50,7 +50,7 @@ object Frontier: IFrontier {
         jedis.deleteEntry(DEFAULT_PATH ,host)
     }
 
-    fun setupTest(jedisMock: RedisMemoryGateway, loggerMock: KLogger, crawlersManagerMock: CrawlersManager){
+    fun setupTest(jedisMock: RedisRepository, loggerMock: KLogger, crawlersManagerMock: CrawlersManager){
         jedis = jedisMock
         logger = loggerMock
         crawlersManager = crawlersManagerMock

@@ -3,14 +3,14 @@ package storage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import infrastructure.memoryGateways.RedisMemoryGateway
+import infrastructure.repository.RedisRepository
 import storage.url.Configuration.DEFAULT_PATH
 import storage.url.Configuration.PATH_KEY
 import storage.url.URLStorage
 
 class VisitedURLsTest {
     private val urlStorage = URLStorage
-    private val jedisMock = mock(RedisMemoryGateway::class.java)
+    private val jedisMock = mock(RedisRepository::class.java)
 
     init {
         urlStorage.setup(jedisMock)

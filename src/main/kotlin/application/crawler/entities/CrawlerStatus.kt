@@ -1,6 +1,6 @@
 package application.crawler.entities
 
 data class CrawlerStatus(
-    val isAlive: Boolean,
-    val isWorking: Boolean
+    var isAlive: Boolean,
+    var isWorking: Boolean
 )

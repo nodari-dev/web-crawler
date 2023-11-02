@@ -1,5 +1,6 @@
 package components.parser.robotsparser
 
+import application.parser.robotsparser.RobotsParser
 import core.dto.WebLink
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

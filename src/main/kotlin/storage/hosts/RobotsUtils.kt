@@ -1,9 +1,9 @@
 package storage.hosts
 
-import components.fetcher.Fetcher
-import components.parser.robotsparser.RobotsParser
+import application.fetcher.Fetcher
+import application.parser.robotsparser.RobotsParser
 import core.dto.WebLink
-import components.interfaces.IRobotsUtils
+import application.interfaces.IRobotsUtils
 import mu.KotlinLogging
 
 class RobotsUtils : IRobotsUtils {

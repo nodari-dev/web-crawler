@@ -2,14 +2,14 @@ package modules
 
 import application.crawler.Crawler
 import application.extractor.Extractor
-import components.fetcher.Fetcher
+import application.fetcher.Fetcher
 import storage.frontier.Frontier
 import storage.hosts.HostsStorage
 import storage.mediator.StorageMediator
 import storage.url.URLStorage
 import core.configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
 import modules.interfaces.ICrawlersManager
-import components.parser.urlparser.URLParser
+import application.parser.urlparser.URLParser
 import mu.KotlinLogging
 
 object CrawlersManager: ICrawlersManager {
