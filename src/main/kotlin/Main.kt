@@ -14,7 +14,10 @@ fun main() {
     frontier.updateOrCreateQueue("host", "url")
 
     val crawlersManagerV2 = CrawlersManagerV2(frontier)
-    val queuesManager = QueuesManager(crawlersManagerV2, frontier)
+    val queuesManager = QueuesManager(crawlersManagerV2)
     queuesManager.startMonitoring()
+
+    frontier.register(queuesManager)
+    frontier.testMe()
 //    crawlersManagerV2.requestCrawlerInitialization("host")
 }

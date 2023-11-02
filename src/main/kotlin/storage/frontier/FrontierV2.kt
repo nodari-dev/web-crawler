@@ -4,12 +4,23 @@ import application.interfaces.memoryGateways.IMemoryGateway
 import mu.KotlinLogging
 import storage.frontier.Configuration.DEFAULT_PATH
 import core.dto.WebLink
+import core.interfaces.IPublisher
+import core.interfaces.ISubscriber
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(
     private val gateway: IMemoryGateway
-): IFrontierV2 {
+): IFrontierV2, IPublisher {
     private var logger = KotlinLogging.logger("Frontier")
+    private val subscribers = mutableListOf<ISubscriber>()
+
+    override fun register(subscriber: ISubscriber) {
+        subscribers.add(subscriber)
+    }
+
+    fun testMe(){
+        subscribers.forEach{subscriber -> subscriber.sendMessage()}
+    }
 
     override fun updateOrCreateQueue(host: String, url: String) {
         if(isQueueDefinedForHost(host)){
@@ -42,8 +53,8 @@ class FrontierV2(
         return gateway.checkEntryEmptiness(DEFAULT_PATH, host)
     }
 
-    override fun deleteQueue(host: String){
+    override fun deleteQueue(host: String) {
         logger.info("removed queue with host: $host")
-        gateway.deleteEntry(DEFAULT_PATH ,host)
+        gateway.deleteEntry(DEFAULT_PATH, host)
     }
 }

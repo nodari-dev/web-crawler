@@ -1,15 +1,19 @@
 package modules
 
+import core.interfaces.ISubscriber
 import modules.interfaces.ICrawlersManagerV2
 import modules.interfaces.IQueuesManager
 import storage.interfaces.IFrontierV2
 
 class QueuesManager(
     private val crawlersManagerV2: ICrawlersManagerV2,
-    private val frontier: IFrontierV2
-): IQueuesManager {
+): IQueuesManager, ISubscriber {
     override fun startMonitoring() {
         // TODO: PERIODIC POLLING AND CHECKING FRONTIER
+    }
+
+    override fun sendMessage() {
+        println("Notified")
     }
 
 
