@@ -1,3 +1,4 @@
+import application.CrawlerFactory
 import infrastructure.repository.RedisRepository
 import modules.CrawlersManagerV2
 import modules.QueuesManager
@@ -13,7 +14,9 @@ fun main() {
 
     frontier.updateOrCreateQueue("host", "url")
 
-    val crawlersManagerV2 = CrawlersManagerV2(frontier)
+    val crawlerFactory = CrawlerFactory(frontier)
+
+    val crawlersManagerV2 = CrawlersManagerV2(crawlerFactory)
     crawlersManagerV2.requestCrawlerInitializationAndGetId("host")
 //    crawlersManagerV2.requestCrawlerTermination(0)
 //    crawlersManagerV2.requestCrawlerReassignToAnotherQueue(0, "newHost")

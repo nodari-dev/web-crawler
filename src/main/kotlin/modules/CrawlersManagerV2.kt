@@ -1,12 +1,11 @@
 package modules
 
-import application.crawler.CrawlerV2
 import application.crawler.entities.CrawlerConfig
+import application.interfaces.ICrawlerFactory
 import application.interfaces.ICrawlerV2
 import modules.interfaces.ICrawlersManagerV2
-import storage.interfaces.IFrontierV2
 
-class CrawlersManagerV2(private val frontier: IFrontierV2): ICrawlersManagerV2 {
+class CrawlersManagerV2(private val crawlerFactory: ICrawlerFactory): ICrawlersManagerV2 {
     private val crawlers: MutableList<ICrawlerV2> = mutableListOf()
 
     override fun requestCrawlerInitializationAndGetId(host: String): Int {
@@ -22,7 +21,7 @@ class CrawlersManagerV2(private val frontier: IFrontierV2): ICrawlersManagerV2 {
     private fun generateCrawler(host: String): ICrawlerV2{
         val crawlerId = generateCrawlerId()
         val config = CrawlerConfig(crawlerId, host)
-        return CrawlerV2(config, frontier)
+        return crawlerFactory.generateCrawler(config)
     }
 
     private fun generateCrawlerId(): Int{
