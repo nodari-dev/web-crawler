@@ -10,7 +10,7 @@ import mu.KLogger
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class Fetcher(override val logger: KLogger) : IFetcher {
+class Fetcher(private val logger: KLogger) : IFetcher {
     private val responseParser = ResponseParser()
 
     override fun getPageHTML(url: String): String? {

@@ -25,8 +25,8 @@ class SeedsManagerTest {
         crawlingManager.startCrawling(seeds)
 
         verify(jedisMock).clear()
-        verify(mockFrontier).updateOrCreateQueue("https://fucking-internet.com", core.dto.WebLink(seeds[0]).url)
-        verify(mockFrontier).updateOrCreateQueue("https://good-internet.com", core.dto.WebLink(seeds[1]).url)
+        verify(mockFrontier).updateOrCreateQueue("https://fucking-internet.com", core.dto.URLData(seeds[0]).url)
+        verify(mockFrontier).updateOrCreateQueue("https://good-internet.com", core.dto.URLData(seeds[1]).url)
     }
 
     @Test

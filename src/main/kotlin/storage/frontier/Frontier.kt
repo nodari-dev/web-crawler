@@ -6,7 +6,7 @@ import infrastructure.repository.RedisRepository
 import modules.CrawlersManager
 import storage.frontier.Configuration.DEFAULT_PATH
 import storage.interfaces.IFrontier
-import core.dto.WebLink
+import core.dto.URLData
 
 object Frontier: IFrontier {
     private var jedis = RedisRepository
@@ -37,8 +37,8 @@ object Frontier: IFrontier {
         crawlersManager.requestCrawlerInitialization(host)
     }
 
-    override fun pullURL(host: String): WebLink {
-        return WebLink(jedis.getFirstEntryItem(DEFAULT_PATH, host))
+    override fun pullURL(host: String): URLData {
+        return URLData(jedis.getFirstEntryItem(DEFAULT_PATH, host))
     }
 
     override fun isQueueEmpty(host: String): Boolean{

@@ -1,13 +1,16 @@
 package core.dto
 
-data class WebLink(var url: String){
+data class URLData(
+    val host: String,
+    var url: String
+){
     init {
         if(!url.endsWith("/")){
             url = "$url/"
         }
     }
 
-    fun getHash(): Int{
+    fun getHashedURL(): Int{
         return url.hashCode()
     }
 }

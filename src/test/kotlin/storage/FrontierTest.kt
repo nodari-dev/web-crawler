@@ -12,11 +12,11 @@ import storage.frontier.Frontier
 class FrontierTest {
     private val frontier = Frontier
     private val host = "https://host.com"
-    private val webLink = core.dto.WebLink("$host/demon/")
-    private val webLinkTwo = core.dto.WebLink("$host/hell/")
+    private val URLData = core.dto.URLData("$host/demon/")
+    private val URLDataTwo = core.dto.URLData("$host/hell/")
 
     private val anotherHost = "https://hell.com"
-    private val anotherUrl = core.dto.WebLink("$anotherHost/hello")
+    private val anotherUrl = core.dto.URLData("$anotherHost/hello")
 
     private val mockCrawlersManager = mock(CrawlersManager::class.java)
     private val mockLogger = mock(KotlinLogging.logger("Frontier")::class.java)
@@ -32,7 +32,7 @@ class FrontierTest {
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false)
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, anotherHost)).thenReturn(false)
 
-        frontier.updateOrCreateQueue(host, webLink.url)
+        frontier.updateOrCreateQueue(host, URLData.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         verify(mockLogger).info("created queue with host: $host")
@@ -41,7 +41,7 @@ class FrontierTest {
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
         verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
 
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLData.url)
         verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
 
         verify(mockCrawlersManager).requestCrawlerInitialization(host)
@@ -53,14 +53,14 @@ class FrontierTest {
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false, true)
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, anotherHost)).thenReturn(false)
 
-        frontier.updateOrCreateQueue(host, webLink.url)
-        frontier.updateOrCreateQueue(host, webLinkTwo.url)
+        frontier.updateOrCreateQueue(host, URLData.url)
+        frontier.updateOrCreateQueue(host, URLDataTwo.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLinkTwo.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLData.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLDataTwo.url)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, anotherHost)
         verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
@@ -69,21 +69,21 @@ class FrontierTest {
     @Test
     fun `returns url from queue`() {
         `when`(jedisMock.isEntryKeyDefined(DEFAULT_PATH, host)).thenReturn(false, true)
-        `when`(jedisMock.getFirstEntryItem(DEFAULT_PATH, host)).thenReturn(webLink.url, webLinkTwo.url)
+        `when`(jedisMock.getFirstEntryItem(DEFAULT_PATH, host)).thenReturn(URLData.url, URLDataTwo.url)
 
-        frontier.updateOrCreateQueue(host, webLink.url)
-        frontier.updateOrCreateQueue(host, webLinkTwo.url)
+        frontier.updateOrCreateQueue(host, URLData.url)
+        frontier.updateOrCreateQueue(host, URLDataTwo.url)
         val result = frontier.pullURL(host)
         val resultTwo = frontier.pullURL(host)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLinkTwo.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLData.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLDataTwo.url)
 
         verify(jedisMock, times(2)).getFirstEntryItem(DEFAULT_PATH, host)
 
-        Assertions.assertEquals(webLink, result)
-        Assertions.assertEquals(webLinkTwo, resultTwo)
+        Assertions.assertEquals(URLData, result)
+        Assertions.assertEquals(URLDataTwo, resultTwo)
     }
 
     @Test
@@ -91,12 +91,12 @@ class FrontierTest {
         `when`(jedisMock.checkEntryEmptiness(DEFAULT_PATH, host)).thenReturn(false)
         `when`(jedisMock.checkEntryEmptiness(DEFAULT_PATH, anotherHost)).thenReturn(true)
 
-        frontier.updateOrCreateQueue(host, webLink.url)
+        frontier.updateOrCreateQueue(host, URLData.url)
         val result = frontier.isQueueEmpty(host)
         val resultTwo = frontier.isQueueEmpty(anotherHost)
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLData.url)
 
         Assertions.assertEquals(false ,result)
         Assertions.assertEquals(true, resultTwo)
@@ -104,7 +104,7 @@ class FrontierTest {
 
     @Test
     fun `deletes queue`() {
-        frontier.updateOrCreateQueue(host, webLink.url)
+        frontier.updateOrCreateQueue(host, URLData.url)
         frontier.updateOrCreateQueue(anotherHost, anotherUrl.url)
 
         frontier.deleteQueue(anotherHost)
@@ -112,7 +112,7 @@ class FrontierTest {
         verify(mockLogger).info("removed queue with host: $anotherHost")
 
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
-        verify(jedisMock).updateEntry(DEFAULT_PATH, host, webLink.url)
+        verify(jedisMock).updateEntry(DEFAULT_PATH, host, URLData.url)
         verify(jedisMock).createEntry(DEFAULT_PATH, host)
         verify(jedisMock).updateEntry(DEFAULT_PATH, anotherHost, anotherUrl.url)
 

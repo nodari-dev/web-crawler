@@ -3,13 +3,20 @@ package application.crawler
 import application.crawler.entities.CrawlerConfig
 import application.crawler.entities.CrawlerStatus
 import application.interfaces.ICrawlerV2
+import application.interfaces.IFetcher
+import application.interfaces.IURLParser
 import storage.interfaces.IFrontierV2
 
 class CrawlerV2(
     private val config: CrawlerConfig,
     private val frontier: IFrontierV2,
+    private val fetcher: IFetcher,
+    private val urlParser: IURLParser
 ):Runnable, ICrawlerV2 {
-    private val status = CrawlerStatus(isAlive = false, isWorking = false)
+    private val status = CrawlerStatus(
+        isAlive = false,
+        isWorking = false
+    )
 
     override fun getStatus(): CrawlerStatus {
         return status
@@ -40,18 +47,25 @@ class CrawlerV2(
 
     private fun crawl(){
         println("Hello fucking world! Here is my data: $config")
-        var count = 0
         while (status.isAlive){
-            if(count < 5){
-                val result = frontier.pullURL(config.host)
-                frontier.updateOrCreateQueue(config.host, result.url + "_$count")
-                frontier.updateOrCreateQueue(config.host, result.url + "_$count")
-                println(frontier.pullURL(config.host))
-                count++
-            } else{
-                status.isAlive = false
+            val webLink = frontier.pullWebLink(config.host)
+            if(webLink != null){
+            val html = fetcher.getPageHTML(webLink.url)
+                if(html != null){
+                    val webLinkList = urlParser.getURLs(html)
+                    webLinkList.forEach{webLink -> frontier.updateOrCreateQueue(
+                        urlParser.getHostWithProtocol(webLink.url), webLink.url
+                        )
+                    }
+                }
             }
+//            if(count < 1){
+//                val result = frontier.pullURL(config.host)
+//                println(result)
+//                count++
+//            } else{
+//                status.isAlive = false
+//            }
         }
     }
-
 }

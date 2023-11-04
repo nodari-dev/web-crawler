@@ -1,12 +1,13 @@
 package infrastructure.repository
 
 import application.interfaces.memoryGateways.IMemoryRepository
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.Jedis
 import java.util.concurrent.locks.ReentrantLock
 
-object RedisRepository: IMemoryRepository {
-    private var mutex = ReentrantLock()
-    private var jedis = JedisPool("localhost", 6379).resource
+class RedisRepositoryV2(
+    private val mutex: ReentrantLock,
+    private val jedis: Jedis
+    ): IMemoryRepository {
 
     override fun createEntry(path: String, key: String){
         mutex.lock()

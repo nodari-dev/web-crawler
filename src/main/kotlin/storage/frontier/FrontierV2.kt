@@ -1,22 +1,17 @@
 package storage.frontier
 
-import application.interfaces.memoryGateways.IMemoryGateway
+import application.interfaces.memoryGateways.IMemoryRepository
 import mu.KotlinLogging
 import storage.frontier.Configuration.DEFAULT_PATH
-import core.dto.WebLink
-import application.interfaces.IPublisher
+import core.dto.URLData
 import application.interfaces.ISubscriber
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(
-    private val gateway: IMemoryGateway
-): IFrontierV2, IPublisher {
+    private val gateway: IMemoryRepository
+): IFrontierV2 {
     private var logger = KotlinLogging.logger("Frontier")
     private val subscribers = mutableListOf<ISubscriber>()
-
-    override fun register(subscriber: ISubscriber) {
-        subscribers.add(subscriber)
-    }
 
     fun testMe(){
         subscribers.forEach{subscriber -> subscriber.sendMessage()}
@@ -45,8 +40,8 @@ class FrontierV2(
         gateway.updateEntry(DEFAULT_PATH, host, url)
     }
 
-    override fun pullURL(host: String): WebLink {
-        return WebLink(gateway.getFirstEntryItem(DEFAULT_PATH, host))
+    override fun pullWebLink(host: String): URLData? {
+        return URLData(gateway.getFirstEntryItem(DEFAULT_PATH, host))
     }
 
     override fun isQueueEmpty(host: String): Boolean{

@@ -1,30 +1,34 @@
 import application.CrawlerFactory
-import infrastructure.repository.RedisRepository
+import application.fetcher.Fetcher
+import application.parser.urlparser.URLParser
+import core.dto.URLData
+import infrastructure.repository.RedisRepositoryV2
 import modules.CrawlersManagerV2
 import modules.QueuesManager
+import mu.KotlinLogging
+import redis.clients.jedis.JedisPool
 import storage.frontier.FrontierV2
+import java.util.concurrent.locks.ReentrantLock
 
 fun main() {
 //    SeedsManager.startCrawling(listOf("https://ecospace.org.ua"))
+    val url = "https://ecospace.org.ua"
+    val host = URLParser().getHostWithProtocol(url)
 
-    val redisGateway = RedisRepository
+    val jedis = JedisPool("localhost", 6379).resource
+    val reentrantLock = ReentrantLock()
+    val redisGateway = RedisRepositoryV2(reentrantLock, jedis)
     val frontier = FrontierV2(redisGateway)
+    val fetcher = Fetcher(KotlinLogging.logger("fetcher"))
+    val urlParser = URLParser()
 
-    // seed manager imitation
+    frontier.updateOrCreateQueue(host, URLData(url).url)
 
-    frontier.updateOrCreateQueue("host", "url")
-
-    val crawlerFactory = CrawlerFactory(frontier)
+    val crawlerFactory = CrawlerFactory(frontier, fetcher, urlParser)
 
     val crawlersManagerV2 = CrawlersManagerV2(crawlerFactory)
-    crawlersManagerV2.requestCrawlerInitializationAndGetId("host")
-//    crawlersManagerV2.requestCrawlerTermination(0)
-//    crawlersManagerV2.requestCrawlerReassignToAnotherQueue(0, "newHost")
+    // DO NOT TOUCH IT
+//    crawlersManagerV2.requestCrawlerInitializationAndGetId(host)
 
-    val queuesManager = QueuesManager(crawlersManagerV2)
-
-//    queuesManager.startMonitoring()
-
-//    frontier.register(queuesManager)
-//    frontier.testMe()
+    val queuesManager = QueuesManager(crawlersManagerV2, frontier)
 }

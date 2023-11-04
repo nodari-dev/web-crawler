@@ -1,6 +1,6 @@
 package core.dto
 
 data class WebPage(
-    val link: WebLink,
+val urlData: URLData,
     val html: String?
 )

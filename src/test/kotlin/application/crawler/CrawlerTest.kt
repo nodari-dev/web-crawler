@@ -11,7 +11,7 @@ import application.interfaces.IContentProcessor
 import modules.interfaces.ICrawlersManager
 import application.interfaces.IFetcher
 import application.interfaces.IURLParser
-import core.dto.WebLink
+import core.dto.URLData
 import application.interfaces.IMediator
 import storage.mediator.Actions.*
 
@@ -92,11 +92,11 @@ class CrawlerTest {
 
     @Test
     fun `skips if html is null`() {
-        val urlHashedPair = core.dto.WebLink("$host/test")
+        val urlHashedPair = core.dto.URLData("$host/test")
         val html = null
 
         `when`(storageMediatorMock.request<Boolean>(FRONTIER_IS_QUEUE_EMPTY, host)).thenReturn(false, true)
-        `when`(storageMediatorMock.request<WebLink>(FRONTIER_PULL, host)).thenReturn(urlHashedPair)
+        `when`(storageMediatorMock.request<URLData>(FRONTIER_PULL, host)).thenReturn(urlHashedPair)
 //        `when`(urlValidatorMock.canProcessURL(host, urlHashedPair)).thenReturn(true)
         `when`(fetcherMock.getPageHTML(urlHashedPair.url)).thenReturn(html)
 
@@ -106,7 +106,7 @@ class CrawlerTest {
 
         // assert
         verify(loggerMock).info("Started")
-        verify(storageMediatorMock).request<Unit>(URLS_UPDATE, urlHashedPair.getHash())
+        verify(storageMediatorMock).request<Unit>(URLS_UPDATE, urlHashedPair.getHashedURL())
 //        verify(contentProcessor, never()).processWebPage(any())
         verify(loggerMock).info("Stopped")
     }
@@ -139,13 +139,13 @@ class CrawlerTest {
 
     @Test
     fun `skips url from html if its not valid`() {
-        val urlHashedPair = WebLink("$host/test")
-        val foundURL = WebLink("$host/someNewUrl")
+        val urlHashedPair = URLData("$host/test")
+        val foundURL = URLData("$host/someNewUrl")
         val html = """<html><a href="${foundURL.url}">123</a></html>"""
 
 
         `when`(storageMediatorMock.request<Boolean>(FRONTIER_IS_QUEUE_EMPTY, host)).thenReturn(false, true)
-        `when`(storageMediatorMock.request<WebLink>(FRONTIER_PULL, host)).thenReturn(urlHashedPair, urlHashedPair)
+        `when`(storageMediatorMock.request<URLData>(FRONTIER_PULL, host)).thenReturn(urlHashedPair, urlHashedPair)
 
 //        `when`(urlValidatorMock.canProcessURL(host, urlHashedPair)).thenReturn(true)
 //        `when`(urlValidatorMock.canProcessURL(host, foundURL)).thenReturn(false)
@@ -160,8 +160,8 @@ class CrawlerTest {
         verify(loggerMock).info("Started")
         verify(fetcherMock, never()).getPageHTML(foundURL.url)
 
-        verify(storageMediatorMock).request<Unit>(URLS_UPDATE, urlHashedPair.getHash())
-        verify(storageMediatorMock, never()).request<Unit>(URLS_UPDATE, foundURL.getHash())
+        verify(storageMediatorMock).request<Unit>(URLS_UPDATE, urlHashedPair.getHashedURL())
+        verify(storageMediatorMock, never()).request<Unit>(URLS_UPDATE, foundURL.getHashedURL())
 
 //        verify(contentProcessor, never()).processWebPage(any())
         verify(loggerMock).info("Stopped")

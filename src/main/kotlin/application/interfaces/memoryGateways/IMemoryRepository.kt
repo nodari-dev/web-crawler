@@ -1,7 +1,7 @@
 package application.interfaces.memoryGateways
 
 
-interface IMemoryGateway {
+interface IMemoryRepository {
     fun createEntry(path: String, key: String)
     fun updateEntry(path: String, key: String, value: String)
     fun deleteEntry(path: String, key: String)

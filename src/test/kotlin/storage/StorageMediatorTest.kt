@@ -5,7 +5,7 @@ import storage.interfaces.IHostsStorage
 import storage.interfaces.IURLStorage
 import storage.mediator.StorageMediator
 import storage.mediator.Actions.*
-import core.dto.WebLink
+import core.dto.URLData
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 
@@ -19,7 +19,7 @@ class StorageMediatorTest {
     @Test
     fun `calls frontier pullURL`(){
         val host = "some-host"
-        storageMediator.request<WebLink>(FRONTIER_PULL, host)
+        storageMediator.request<URLData>(FRONTIER_PULL, host)
 
         verify(frontierMock).pullURL(host)
     }

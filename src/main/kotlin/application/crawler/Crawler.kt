@@ -1,6 +1,6 @@
 package application.crawler
 
-import core.dto.WebLink
+import core.dto.URLData
 import application.interfaces.ICrawler
 import application.interfaces.IDataExtractor
 import modules.interfaces.ICrawlersManager
@@ -54,15 +54,15 @@ class Crawler(
     }
 
     private fun processNewFrontierRecord() {
-        val pulledURL = storageMediator.request<WebLink>(FRONTIER_PULL, primaryHost)
+        val pulledURL = storageMediator.request<URLData>(FRONTIER_PULL, primaryHost)
         if (canProcessURL(primaryHost, pulledURL)) {
-            storageMediator.request<Unit>(URLS_UPDATE, pulledURL.getHash())
+            storageMediator.request<Unit>(URLS_UPDATE, pulledURL.getHashedURL())
             storageMediator.request<Unit>(HOSTS_PROVIDE_NEW, primaryHost)
             processURL(pulledURL)
         }
     }
 
-    private fun processURL(pulledURL: WebLink) {
+    private fun processURL(pulledURL: URLData) {
         val html = fetcher.getPageHTML(pulledURL.url)
         html?.let {
             val webPage = WebPage(pulledURL, html)
@@ -79,7 +79,7 @@ class Crawler(
         }
     }
 
-    private fun processChildURLs(urls: List<WebLink>) {
+    private fun processChildURLs(urls: List<URLData>) {
         val uniqueHashedUrlPairs = urls.toSet()
         uniqueHashedUrlPairs.forEach { hashedUrlPair ->
             val host = urlParser.getHostWithProtocol(hashedUrlPair.url)
@@ -89,13 +89,13 @@ class Crawler(
         }
     }
 
-    private fun canProcessURL(host: String, webLink: core.dto.WebLink?): Boolean {
-        if (webLink == null) {
+    private fun canProcessURL(host: String, URLData: core.dto.URLData?): Boolean {
+        if (URLData == null) {
             return false
         }
 
-        val isNew = storageMediator.request<Boolean>(URLS_CHECK_EXISTENCE, webLink.getHash())
-        val isAllowed = storageMediator.request<Boolean>(HOSTS_IS_URL_ALLOWED, host, webLink.url)
+        val isNew = storageMediator.request<Boolean>(URLS_CHECK_EXISTENCE, URLData.getHashedURL())
+        val isAllowed = storageMediator.request<Boolean>(HOSTS_IS_URL_ALLOWED, host, URLData.url)
         return isNew && isAllowed
     }
 }
