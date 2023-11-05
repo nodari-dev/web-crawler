@@ -51,13 +51,13 @@ class CrawlerV2(
             val webLink = frontier.pullWebLink(config.host)
             if(webLink != null){
             val html = fetcher.getPageHTML(webLink.url)
-                if(html != null){
-                    val webLinkList = urlParser.getURLs(html)
-                    webLinkList.forEach{webLink -> frontier.updateOrCreateQueue(
-                        urlParser.getHostWithProtocol(webLink.url), webLink.url
-                        )
-                    }
-                }
+//                if(html != null){
+//                    val webLinkList = urlParser.getURLs(html)
+//                    webLinkList.forEach{webLink -> frontier.updateOrCreateQueue(
+//                        urlParser.getHostWithProtocol(webLink.url), webLink.url
+//                        )
+//                    }
+//                }
             }
 //            if(count < 1){
 //                val result = frontier.pullURL(config.host)

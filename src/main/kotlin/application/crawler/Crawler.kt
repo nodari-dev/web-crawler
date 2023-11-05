@@ -74,7 +74,7 @@ class Crawler(
         if(webPage.html == null){
             println("html is not correct")
         } else{
-            extractor.extractSEODataToFile(webPage.html, webPage.link.url, Configuration.SAVE_FILE_LOCATION)
+            extractor.extractSEODataToFile(webPage.html, webPage.urlData.url, Configuration.SAVE_FILE_LOCATION)
             processChildURLs(urlParser.getURLs(webPage.html))
         }
     }

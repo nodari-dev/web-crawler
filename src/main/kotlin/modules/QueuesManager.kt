@@ -8,11 +8,8 @@ class QueuesManager(
     private val crawlersManagerV2: ICrawlersManagerV2,
     private val frontierV2: IFrontierV2
 ): IQueuesManager {
-    override fun startMonitoring() {
-        // TODO: PERIODIC POLLING AND CHECKING FRONTIER
-    }
 
     fun provideSeeds(seeds: List<String>){
-        frontierV2.updateOrCreateQueue()
+//        frontierV2.updateOrCreateQueue()
     }
 }

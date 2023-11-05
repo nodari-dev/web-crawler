@@ -1,55 +1,49 @@
 package storage.frontier
 
-import application.interfaces.memoryGateways.IMemoryRepository
+import application.interfaces.memoryGateways.IFrontierRepository
 import mu.KotlinLogging
-import storage.frontier.Configuration.DEFAULT_PATH
 import core.dto.URLData
-import application.interfaces.ISubscriber
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(
-    private val gateway: IMemoryRepository
+    private val frontierRepository: IFrontierRepository
 ): IFrontierV2 {
     private var logger = KotlinLogging.logger("Frontier")
-    private val subscribers = mutableListOf<ISubscriber>()
 
-    fun testMe(){
-        subscribers.forEach{subscriber -> subscriber.sendMessage()}
-    }
-
-    override fun updateOrCreateQueue(host: String, url: String) {
+    override fun updateOrCreateQueue(host: String, urls: List<String>) {
         if(isQueueDefinedForHost(host)){
-            updateQueue(host, url)
+//            updateQueue(host, urls)
         } else{
-            createQueue(host, url)
+            createQueue(host, urls)
         }
     }
 
     private fun isQueueDefinedForHost(host: String): Boolean{
-        return gateway.isEntryKeyDefined(DEFAULT_PATH, host)
+//        return repository.isEntryKeyDefined(DEFAULT_PATH, host)
+        TODO("Not yet implemented")
     }
 
-    private fun updateQueue(host: String, url: String) {
-        gateway.updateEntry(DEFAULT_PATH, host, url)
-    }
-
-    private fun createQueue(host: String, url: String) {
+    private fun createQueue(host: String, urls: List<String>) {
         logger.info ("created queue with host: $host")
-        gateway.createEntry(DEFAULT_PATH, host)
+//        frontierRepository.createQueue(host, urls)
+    }
 
-        gateway.updateEntry(DEFAULT_PATH, host, url)
+    private fun updateQueue(host: String, urls: List<String>) {
+//        repository.updateEntry(DEFAULT_PATH, host, url)
     }
 
     override fun pullWebLink(host: String): URLData? {
-        return URLData(gateway.getFirstEntryItem(DEFAULT_PATH, host))
+        TODO("Not yet implemented")
+//        return URLData(repository.getFirstEntryItem(DEFAULT_PATH, host))
     }
 
     override fun isQueueEmpty(host: String): Boolean{
-        return gateway.checkEntryEmptiness(DEFAULT_PATH, host)
+        TODO("Not yet implemented")
+//        return repository.checkEntryEmptiness(DEFAULT_PATH, host)
     }
 
     override fun deleteQueue(host: String) {
         logger.info("removed queue with host: $host")
-        gateway.deleteEntry(DEFAULT_PATH, host)
+//        repository.deleteEntry(DEFAULT_PATH, host)
     }
 }

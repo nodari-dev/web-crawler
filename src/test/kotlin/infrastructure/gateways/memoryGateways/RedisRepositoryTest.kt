@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
+import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import java.util.concurrent.locks.ReentrantLock
 
@@ -22,9 +23,9 @@ class RedisRepositoryTest {
     private val combinedPath = "$path:$key"
     private val secondCombinedPath = "$secondPath:$key"
 
-    init{
-        redisManager.setupTest(jedisMock, mutexMock)
-    }
+//    init{
+//        redisManager.setupTest(jedisMock, mutexMock)
+//    }
 
     @AfterEach
     fun cleanup(){

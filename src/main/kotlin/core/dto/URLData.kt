@@ -1,7 +1,6 @@
 package core.dto
 
 data class URLData(
-    val host: String,
     var url: String
 ){
     init {

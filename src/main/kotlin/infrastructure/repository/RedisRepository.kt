@@ -39,7 +39,6 @@ object RedisRepository: IMemoryRepository {
         } finally {
             mutex.unlock()
         }
-
     }
 
     override fun getFirstEntryItem(path: String, key: String): String{
