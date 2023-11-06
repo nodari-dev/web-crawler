@@ -27,9 +27,12 @@ fun main() {
 
 
     val frontierRepository = FrontierRepository(reentrantLock, jedis)
-//    frontierRepository.createQueue(host, listOf(url))
-    println(frontierRepository.getQueues())
-//    val frontier = FrontierV2(redisGateway)
+
+    val frontier = FrontierV2(frontierRepository)
+    frontier.updateOrCreateQueue(host, listOf(url))
+    println(frontier.pullWebLink(host))
+    frontier.deleteQueue(host)
+
 //    val fetcher = Fetcher(KotlinLogging.logger("fetcher"))
 //    val urlParser = URLParser()
 //

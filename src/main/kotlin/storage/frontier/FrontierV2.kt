@@ -12,38 +12,37 @@ class FrontierV2(
 
     override fun updateOrCreateQueue(host: String, urls: List<String>) {
         if(isQueueDefinedForHost(host)){
-//            updateQueue(host, urls)
+            updateQueue(host, urls)
         } else{
             createQueue(host, urls)
         }
     }
 
     private fun isQueueDefinedForHost(host: String): Boolean{
-//        return repository.isEntryKeyDefined(DEFAULT_PATH, host)
-        TODO("Not yet implemented")
+        val queues = frontierRepository.getQueues()
+        return queues?.contains(host) ?: false
     }
 
     private fun createQueue(host: String, urls: List<String>) {
+        frontierRepository.create(host, urls)
         logger.info ("created queue with host: $host")
-//        frontierRepository.createQueue(host, urls)
     }
 
     private fun updateQueue(host: String, urls: List<String>) {
-//        repository.updateEntry(DEFAULT_PATH, host, url)
+        frontierRepository.update(host, urls)
     }
 
     override fun pullWebLink(host: String): URLData? {
-        TODO("Not yet implemented")
-//        return URLData(repository.getFirstEntryItem(DEFAULT_PATH, host))
-    }
-
-    override fun isQueueEmpty(host: String): Boolean{
-        TODO("Not yet implemented")
-//        return repository.checkEntryEmptiness(DEFAULT_PATH, host)
+        val url = frontierRepository.getLastItem(host)
+        return if(url == null){
+            null
+        } else{
+            URLData(url)
+        }
     }
 
     override fun deleteQueue(host: String) {
+        frontierRepository.delete(host)
         logger.info("removed queue with host: $host")
-//        repository.deleteEntry(DEFAULT_PATH, host)
     }
 }

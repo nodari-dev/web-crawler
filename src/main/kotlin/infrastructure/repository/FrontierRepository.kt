@@ -12,16 +12,6 @@ class FrontierRepository(
     private val table = "frontier"
     private val field = "queues"
 
-    override fun clear(){
-        mutex.lock()
-        try{
-            jedis.flushAll()
-            jedis.close()
-        } finally {
-            mutex.unlock()
-        }
-    }
-
     override fun create(host: String, list: List<String>) {
         mutex.lock()
         try{
@@ -36,7 +26,7 @@ class FrontierRepository(
         }
     }
 
-    override fun getQueues(): String {
+    override fun getQueues(): String? {
         mutex.lock()
         try{
             jedis.use { jedis ->
