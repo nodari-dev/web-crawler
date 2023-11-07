@@ -11,26 +11,61 @@ import kotlin.test.assertEquals
 class FrontierRepositoryTest {
     private val jedisMock = mock(JedisPool("localhost", 6379).resource::class.java)
     private val mutexMock = mock(ReentrantLock::class.java)
-    private val redisRepository = FrontierRepository(mutexMock, jedisMock)
+    private val frontierRepository = FrontierRepository(mutexMock, jedisMock)
     private val table = "frontier"
-    private val field = "queues"
-
 
     @AfterEach
     fun cleanup(){
-        redisRepository.clear()
+        frontierRepository.clear()
     }
 
     @Test
     fun `create works correct`(){
         val host = "host"
         val list = listOf("url1", "url2")
-        redisRepository.create(host ,list)
+        frontierRepository.create(host ,list)
 
         verify(mutexMock).lock()
         verify(jedisMock).rpush(host, list[0])
         verify(jedisMock).rpush(host, list[1])
         verify(jedisMock).hset(table, "$host-urls", host)
+        verify(jedisMock).close()
+        verify(mutexMock).unlock()
+    }
+
+    @Test
+    fun `update works correct`(){
+        val host = "host"
+        val list = listOf("url1", "url2")
+        frontierRepository.update(host ,list)
+
+        verify(mutexMock).lock()
+        verify(jedisMock).rpush(host, list[0])
+        verify(jedisMock).rpush(host, list[1])
+        verify(jedisMock).close()
+        verify(mutexMock).unlock()
+    }
+
+    @Test
+    fun `assignCrawler work correct`(){
+        val host = "host"
+        val crawlerId = "crawler-id"
+
+        frontierRepository.assignCrawler(host, crawlerId)
+        verify(mutexMock).lock()
+        verify(jedisMock).rpush("host-crawlers", crawlerId)
+        verify(jedisMock).close()
+        verify(mutexMock).unlock()
+    }
+
+    @Test
+    fun `unassignCrawler work correct`(){
+        val host = "host"
+        val crawlerId = "crawler-id"
+
+        frontierRepository.unassignCrawler(host, crawlerId)
+        verify(mutexMock).lock()
+        verify(jedisMock).lrem("host-crawlers", 0, crawlerId)
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }
@@ -42,7 +77,7 @@ class FrontierRepositoryTest {
             "host-crawlers" to "host-crawlers"
         )
         `when`(jedisMock.hgetAll(table)).thenReturn(expectedResult)
-        val result = redisRepository.getQueuesInfo()
+        val result = frontierRepository.getQueuesInfo()
         assertEquals(expectedResult, result)
 
         verify(mutexMock).lock()
@@ -58,14 +93,14 @@ class FrontierRepositoryTest {
         )
         val host = "host"
         `when`(jedisMock.hgetAll(table)).thenReturn(mockedTable)
-        val result = redisRepository.isQueueDefined(host)
+        val result = frontierRepository.isQueueDefined(host)
         assertEquals(true, result)
         verify(mutexMock).lock()
         verify(jedisMock).hgetAll(table)
         verify(jedisMock).close()
         verify(mutexMock).unlock()
 
-        val resultWithNotDefinedQueue = redisRepository.isQueueDefined("something-else")
+        val resultWithNotDefinedQueue = frontierRepository.isQueueDefined("something-else")
         assertEquals(false, resultWithNotDefinedQueue)
     }
 
@@ -76,7 +111,7 @@ class FrontierRepositoryTest {
         val url = "url"
         `when`(jedisMock.lpop(host)).thenReturn(url)
 
-        val result = redisRepository.getLastItem(host)
+        val result = frontierRepository.getLastItem(host)
         assertEquals(url, result)
 
         verify(mutexMock).lock()
@@ -88,7 +123,7 @@ class FrontierRepositoryTest {
     @Test
     fun `getLastItem works correct with empty queue`(){
         val host = "not_exists"
-        val notExisting = redisRepository.getLastItem(host)
+        val notExisting = frontierRepository.getLastItem(host)
         assertEquals(null, notExisting)
 
         verify(mutexMock).lock()
@@ -100,7 +135,7 @@ class FrontierRepositoryTest {
     @Test
     fun `delete works correct`(){
         val host = "host"
-        redisRepository.delete(host)
+        frontierRepository.delete(host)
 
         verify(mutexMock).lock()
         verify(jedisMock).del(host)

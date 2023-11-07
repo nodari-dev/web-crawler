@@ -33,4 +33,15 @@ class FrontierV2(
         frontierRepository.delete(host)
         logger.info("removed queue with host: $host")
     }
+
+    override fun assignCrawler(host: String, crawlerId: String) {
+        frontierRepository.assignCrawler(host, crawlerId)
+        logger.info("assigned crawler $crawlerId to queue with host: $host")
+    }
+
+    override fun unassignCrawler(host: String, crawlerId: String) {
+        frontierRepository.unassignCrawler(host, crawlerId)
+        logger.info("unassigned crawler $crawlerId from queue with host: $host")
+    }
+
 }

@@ -55,4 +55,24 @@ class FrontierV2Test {
         verify(logger).info ("removed queue with host: $existingHost")
 
     }
+
+    @Test
+    fun `assigns crawler to queue`(){
+        val host = "somehost"
+        val crawlerId = "crawlerId"
+
+        frontier.assignCrawler(host, crawlerId)
+        verify(frontierRepositoryMock).assignCrawler(host, crawlerId)
+        verify(logger).info ("assigned crawler $crawlerId to queue with host: $host")
+    }
+
+    @Test
+    fun `unassigns crawler from queue`(){
+        val host = "somehost"
+        val crawlerId = "crawlerId"
+
+        frontier.unassignCrawler(host, crawlerId)
+        verify(frontierRepositoryMock).unassignCrawler(host, crawlerId)
+        verify(logger).info ("unassigned crawler $crawlerId from queue with host: $host")
+    }
 }

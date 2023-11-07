@@ -73,6 +73,28 @@ class FrontierRepository(
         }
     }
 
+    override fun assignCrawler(host: String, crawlerId: String) {
+        mutex.lock()
+        try{
+            jedis.use{ jedis ->
+                jedis.rpush(getCrawlersFieldName(host), crawlerId)
+            }
+        } finally {
+            mutex.unlock()
+        }
+    }
+
+    override fun unassignCrawler(host: String, crawlerId: String) {
+        mutex.lock()
+        try{
+            jedis.use{ jedis ->
+                jedis.lrem(getCrawlersFieldName(host),0, crawlerId)
+            }
+        } finally {
+            mutex.unlock()
+        }
+    }
+
     override fun delete(host: String) {
         mutex.lock()
         try{
