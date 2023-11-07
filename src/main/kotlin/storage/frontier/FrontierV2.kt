@@ -1,13 +1,14 @@
 package storage.frontier
 
 import application.interfaces.memoryGateways.IFrontierRepository
-import mu.KotlinLogging
 import core.dto.URLData
+import modules.interfaces.IQueuesManager
 import mu.KLogger
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(
     private val frontierRepository: IFrontierRepository,
+    private val queuesManager: IQueuesManager,
     private val logger: KLogger,
 ): IFrontierV2 {
 
@@ -15,6 +16,7 @@ class FrontierV2(
         if(frontierRepository.isQueueDefined(host)){
             frontierRepository.update(host, urls)
         } else{
+            queuesManager.requestCallToCrawlersManager(host)
             frontierRepository.create(host, urls)
             logger.info ("created queue with host: $host")
         }

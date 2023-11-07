@@ -3,6 +3,7 @@ package application
 import application.crawler.entities.CrawlerConfig
 import application.interfaces.IFetcher
 import application.interfaces.IURLParser
+import application.interfaces.IURLPacker
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
@@ -12,7 +13,9 @@ class CrawlerFactoryTest {
     private val frontierMock = mock(IFrontierV2::class.java)
     private val fetcherMock = mock(IFetcher::class.java)
     private val urlParserMock = mock(IURLParser::class.java)
-    private val crawlerFactory = CrawlerFactory(frontierMock, fetcherMock, urlParserMock)
+    private val urlPacker = mock(IURLPacker::class.java)
+
+    private val crawlerFactory = CrawlerFactory(frontierMock, fetcherMock, urlParserMock, urlPacker)
 
     @Test
     fun `creates new crawler`(){

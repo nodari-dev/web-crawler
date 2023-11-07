@@ -3,6 +3,7 @@ package application.crawler
 import application.crawler.entities.CrawlerConfig
 import application.crawler.entities.CrawlerStatus
 import application.interfaces.IFetcher
+import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -14,7 +15,8 @@ class CrawlerV2Test {
     private val frontierMock = mock(IFrontierV2::class.java)
     private val fetcherMock = mock(IFetcher::class.java)
     private val urlParserMock = mock(IURLParser::class.java)
-    private val crawler = CrawlerV2(config, frontierMock, fetcherMock, urlParserMock)
+    private val urlPacker = mock(IURLPacker::class.java)
+    private val crawler = CrawlerV2(config, frontierMock, fetcherMock, urlParserMock, urlPacker)
 
     @Test
     fun `returns status`(){
