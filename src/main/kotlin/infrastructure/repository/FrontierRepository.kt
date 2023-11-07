@@ -19,6 +19,7 @@ class FrontierRepository(
                 list.forEach { item ->
                     jedis.rpush(host, item)
                 }
+                val field = getQFieldName(host)
                 jedis.hset(table, field, host)
             }
         } finally {
@@ -26,11 +27,22 @@ class FrontierRepository(
         }
     }
 
-    override fun getQueues(): String? {
+    override fun getQueuesInfo(): MutableMap<String, String>? {
         mutex.lock()
         try{
             jedis.use { jedis ->
-                return jedis.hget(table, field)
+                return jedis.hgetAll(table)
+            }
+        } finally {
+            mutex.unlock()
+        }
+    }
+
+    override fun isQueueDefined(host: String): Boolean {
+        mutex.lock()
+        try{
+            jedis.use { jedis ->
+                return jedis.hgetAll(table).containsKey(getQFieldName(host))
             }
         } finally {
             mutex.unlock()
@@ -65,9 +77,28 @@ class FrontierRepository(
         mutex.lock()
         try{
             jedis.use{ jedis ->
-                jedis.hdel(table, field, host)
+                jedis.hdel(table, getQFieldName(host))
+                jedis.hdel(table, getCrawlersFieldName(host))
                 jedis.del(host)
             }
+        } finally {
+            mutex.unlock()
+        }
+    }
+
+    private fun getQFieldName(host: String): String{
+        return "$host-urls"
+    }
+
+    private fun getCrawlersFieldName(host: String): String{
+        return "$host-crawlers"
+    }
+
+    override fun clear(){
+        mutex.lock()
+        try{
+            jedis.flushAll()
+            jedis.close()
         } finally {
             mutex.unlock()
         }

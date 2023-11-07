@@ -27,12 +27,20 @@ fun main() {
 
 
     val frontierRepository = FrontierRepository(reentrantLock, jedis)
+//
+//    val frontier = FrontierV2(frontierRepository)
+//    frontier.updateOrCreateQueue(host, listOf(url))
+//    println(frontier.pullWebLink(host))
+//    frontier.deleteQueue(host)
 
-    val frontier = FrontierV2(frontierRepository)
-    frontier.updateOrCreateQueue(host, listOf(url))
-    println(frontier.pullWebLink(host))
-    frontier.deleteQueue(host)
+    val expectedResult = mutableMapOf(
+        "host-urls" to "host",
+        "host-crawlers" to "host-crawlers"
+    )
 
+    println(
+        expectedResult.filter { item -> item.key.contains("crawlers") }
+    )
 //    val fetcher = Fetcher(KotlinLogging.logger("fetcher"))
 //    val urlParser = URLParser()
 //

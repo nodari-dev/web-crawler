@@ -30,23 +30,45 @@ class FrontierRepositoryTest {
         verify(mutexMock).lock()
         verify(jedisMock).rpush(host, list[0])
         verify(jedisMock).rpush(host, list[1])
-        verify(jedisMock).hset(table, field, host)
+        verify(jedisMock).hset(table, "$host-urls", host)
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }
 
     @Test
-    fun `getQueues works correct`(){
-        val host = "host"
-        `when`(jedisMock.hget(table, field)).thenReturn(host)
-        val result = redisRepository.getQueues()
-        assertEquals(host, result)
+    fun `getQueuesInfo works correct`(){
+        val expectedResult = mutableMapOf(
+            "host-urls" to "host",
+            "host-crawlers" to "host-crawlers"
+        )
+        `when`(jedisMock.hgetAll(table)).thenReturn(expectedResult)
+        val result = redisRepository.getQueuesInfo()
+        assertEquals(expectedResult, result)
 
         verify(mutexMock).lock()
-        verify(jedisMock).hget(table, field)
+        verify(jedisMock).hgetAll(table)
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }
+
+    @Test
+    fun `isQueueDefined works correct`(){
+        val mockedTable = mutableMapOf(
+            "host-urls" to "host",
+        )
+        val host = "host"
+        `when`(jedisMock.hgetAll(table)).thenReturn(mockedTable)
+        val result = redisRepository.isQueueDefined(host)
+        assertEquals(true, result)
+        verify(mutexMock).lock()
+        verify(jedisMock).hgetAll(table)
+        verify(jedisMock).close()
+        verify(mutexMock).unlock()
+
+        val resultWithNotDefinedQueue = redisRepository.isQueueDefined("something-else")
+        assertEquals(false, resultWithNotDefinedQueue)
+    }
+
 
     @Test
     fun `getLastItem works correct with not empty queue`(){
@@ -82,7 +104,8 @@ class FrontierRepositoryTest {
 
         verify(mutexMock).lock()
         verify(jedisMock).del(host)
-        verify(jedisMock).hdel(table, field, host)
+        verify(jedisMock).hdel(table, "$host-urls")
+        verify(jedisMock).hdel(table, "$host-crawlers")
         verify(jedisMock).close()
         verify(mutexMock).unlock()
     }
