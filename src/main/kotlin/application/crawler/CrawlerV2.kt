@@ -1,60 +1,56 @@
 package application.crawler
 
 import application.crawler.entities.CrawlerConfig
-import application.crawler.entities.CrawlerStatus
-import application.interfaces.ICrawlerV2
 import application.interfaces.IFetcher
 import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
 import storage.interfaces.IFrontierV2
+import core.configuration.Configuration.TIME_BETWEEN_FETCHING
 
 class CrawlerV2(
-    private val config: CrawlerConfig,
+    id: Int,
     private val frontier: IFrontierV2,
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
     private val urlPacker: IURLPacker,
-):Runnable, ICrawlerV2 {
-    private val status = CrawlerStatus(
-        isAlive = false,
-        isWorking = false
-    )
-
-    override fun getStatus(): CrawlerStatus {
-        return status
-    }
-
-    override fun getConfig(): CrawlerConfig {
-        return config
-    }
-
-    override fun reassign(newHost: String) {
-        config.host = newHost
-    }
-
-    override fun terminate() {
-        status.isAlive = false
-        status.isWorking = false
-    }
+):Runnable {
+    private val isALive = true
+    private val config = CrawlerConfig(id)
 
     override fun run() {
-        styingAlive()
-        crawl()
-    }
+        println("Started ${config.id}")
+        config.host = "https://ecospace.org.ua"
 
-    private fun styingAlive(){
-        status.isAlive = true
-        status.isWorking = true
+        try{
+            while (isALive){
+                crawl()
+            }
+        } catch (e: InterruptedException){
+            e.printStackTrace()
+        }
     }
 
     private fun crawl(){
-        while (status.isAlive){
-            val webLink = frontier.pullWebLink(config.host)
-            if(webLink != null){
-                val html = fetcher.getPageHTML(webLink.url)
-                if(html != null){
-                    processHTML(html)
-                }
+//        if(config.host == null){
+//            Thread.sleep(5000)
+//        } else{
+//            Thread.sleep(5000)
+//            processURL(frontier.pullFrom(config.host!!))
+//        }
+        Thread.sleep(5000)
+        processURL(frontier.pullFrom(config.host!!))
+    }
+
+    private fun connectToDifferentQueue(){
+        println("looking for new queue")
+    }
+
+    private fun processURL(url: String?){
+        if(url != null){
+            Thread.sleep(TIME_BETWEEN_FETCHING)
+            val html = fetcher.getPageHTML(url)
+            if(html != null){
+                processHTML(html)
             }
         }
     }
@@ -62,8 +58,8 @@ class CrawlerV2(
     private fun processHTML(html: String){
         val webLinkList = urlParser.getURLs(html)
         val packedURLs = urlPacker.pack(webLinkList)
-        packedURLs.forEach{pack -> frontier.updateOrCreateQueue(
-            urlParser.getHostWithProtocol(pack.key), pack.value)
+        packedURLs.forEach{pack ->
+            frontier.update(urlParser.getHostWithProtocol(pack.key), pack.value)
         }
     }
 }

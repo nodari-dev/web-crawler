@@ -1,6 +1,6 @@
 package infrastructure.repository
 
-import application.interfaces.memoryGateways.IFrontierRepository
+import application.interfaces.repository.IFrontierRepository
 import redis.clients.jedis.Jedis
 import java.util.concurrent.locks.ReentrantLock
 
@@ -9,63 +9,15 @@ class FrontierRepository(
     private val jedis: Jedis
     ): IFrontierRepository {
 
-    private val table = "frontier"
-    private val field = "queues"
+    private val frontier = "frontier"
 
-    override fun create(host: String, list: List<String>) {
+    override fun update(host: String, list: List<String>){
         mutex.lock()
         try{
             jedis.use { jedis ->
                 list.forEach { item ->
-                    jedis.rpush(host, item)
-                }
-                val field = getQFieldName(host)
-                jedis.hset(table, field, host)
-            }
-        } finally {
-            mutex.unlock()
-        }
-    }
-
-    override fun getQueuesInfo(): MutableMap<String, String>? {
-        mutex.lock()
-        try{
-            jedis.use { jedis ->
-                return jedis.hgetAll(table)
-            }
-        } finally {
-            mutex.unlock()
-        }
-    }
-
-    override fun isQueueDefined(host: String): Boolean {
-        mutex.lock()
-        try{
-            jedis.use { jedis ->
-                return jedis.hgetAll(table).containsKey(getQFieldName(host))
-            }
-        } finally {
-            mutex.unlock()
-        }
-    }
-
-    override fun getLastItem(host: String): String? {
-        mutex.lock()
-        try{
-            jedis.use { jedis ->
-                return jedis.lpop(host)
-            }
-        } finally {
-            mutex.unlock()
-        }
-    }
-
-    override fun update(host: String, list: List<String>) {
-        mutex.lock()
-        try{
-            jedis.use { jedis ->
-                list.forEach { item ->
-                    jedis.rpush(host, item)
+                    val key = getURLsKey(host)
+                    jedis.rpush(key, item)
                 }
             }
         } finally {
@@ -73,47 +25,59 @@ class FrontierRepository(
         }
     }
 
-    override fun assignCrawler(host: String, crawlerId: String) {
+    override fun assignCrawler(id: Int, host: String) {
         mutex.lock()
         try{
-            jedis.use{ jedis ->
-                jedis.rpush(getCrawlersFieldName(host), crawlerId)
+            jedis.use { jedis ->
+                val key = getCrawlersKey(host)
+                jedis.rpush(key, "$id")
             }
         } finally {
             mutex.unlock()
         }
     }
 
-    override fun unassignCrawler(host: String, crawlerId: String) {
+    override fun unassignCrawler(id: Int, host: String) {
         mutex.lock()
         try{
-            jedis.use{ jedis ->
-                jedis.lrem(getCrawlersFieldName(host),0, crawlerId)
+            jedis.use { jedis ->
+                val key = getCrawlersKey(host)
+                jedis.lrem(key, 0, "$id")
             }
         } finally {
             mutex.unlock()
         }
     }
 
-    override fun delete(host: String) {
+    override fun getQueuesData(): MutableSet<String>? {
         mutex.lock()
         try{
-            jedis.use{ jedis ->
-                jedis.hdel(table, getQFieldName(host))
-                jedis.hdel(table, getCrawlersFieldName(host))
-                jedis.del(host)
+            jedis.use { jedis ->
+                val data = jedis.keys("$frontier*")
+                // TODO: IMPLEMENT
             }
         } finally {
             mutex.unlock()
         }
     }
 
-    private fun getQFieldName(host: String): String{
-        return "$host-urls"
+    override fun get(host: String): String? {
+        mutex.lock()
+        try{
+            jedis.use { jedis ->
+                return jedis.lpop(getURLsKey(host))
+            }
+        } finally {
+            mutex.unlock()
+        }
     }
 
-    private fun getCrawlersFieldName(host: String): String{
-        return "$host-crawlers"
+    private fun getCrawlersKey(host: String): String{
+        return "$frontier:$host:crawlerIds"
+    }
+
+    private fun getURLsKey(host: String): String{
+        return "$frontier:$host:urls"
     }
 
     override fun clear(){

@@ -1,4 +1,4 @@
-package application.interfaces.memoryGateways
+package application.interfaces.repository
 
 
 interface IMemoryRepository {

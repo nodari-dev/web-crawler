@@ -1,49 +1,38 @@
 package storage.frontier
 
-import application.interfaces.memoryGateways.IFrontierRepository
-import core.dto.URLData
-import modules.interfaces.IQueuesManager
+import application.interfaces.repository.IFrontierRepository
 import mu.KLogger
 import storage.interfaces.IFrontierV2
 
 class FrontierV2(
     private val frontierRepository: IFrontierRepository,
-    private val queuesManager: IQueuesManager,
     private val logger: KLogger,
 ): IFrontierV2 {
 
-    override fun updateOrCreateQueue(host: String, urls: List<String>) {
-        if(frontierRepository.isQueueDefined(host)){
-            frontierRepository.update(host, urls)
-        } else{
-            queuesManager.requestCallToCrawlersManager(host)
-            frontierRepository.create(host, urls)
-            logger.info ("created queue with host: $host")
+    override fun update(host: String, urls: List<String>) {
+        frontierRepository.update(host, urls)
+        logger.info ("new data for host: $host")
+    }
+
+    override fun pullFrom(host: String): String? {
+        return frontierRepository.get(host)
+    }
+
+    fun assign(id: Int, host: String){
+        frontierRepository.assignCrawler(id, host)
+        logger.info ("assigned crawler $id to $host")
+    }
+
+    fun unassign(id: Int, host: String){
+        frontierRepository.unassignCrawler(id, host)
+        logger.info ("removed crawler $id from $host")
+    }
+
+    fun getAvaibleQueue(){
+        val data = frontierRepository.getQueuesData()
+        if(data != null){
+            data.forEach{item -> println(item)}
         }
-    }
-
-    override fun pullWebLink(host: String): URLData? {
-        val url = frontierRepository.getLastItem(host)
-        return if(url == null){
-            null
-        } else{
-            URLData(url)
-        }
-    }
-
-    override fun deleteQueue(host: String) {
-        frontierRepository.delete(host)
-        logger.info("removed queue with host: $host")
-    }
-
-    override fun assignCrawler(host: String, crawlerId: String) {
-        frontierRepository.assignCrawler(host, crawlerId)
-        logger.info("assigned crawler $crawlerId to queue with host: $host")
-    }
-
-    override fun unassignCrawler(host: String, crawlerId: String) {
-        frontierRepository.unassignCrawler(host, crawlerId)
-        logger.info("unassigned crawler $crawlerId from queue with host: $host")
     }
 
 }

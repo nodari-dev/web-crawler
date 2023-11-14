@@ -1,4 +1,4 @@
-package application.interfaces.memoryGateways
+package application.interfaces.repository
 
 interface IRedisStorageUtils {
     fun getEntryPath(defaultPath: String, key: String): String

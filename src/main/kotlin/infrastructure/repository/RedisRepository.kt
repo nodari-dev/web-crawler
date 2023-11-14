@@ -1,6 +1,6 @@
 package infrastructure.repository
 
-import application.interfaces.memoryGateways.IMemoryRepository
+import application.interfaces.repository.IMemoryRepository
 import redis.clients.jedis.JedisPool
 import java.util.concurrent.locks.ReentrantLock
 
