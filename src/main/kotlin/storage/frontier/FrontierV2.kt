@@ -11,28 +11,25 @@ class FrontierV2(
 
     override fun update(host: String, urls: List<String>) {
         frontierRepository.update(host, urls)
-        logger.info ("new data for host: $host")
+        logger.info("new data for host: $host")
     }
 
     override fun pullFrom(host: String): String? {
         return frontierRepository.get(host)
     }
 
-    fun assign(id: Int, host: String){
+    override fun assign(id: Int, host: String){
         frontierRepository.assignCrawler(id, host)
-        logger.info ("assigned crawler $id to $host")
+        logger.info("assigned crawler $id to $host")
     }
 
-    fun unassign(id: Int, host: String){
+    override fun unassign(id: Int, host: String){
         frontierRepository.unassignCrawler(id, host)
-        logger.info ("removed crawler $id from $host")
+        logger.info("removed crawler $id from $host")
     }
 
-    fun getAvaibleQueue(){
-        val data = frontierRepository.getQueuesData()
-        if(data != null){
-            data.forEach{item -> println(item)}
-        }
+    override fun getAvailableQueue(): String?{
+        return frontierRepository.getAvailableQueue()
     }
 
 }

@@ -19,6 +19,7 @@ class FrontierRepository(
                     val key = getURLsKey(host)
                     jedis.rpush(key, item)
                 }
+                changeQueueAvailability(host)
             }
         } finally {
             mutex.unlock()
@@ -31,6 +32,7 @@ class FrontierRepository(
             jedis.use { jedis ->
                 val key = getCrawlersKey(host)
                 jedis.rpush(key, "$id")
+                changeQueueAvailability(host)
             }
         } finally {
             mutex.unlock()
@@ -43,18 +45,26 @@ class FrontierRepository(
             jedis.use { jedis ->
                 val key = getCrawlersKey(host)
                 jedis.lrem(key, 0, "$id")
+                changeQueueAvailability(host)
             }
         } finally {
             mutex.unlock()
         }
     }
 
-    override fun getQueuesData(): MutableSet<String>? {
+    override fun getAvailableQueue(): String? {
         mutex.lock()
         try{
             jedis.use { jedis ->
-                val data = jedis.keys("$frontier*")
-                // TODO: IMPLEMENT
+                val keys = jedis.keys("$frontier:*:available")
+                var host: String? = null
+                keys.forEach{item ->
+                    if (jedis.get(item) == "yes"){
+                        host = item.split(":")[1]
+                        return@forEach
+                    }
+                }
+                return host
             }
         } finally {
             mutex.unlock()
@@ -65,10 +75,22 @@ class FrontierRepository(
         mutex.lock()
         try{
             jedis.use { jedis ->
-                return jedis.lpop(getURLsKey(host))
+                val url = jedis.lpop(getURLsKey(host))
+                changeQueueAvailability(host)
+                return url
             }
         } finally {
             mutex.unlock()
+        }
+    }
+
+    private fun changeQueueAvailability(host: String){
+        val urlsCount = jedis.lrange(getURLsKey(host), 0, -1).size
+        val crawlersCount = jedis.lrange(getCrawlersKey(host), 0, -1).size
+        if(urlsCount > crawlersCount){
+            jedis.set(getAvailabilityKey(host), "yes")
+        } else{
+            jedis.set(getAvailabilityKey(host), "no")
         }
     }
 
@@ -78,6 +100,10 @@ class FrontierRepository(
 
     private fun getURLsKey(host: String): String{
         return "$frontier:$host:urls"
+    }
+
+    private fun getAvailabilityKey(host: String): String{
+        return "$frontier:$host:available"
     }
 
     override fun clear(){

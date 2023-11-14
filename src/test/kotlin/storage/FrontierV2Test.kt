@@ -1,6 +1,5 @@
 package storage
 
-import core.dto.URLData
 import infrastructure.repository.FrontierRepository
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
@@ -14,21 +13,16 @@ class FrontierV2Test {
     private val frontier = FrontierV2(frontierRepositoryMock, logger)
 
     @Test
-    fun `updateOrCreateQueue works correct`(){
+    fun `update works correct`(){
         val list = listOf("list")
-        val existingHost = "somehost"
+        val host = "somehost"
         val newHost = "mew-host"
 
-        `when`(frontierRepositoryMock.isQueueDefined(existingHost)).thenReturn(true)
-        `when`(frontierRepositoryMock.isQueueDefined(newHost)).thenReturn(false)
-
         // act
-        frontier.updateOrCreateQueue(existingHost, list)
-        verify(frontierRepositoryMock).update(existingHost, list)
-
-        frontier.updateOrCreateQueue(newHost, list)
-        verify(frontierRepositoryMock).create(newHost, list)
-        verify(logger).info ("created queue with host: $newHost")
+        frontier.update(host, list)
+        frontier.update(newHost, list)
+        verify(frontierRepositoryMock).update(host, list)
+        verify(frontierRepositoryMock).update(newHost, list)
     }
 
     @Test
@@ -36,43 +30,43 @@ class FrontierV2Test {
         val existingHost = "somehost"
         val newHost = "mew-host"
 
-        `when`(frontierRepositoryMock.getLastItem(existingHost)).thenReturn("url")
-        `when`(frontierRepositoryMock.getLastItem(newHost)).thenReturn(null)
+        `when`(frontierRepositoryMock.get(existingHost)).thenReturn("url")
+        `when`(frontierRepositoryMock.get(newHost)).thenReturn(null)
 
-        val resultWithURL = frontier.pullWebLink(existingHost)
-        assertEquals(URLData("url"), resultWithURL)
+        val resultWithURL = frontier.pullFrom(existingHost)
+        assertEquals("url", resultWithURL)
 
-        val resultWithNull = frontier.pullWebLink(newHost)
+        val resultWithNull = frontier.pullFrom(newHost)
         assertEquals(null, resultWithNull)
     }
-
-    @Test
-    fun `deletes queue`(){
-        val existingHost = "somehost"
-
-        frontier.deleteQueue(existingHost)
-        verify(frontierRepositoryMock).delete(existingHost)
-        verify(logger).info ("removed queue with host: $existingHost")
-
-    }
-
+//
+//    @Test
+//    fun `deletes queue`(){
+//        val existingHost = "somehost"
+//
+//        frontier.deleteQueue(existingHost)
+//        verify(frontierRepositoryMock).delete(existingHost)
+//        verify(logger).info ("removed queue with host: $existingHost")
+//
+//    }
+//
     @Test
     fun `assigns crawler to queue`(){
         val host = "somehost"
-        val crawlerId = "crawlerId"
+        val crawlerId = 12
 
-        frontier.assignCrawler(host, crawlerId)
-        verify(frontierRepositoryMock).assignCrawler(host, crawlerId)
-        verify(logger).info ("assigned crawler $crawlerId to queue with host: $host")
+        frontier.assign(crawlerId, host)
+        verify(frontierRepositoryMock).assignCrawler(crawlerId, host )
+        verify(logger).info ("assigned crawler $crawlerId to $host")
     }
 
     @Test
     fun `unassigns crawler from queue`(){
         val host = "somehost"
-        val crawlerId = "crawlerId"
+        val crawlerId = 12
 
-        frontier.unassignCrawler(host, crawlerId)
-        verify(frontierRepositoryMock).unassignCrawler(host, crawlerId)
-        verify(logger).info ("unassigned crawler $crawlerId from queue with host: $host")
+        frontier.unassign(crawlerId, host)
+        verify(frontierRepositoryMock).unassignCrawler(crawlerId, host)
+        verify(logger).info ("removed crawler $crawlerId from $host")
     }
 }

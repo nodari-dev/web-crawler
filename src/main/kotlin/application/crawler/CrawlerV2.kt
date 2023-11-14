@@ -19,7 +19,6 @@ class CrawlerV2(
 
     override fun run() {
         println("Started ${config.id}")
-        config.host = "https://ecospace.org.ua"
 
         try{
             while (isALive){
@@ -31,12 +30,17 @@ class CrawlerV2(
     }
 
     private fun crawl(){
-//        if(config.host == null){
-//            Thread.sleep(5000)
-//        } else{
-//            Thread.sleep(5000)
-//            processURL(frontier.pullFrom(config.host!!))
-//        }
+        if(config.host == null){
+            Thread.sleep(5000)
+            val host = frontier.getAvailableQueue()
+            if(host != null){
+                frontier.assign(config.id, host)
+            }
+            println("${config.id} $host here!")
+        } else{
+            Thread.sleep(5000)
+            processURL(frontier.pullFrom(config.host!!))
+        }
         Thread.sleep(5000)
         processURL(frontier.pullFrom(config.host!!))
     }

@@ -16,25 +16,14 @@ fun main() {
     val frontierLogger = KotlinLogging.logger("Frontier")
     val frontier = FrontierV2(frontierRepository, frontierLogger)
 
-
-    // TESTING
-        val urlData = URLData("https://ecospace.org.ua")
+    val urlData = URLData("https://ecospace.org.ua")
     val host = URLParser().getHostWithProtocol(urlData.url)
     frontier.update(host, listOf(urlData.url))
-    frontier.update("host", listOf(urlData.url))
-    frontier.update("hos1t", listOf(urlData.url))
 
-    frontier.getAvaibleQueue()
-    // TESTING
-
-//    val urlData = URLData("https://ecospace.org.ua")
-//    val host = URLParser().getHostWithProtocol(urlData.url)
-//    frontier.update(host, listOf(urlData.url))
-//
-//    val fetcherLogger = KotlinLogging.logger("Fetcher")
-//    val fetcher = Fetcher(fetcherLogger)
-//    val urlParser = URLParser()
-//    val urlPacker = URLPacker()
-//    val crawlingManager = CrawlingManager(frontier, fetcher, urlParser, urlPacker)
-//    crawlingManager.start()
+    val fetcherLogger = KotlinLogging.logger("Fetcher")
+    val fetcher = Fetcher(fetcherLogger)
+    val urlParser = URLParser()
+    val urlPacker = URLPacker()
+    val crawlingManager = CrawlingManager(frontier, fetcher, urlParser, urlPacker)
+    crawlingManager.start()
 }

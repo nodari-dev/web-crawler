@@ -6,5 +6,5 @@ interface IFrontierRepository {
     fun update(host: String, list: List<String>)
     fun assignCrawler(id: Int, host: String)
     fun unassignCrawler(id: Int, host: String)
-    fun getQueuesData(): MutableSet<String>?
+    fun getAvailableQueue(): String?
 }
