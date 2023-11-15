@@ -12,7 +12,7 @@ class CrawlingManager(
     private val urlParser: IURLParser,
     private val urlPacker: IURLPacker
 ): ICrawlersManagerV2 {
-    private val MAX_NUMBER_OF_CRAWLERS = 2
+    private val MAX_NUMBER_OF_CRAWLERS = 10
     private val crawlersPool = Executors.newFixedThreadPool(MAX_NUMBER_OF_CRAWLERS)
 
     override fun start() {

@@ -35,18 +35,16 @@ class CrawlerV2(
             val host = frontier.getAvailableQueue()
             if(host != null){
                 frontier.assign(config.id, host)
+                config.host = host
+            } else{
+                crawl()
             }
-            println("${config.id} $host here!")
         } else{
             Thread.sleep(5000)
             processURL(frontier.pullFrom(config.host!!))
         }
         Thread.sleep(5000)
         processURL(frontier.pullFrom(config.host!!))
-    }
-
-    private fun connectToDifferentQueue(){
-        println("looking for new queue")
     }
 
     private fun processURL(url: String?){
@@ -63,7 +61,7 @@ class CrawlerV2(
         val webLinkList = urlParser.getURLs(html)
         val packedURLs = urlPacker.pack(webLinkList)
         packedURLs.forEach{pack ->
-            frontier.update(urlParser.getHostWithProtocol(pack.key), pack.value)
+            frontier.update(pack.key, pack.value)
         }
     }
 }
