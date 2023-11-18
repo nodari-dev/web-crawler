@@ -64,6 +64,7 @@ class CrawlingManager(
 //                sleep(1000)
             }
         }
+        crawlers.forEach { crawler -> crawler.join() }
     }
 
     private fun allCrawlersFinished(): Boolean{
