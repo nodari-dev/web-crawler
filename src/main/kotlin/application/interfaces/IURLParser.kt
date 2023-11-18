@@ -1,8 +1,8 @@
 package application.interfaces
 
-import core.dto.URLData
+import core.dto.URLInfo
 
 interface IURLParser {
-    fun getURLs(document: String): List<URLData>
-    fun getHostWithProtocol(document: String): String
+    fun getURLs(document: String): List<URLInfo>
+    fun getHostname(document: String): String
 }

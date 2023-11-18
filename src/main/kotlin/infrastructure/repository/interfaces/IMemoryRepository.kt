@@ -1,4 +1,4 @@
-package application.interfaces.repository
+package infrastructure.repository.interfaces
 
 
 interface IMemoryRepository {

@@ -5,14 +5,12 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import infrastructure.repository.RedisRepository
 
 import application.interfaces.IContentProcessor
 import modules.interfaces.ICrawlersManager
 import application.interfaces.IFetcher
 import application.interfaces.IURLParser
-import core.dto.URLData
-import application.interfaces.IMediator
+import core.dto.URLInfo
 import storage.mediator.Actions.*
 
 class CrawlerTest {
@@ -92,11 +90,11 @@ class CrawlerTest {
 
     @Test
     fun `skips if html is null`() {
-        val urlHashedPair = core.dto.URLData("$host/test")
+        val urlHashedPair = core.dto.URLInfo("$host/test")
         val html = null
 
         `when`(storageMediatorMock.request<Boolean>(FRONTIER_IS_QUEUE_EMPTY, host)).thenReturn(false, true)
-        `when`(storageMediatorMock.request<URLData>(FRONTIER_PULL, host)).thenReturn(urlHashedPair)
+        `when`(storageMediatorMock.request<URLInfo>(FRONTIER_PULL, host)).thenReturn(urlHashedPair)
 //        `when`(urlValidatorMock.canProcessURL(host, urlHashedPair)).thenReturn(true)
         `when`(fetcherMock.getPageHTML(urlHashedPair.url)).thenReturn(html)
 
@@ -139,13 +137,13 @@ class CrawlerTest {
 
     @Test
     fun `skips url from html if its not valid`() {
-        val urlHashedPair = URLData("$host/test")
-        val foundURL = URLData("$host/someNewUrl")
+        val urlHashedPair = URLInfo("$host/test")
+        val foundURL = URLInfo("$host/someNewUrl")
         val html = """<html><a href="${foundURL.url}">123</a></html>"""
 
 
         `when`(storageMediatorMock.request<Boolean>(FRONTIER_IS_QUEUE_EMPTY, host)).thenReturn(false, true)
-        `when`(storageMediatorMock.request<URLData>(FRONTIER_PULL, host)).thenReturn(urlHashedPair, urlHashedPair)
+        `when`(storageMediatorMock.request<URLInfo>(FRONTIER_PULL, host)).thenReturn(urlHashedPair, urlHashedPair)
 
 //        `when`(urlValidatorMock.canProcessURL(host, urlHashedPair)).thenReturn(true)
 //        `when`(urlValidatorMock.canProcessURL(host, foundURL)).thenReturn(false)

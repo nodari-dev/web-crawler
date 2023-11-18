@@ -11,7 +11,7 @@ import application.parser.urlparser.URLPatterns.UNSUPPORTED_FILETYPES
 class URLParser: IURLParser {
     private val parserUtils = ParserUtils()
 
-    override fun getURLs(document: String): List<core.dto.URLData> {
+    override fun getURLs(document: String): List<core.dto.URLInfo> {
         val urls = parserUtils.parseValues(document, A_TAG, A_TAG_GROUP_INDEX)
         val allowedURLs = getAllowedURLs(urls)
         return parserUtils.transformToFormattedURLs(allowedURLs)
@@ -21,7 +21,7 @@ class URLParser: IURLParser {
         return  urls.filterNot { url -> UNSUPPORTED_FILETYPES.matcher(url).find()}
     }
 
-    override fun getHostWithProtocol(document: String): String {
+    override fun getHostname(document: String): String {
         return parserUtils.parseSingleValue(document, HOST_WITH_PROTOCOL, HOST_WITH_PROTOCOL_GROUP_INDEX)!!
     }
 }

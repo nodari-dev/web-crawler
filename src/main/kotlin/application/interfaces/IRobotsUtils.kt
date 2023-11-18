@@ -1,7 +1,7 @@
 package application.interfaces
 
-import core.dto.URLData
+import core.dto.URLInfo
 
 interface IRobotsUtils {
-    fun getDisallowedURLs(host: String): List<URLData>
+    fun getDisallowedURLs(host: String): List<URLInfo>
 }

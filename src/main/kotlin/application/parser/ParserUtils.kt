@@ -40,8 +40,8 @@ class ParserUtils : IParserUtils {
         return matcher.replaceAll("")
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<core.dto.URLData> {
-        return list.map { element -> core.dto.URLData(element) }
+    override fun transformToFormattedURLs(list: List<String>): List<core.dto.URLInfo> {
+        return list.map { element -> core.dto.URLInfo(element) }
     }
 
     override fun isExisting(html: String, pattern: Pattern): Boolean {

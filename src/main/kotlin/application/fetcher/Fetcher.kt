@@ -19,7 +19,7 @@ class Fetcher(private val logger: KLogger) : IFetcher {
 
     private fun getResponse(url: String): Response? {
         return try {
-            logger.info("downloading $url")
+//            logger.info("downloading $url")
             Jsoup.connect(url).followRedirects(true).execute()
         } catch (exception: Exception) {
             when (exception) {
@@ -28,11 +28,11 @@ class Fetcher(private val logger: KLogger) : IFetcher {
                 is IllegalArgumentException,
                 is SocketTimeoutException,
                 is FetchingFailedException -> {
-                    logger.error ("Fetching of $url failed")
+//                    logger.error ("Fetching of $url failed")
                     null
                 }
                 else -> {
-                    logger.error ("Something went wrong with $url")
+//                    logger.error ("Something went wrong with $url")
                     null
                 }
             }

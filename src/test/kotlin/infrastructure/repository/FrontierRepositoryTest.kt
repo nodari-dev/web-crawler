@@ -1,4 +1,4 @@
-package infrastructure.gateways.memoryGateways
+package infrastructure.repository
 
 import infrastructure.repository.FrontierRepository
 import org.junit.jupiter.api.AfterEach

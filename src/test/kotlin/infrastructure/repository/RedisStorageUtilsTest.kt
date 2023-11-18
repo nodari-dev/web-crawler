@@ -1,4 +1,4 @@
-package infrastructure.gateways.memoryGateways
+package infrastructure.repository
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package application.interfaces
 
-import core.dto.URLData
+import core.dto.URLInfo
 
 interface IURLPacker {
-    fun pack(urlDataList: List<URLData>): MutableMap<String, MutableList<String>>
+    fun pack(urlInfoList: List<URLInfo>): MutableMap<String, MutableList<URLInfo>>
 }

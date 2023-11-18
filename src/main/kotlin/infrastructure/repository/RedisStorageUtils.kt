@@ -1,6 +1,6 @@
 package infrastructure.repository
 
-import application.interfaces.repository.IRedisStorageUtils
+import infrastructure.repository.interfaces.IRedisStorageUtils
 
 class RedisStorageUtils: IRedisStorageUtils {
     override fun getEntryPath(defaultPath: String, key: String): String {

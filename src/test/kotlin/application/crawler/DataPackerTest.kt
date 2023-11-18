@@ -1,6 +1,6 @@
 package application.crawler
 
-import core.dto.URLData
+import core.dto.URLInfo
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -10,10 +10,10 @@ class URLPackerTest {
     @Test
     fun `packs urls related to specific host`(){
         val urls = listOf(
-            URLData("https://host-one.com"),
-            URLData("https://host-one.com/child"),
-            URLData("https://host-two.com"),
-            URLData("https://host-two.com/child"),
+            URLInfo("https://host-one.com"),
+            URLInfo("https://host-one.com/child"),
+            URLInfo("https://host-two.com"),
+            URLInfo("https://host-two.com/child"),
             )
 
         val expectedResult = mutableMapOf<String, MutableList<String>>(

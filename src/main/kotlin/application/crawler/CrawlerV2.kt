@@ -1,65 +1,87 @@
 package application.crawler
 
-import application.crawler.entities.CrawlerConfig
+import application.crawler.entities.CrawlerSettings
+import application.extractor.Extractor
 import application.interfaces.IFetcher
 import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
 import storage.interfaces.IFrontierV2
-import core.configuration.Configuration.TIME_BETWEEN_FETCHING
+import core.dto.URLInfo
+import storage.interfaces.IVisitedURLs
+import kotlin.random.Random
 
 class CrawlerV2(
-    id: Int,
     private val frontier: IFrontierV2,
+    private val visitedURLs: IVisitedURLs,
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
     private val urlPacker: IURLPacker,
-):Runnable {
-    private val isALive = true
-    private val config = CrawlerConfig(id)
+): Thread() {
+    private var crawling = false
+    private val settings = CrawlerSettings()
+
+    fun setId(newId: Int){
+        settings.id = newId
+    }
+
+    fun setHost(newHost: String){
+        settings.host = newHost
+    }
+
+    fun isCrawling(): Boolean{
+        return crawling
+    }
 
     override fun run() {
-        println("Started ${config.id}")
+        crawling = true
+        println("IMAAA HERE ${settings.id}")
+        frontier.assign(settings.id, settings.host)
 
         try{
-            while (isALive){
+            while (crawling){
+                sleep(5000 + Random.nextLong(0, 5000))
                 crawl()
             }
+            println("IMAAA DONE ${settings.id}")
         } catch (e: InterruptedException){
             e.printStackTrace()
         }
     }
 
-    private fun crawl(){
-        if(config.host == null){
-            Thread.sleep(5000)
-            val host = frontier.getAvailableQueue()
-            if(host != null){
-                frontier.assign(config.id, host)
-                config.host = host
-            } else{
-                crawl()
-            }
+    private fun crawl (){
+        val urlInfo = frontier.pullFrom(settings.host)
+        if(urlInfo == null){
+            frontier.unassign(settings.id, settings.host)
+            crawling = false
+            settings.host = ""
         } else{
-            Thread.sleep(5000)
-            processURL(frontier.pullFrom(config.host!!))
+            processURL(urlInfo)
         }
-        Thread.sleep(5000)
-        processURL(frontier.pullFrom(config.host!!))
     }
 
-    private fun processURL(url: String?){
-        if(url != null){
-            Thread.sleep(TIME_BETWEEN_FETCHING)
-            val html = fetcher.getPageHTML(url)
+    private fun processURL(urlInfo: URLInfo){
+        if(isURLInfoValid(urlInfo)){
+            visitedURLs.update(urlInfo)
+            val html = fetcher.getPageHTML(urlInfo.link)
             if(html != null){
-                processHTML(html)
+                processHTML(html, urlInfo)
             }
         }
     }
 
-    private fun processHTML(html: String){
-        val webLinkList = urlParser.getURLs(html)
-        val packedURLs = urlPacker.pack(webLinkList)
+    private fun isURLInfoValid(urlInfo: URLInfo?): Boolean{
+        if(urlInfo == null){
+            return false
+        }
+        return visitedURLs.isValid(urlInfo.hash)
+    }
+
+    private fun processHTML(html: String, urlInfo: URLInfo){
+        Extractor().extractSEODataToFile(html, urlInfo.link)
+
+        val urlsInfoList = urlParser.getURLs(html)
+        val urlsInfoListOnlyNew = visitedURLs.filterByNewOnly(urlsInfoList)
+        val packedURLs = urlPacker.pack(urlsInfoListOnlyNew)
         packedURLs.forEach{pack ->
             frontier.update(pack.key, pack.value)
         }

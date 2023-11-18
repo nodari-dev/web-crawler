@@ -1,6 +1,7 @@
 package infrastructure.repository
 
-import application.interfaces.repository.IFrontierRepository
+import core.dto.URLInfo
+import infrastructure.repository.interfaces.IFrontierRepository
 import redis.clients.jedis.Jedis
 import java.util.concurrent.locks.ReentrantLock
 
@@ -11,13 +12,13 @@ class FrontierRepository(
 
     private val frontier = "frontier"
 
-    override fun update(host: String, list: List<String>){
+    override fun update(host: String, list: List<URLInfo>){
         mutex.lock()
         try{
             jedis.use { jedis ->
                 list.forEach { item ->
                     val key = getURLsKey(host)
-                    jedis.rpush(key, item)
+                    jedis.rpush(key, item.link)
                 }
                 changeQueueAvailability(host)
             }
@@ -71,13 +72,13 @@ class FrontierRepository(
         }
     }
 
-    override fun get(host: String): String? {
+    override fun get(host: String): URLInfo? {
         mutex.lock()
         try{
             jedis.use { jedis ->
                 val url = jedis.lpop(getURLsKey(host))
                 changeQueueAvailability(host)
-                return url
+                return if (url == null) null else URLInfo(url)
             }
         } finally {
             mutex.unlock()
