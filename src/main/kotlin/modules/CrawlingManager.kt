@@ -14,11 +14,13 @@ class CrawlingManager(
     private val urlPacker: IURLPacker
 ): ICrawlersManagerV2, Thread() {
     private val MAX_NUMBER_OF_CRAWLERS = 15
-    private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) {CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker)}
+    private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) {
+        CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker)
+    }
 
     override fun start() {
         for (i in 0 until  MAX_NUMBER_OF_CRAWLERS){
-            crawlers[i].setId(i)
+            crawlers[i].id(i)
         }
         var crawlerIndex = 0
 
@@ -26,16 +28,13 @@ class CrawlingManager(
         val startingQueue = frontier.getAvailableQueue()
         val startingCrawler = crawlers[crawlerIndex]
         if(startingQueue != null){
-            startingCrawler.setHost(startingQueue)
-            startingCrawler.start()
-
+            startingCrawler.host(startingQueue).start()
+            while (!startingCrawler.isCrawling()) continue
             crawlerIndex +=1
         }
-
-        sleep(1000)
-
+//        sleep(1000)
         // DO NOT TOUCH IT
-        crawlerIndex = 0
+
         while (!allCrawlersFinished()){
             while (crawlers[crawlerIndex].isCrawling()){
                 crawlerIndex +=1
@@ -47,20 +46,22 @@ class CrawlingManager(
             val queueName = frontier.getAvailableQueue()
 
             if(queueName != null) {
-                val crawler = crawlers[crawlerIndex]
-                crawler.setHost(queueName)
                 try {
-                    crawler.start()
+                    crawlers[crawlerIndex].host(queueName).start()
+                    while (!crawlers[crawlerIndex].isCrawling()) continue
                 } catch (e: Exception){
-                    crawler.join()
-                    val newCrawler = CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker)
-                    crawlers[crawlerIndex] = newCrawler
-                    newCrawler.setId(crawlerIndex)
-                    newCrawler.setHost(queueName)
-                    newCrawler.start()
+                    crawlers[crawlerIndex].join()
+
+                    crawlers[crawlerIndex] = CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker)
+                        .id(crawlerIndex)
+                        .host(queueName)
+                    crawlers[crawlerIndex].start()
+                    while (!crawlers[crawlerIndex].isCrawling()) continue
+                    println(crawlers[crawlerIndex].isCrawling())
+
                 }
 
-                sleep(1000)
+//                sleep(1000)
             }
         }
     }

@@ -20,12 +20,14 @@ class CrawlerV2(
     private var crawling = false
     private val settings = CrawlerSettings()
 
-    fun setId(newId: Int){
+    fun id(newId: Int): CrawlerV2 {
         settings.id = newId
+        return this
     }
 
-    fun setHost(newHost: String){
+    fun host(newHost: String): CrawlerV2 {
         settings.host = newHost
+        return this
     }
 
     fun isCrawling(): Boolean{
