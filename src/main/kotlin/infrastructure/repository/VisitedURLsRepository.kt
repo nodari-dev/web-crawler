@@ -27,7 +27,6 @@ class VisitedURLsRepository(
         mutex.lock()
         try{
             jedis.use{ jedis ->
-//                if(jedis.lpos(visitedURLs, urlInfo.hash) == null){ }
                 jedis.rpush(visitedURLs, urlInfo.hash)
             }
         } finally {

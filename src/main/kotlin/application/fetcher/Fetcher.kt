@@ -6,11 +6,13 @@ import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import application.interfaces.IFetcher
 import mu.KLogger
+import mu.KotlinLogging
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class Fetcher(private val logger: KLogger) : IFetcher {
+class Fetcher: IFetcher {
     private val responseParser = ResponseParser()
+    private val logger = KotlinLogging.logger("Fetcher")
 
     override fun getPageHTML(url: String): String? {
         val response = getResponse(url)

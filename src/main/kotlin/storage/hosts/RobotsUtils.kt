@@ -7,7 +7,7 @@ import application.interfaces.IRobotsUtils
 import mu.KotlinLogging
 
 class RobotsUtils : IRobotsUtils {
-    private val fetcher = Fetcher(KotlinLogging.logger("Fetсher"))
+    private val fetcher = Fetcher()
     private val robotsParser = RobotsParser()
 
     override fun getDisallowedURLs(host: String): List<URLInfo> {

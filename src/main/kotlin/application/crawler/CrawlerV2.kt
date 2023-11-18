@@ -7,7 +7,9 @@ import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
 import storage.interfaces.IFrontierV2
 import core.dto.URLInfo
+import mu.KLogger
 import storage.interfaces.IVisitedURLs
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
 class CrawlerV2(
@@ -16,8 +18,9 @@ class CrawlerV2(
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
     private val urlPacker: IURLPacker,
+    private val logger: KLogger
 ): Thread() {
-    private var crawling = false
+    private var crawling = AtomicBoolean(false)
     private val settings = CrawlerSettings()
 
     fun id(newId: Int): CrawlerV2 {
@@ -31,20 +34,20 @@ class CrawlerV2(
     }
 
     fun isCrawling(): Boolean{
-        return crawling
+        return crawling.get()
     }
 
     override fun run() {
-        crawling = true
-        println("IMAAA HERE ${settings.id}")
         frontier.assign(settings.id, settings.host)
+        crawling.set(true)
+        logger.info("#${settings.id} Imaaa started")
 
         try{
-            while (crawling){
+            while (crawling.get()){
                 sleep(5000 + Random.nextLong(0, 5000))
                 crawl()
             }
-            println("IMAAA DONE ${settings.id}")
+            logger.info("#${settings.id} Imaaa done")
         } catch (e: InterruptedException){
             e.printStackTrace()
         }
@@ -54,7 +57,7 @@ class CrawlerV2(
         val urlInfo = frontier.pullFrom(settings.host)
         if(urlInfo == null){
             frontier.unassign(settings.id, settings.host)
-            crawling = false
+            crawling.set(false)
             settings.host = ""
         } else{
             processURL(urlInfo)
