@@ -1,5 +1,6 @@
 package infrastructure.repository
 
+import core.dto.URLInfo
 import infrastructure.repository.interfaces.IHostsRepository
 import redis.clients.jedis.Jedis
 import java.util.concurrent.locks.ReentrantLock
@@ -11,12 +12,12 @@ class HostsRepository(
 
     private val hostsInfo = "hosts-info"
 
-    override fun update(host: String, urls: List<String>) {
+    override fun update(host: String, urlsInfo: List<URLInfo>) {
         mutex.lock()
         try{
             jedis.use { jedis ->
-                urls.forEach{url ->
-                    jedis.rpush(getHostsKey(host), url)
+                urlsInfo.forEach{urlInfo ->
+                    jedis.rpush(getHostsKey(host), urlInfo.link)
                 }
             }
         } finally {

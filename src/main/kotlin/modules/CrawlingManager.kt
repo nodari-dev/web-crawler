@@ -3,6 +3,7 @@ package modules
 import application.crawler.CrawlerV2
 import application.crawler.URLPacker
 import application.fetcher.Fetcher
+import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
 import modules.interfaces.ICrawlersManagerV2
 import mu.KotlinLogging
@@ -19,6 +20,7 @@ class CrawlingManager(
 
     private val fetcher = Fetcher()
     private val urlParser = URLParser()
+    private val robotsParser = RobotsParser()
     private val urlPacker = URLPacker()
     private val crawlerLogger = KotlinLogging.logger("Crawler")
 
@@ -28,7 +30,7 @@ class CrawlingManager(
         idCounter
     }
     private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) {
-        CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, urlPacker, crawlerLogger).id(setId())
+        CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger).id(setId())
     }
 
     override fun run() {
@@ -58,7 +60,7 @@ class CrawlingManager(
                     waitForCrawler(crawlers[index])
                 } catch (e: Exception){
                     crawlers[index].join()
-                    crawlers[index] = CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, urlPacker, crawlerLogger)
+                    crawlers[index] = CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger)
                         .id(index)
                         .host(queueName)
                     crawlers[index].start()

@@ -6,9 +6,9 @@ import infrastructure.repository.VisitedURLsRepository
 import modules.CrawlingManager
 import mu.KotlinLogging
 import redis.clients.jedis.JedisPool
-import storage.frontier.Frontier
-import storage.hosts.HostsStorage
-import storage.url.VisitedURLs
+import storage.Frontier
+import storage.HostsStorage
+import storage.VisitedURLs
 import java.util.concurrent.locks.ReentrantLock
 
 fun main() {
@@ -23,7 +23,8 @@ fun main() {
     val visitedURLs = VisitedURLs(visitedURLsRepository)
 
     val hostsRepository = HostsRepository(reentrantLock, jedis)
-    val hostsStorage = HostsStorage(hostsRepository)
+    val hostsLogger = KotlinLogging.logger("Hosts")
+    val hostsStorage = HostsStorage(hostsRepository, hostsLogger)
 
     val urlInfo = URLInfo("https://ecospace.org.ua")
     val host = URLParser().getHostname(urlInfo.link)

@@ -1,4 +1,4 @@
-package storage.frontier
+package storage
 
 import core.dto.URLInfo
 import infrastructure.repository.interfaces.IFrontierRepository

@@ -5,8 +5,6 @@ import infrastructure.repository.FrontierRepository
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import storage.frontier.Frontier
-import java.net.URL
 import kotlin.test.assertEquals
 
 class FrontierTest {

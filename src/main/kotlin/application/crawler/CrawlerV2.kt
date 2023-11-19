@@ -3,6 +3,7 @@ package application.crawler
 import application.crawler.entities.CrawlerSettings
 import application.extractor.Extractor
 import application.interfaces.IFetcher
+import application.interfaces.IRobotsParser
 import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
 import storage.interfaces.IFrontier
@@ -19,6 +20,7 @@ class CrawlerV2(
     private val hostsStorage: IHostsStorage,
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
+    private val robotsParser: IRobotsParser,
     private val urlPacker: IURLPacker,
     private val logger: KLogger
 ): Thread() {
@@ -40,9 +42,7 @@ class CrawlerV2(
     }
 
     override fun run() {
-        frontier.assign(settings.id, settings.host)
-        crawling.set(true)
-        logger.info("#${settings.id} Imaaa started")
+        initCrawling()
 
         try{
             while (crawling.get()){
@@ -52,6 +52,20 @@ class CrawlerV2(
             logger.info("#${settings.id} Imaaa done")
         } catch (e: InterruptedException){
             e.printStackTrace()
+        }
+    }
+
+    private fun initCrawling(){
+        frontier.assign(settings.id, settings.host)
+        crawling.set(true)
+        logger.info("#${settings.id} Imaaa started")
+
+        if(hostsStorage.doesHostExist(settings.host)){
+            val robots = fetcher.getPageHTML("https://" + settings.host + "/robots.txt")
+            if(robots != null){
+                val disallowedURLs = robotsParser.getRobotsDisallowed(robots)
+                hostsStorage.updateHost(settings.host, disallowedURLs)
+            }
         }
     }
 
@@ -73,13 +87,6 @@ class CrawlerV2(
             if(html != null){
                 processHTML(html, urlInfo)
             }
-
-//            if(hostsStorage.doesHostExist(settings.host)){
-//                hostsStorage.isURLAllowed(settings.host, urlInfo.link)
-//            } else{
-//                val robots = fetcher.getPageHTML("https://" + settings.host + "/robots.txt")
-////                hostsStorage.updateHost()
-//            }
         }
     }
 
@@ -87,7 +94,10 @@ class CrawlerV2(
         if(urlInfo == null){
             return false
         }
-        return visitedURLs.isValid(urlInfo.hash)
+
+        val isAllowed = hostsStorage.isURLAllowed(settings.host, urlInfo)
+        val isNew = visitedURLs.isValid(urlInfo.hash)
+        return isAllowed && isNew
     }
 
     private fun processHTML(html: String, urlInfo: URLInfo){
