@@ -14,7 +14,7 @@ import storage.interfaces.IVisitedURLs
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
-class CrawlerV2(
+class Crawler(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
     private val hostsStorage: IHostsStorage,
@@ -27,12 +27,12 @@ class CrawlerV2(
     private var crawling = AtomicBoolean(false)
     private val settings = CrawlerSettings()
 
-    fun id(newId: Int): CrawlerV2 {
+    fun id(newId: Int): Crawler {
         settings.id = newId
         return this
     }
 
-    fun host(newHost: String): CrawlerV2 {
+    fun host(newHost: String): Crawler {
         settings.host = newHost
         return this
     }
@@ -42,7 +42,8 @@ class CrawlerV2(
     }
 
     override fun run() {
-        initCrawling()
+        initCrawler()
+        setupHost()
 
         try{
             while (crawling.get()){
@@ -55,11 +56,13 @@ class CrawlerV2(
         }
     }
 
-    private fun initCrawling(){
+    private fun initCrawler(){
         frontier.assign(settings.id, settings.host)
         crawling.set(true)
         logger.info("#${settings.id} Imaaa started")
+    }
 
+    private fun setupHost(){
         if(hostsStorage.doesHostExist(settings.host)){
             val robots = fetcher.getPageHTML("https://" + settings.host + "/robots.txt")
             if(robots != null){

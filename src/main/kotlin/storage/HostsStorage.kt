@@ -11,7 +11,6 @@ class HostsStorage(
 ): IHostsStorage {
     override fun updateHost(host: String, urlsInfo: List<URLInfo>) {
         storageRepository.update(host, urlsInfo)
-        println(urlsInfo)
         logger.info("Updated data for host: $host")
     }
 

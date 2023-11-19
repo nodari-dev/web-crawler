@@ -19,7 +19,7 @@ class CrawlerV2Test {
     private val urlPacker = mock(IURLPacker::class.java)
     private val mockLogger = Mockito.mock(KotlinLogging.logger("Crawler")::class.java)
     private val id = 0
-    private val crawler = CrawlerV2(frontierMock, visitedURLsMock, fetcherMock, urlParserMock, urlPacker, mockLogger).id(id)
+    private val crawler = Crawler(frontierMock, visitedURLsMock, fetcherMock, urlParserMock, urlPacker, mockLogger).id(id)
 //
 //    @Test
 //    fun `returns status`(){

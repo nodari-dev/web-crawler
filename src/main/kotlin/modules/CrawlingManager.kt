@@ -1,6 +1,6 @@
 package modules
 
-import application.crawler.CrawlerV2
+import application.crawler.Crawler
 import application.crawler.URLPacker
 import application.fetcher.Fetcher
 import application.parser.robotsparser.RobotsParser
@@ -29,9 +29,7 @@ class CrawlingManager(
         idCounter += 1
         idCounter
     }
-    private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) {
-        CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger).id(setId())
-    }
+    private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) { createCrawler().id(setId()) }
 
     override fun run() {
         // Note: deez nuts work btw
@@ -60,9 +58,7 @@ class CrawlingManager(
                     waitForCrawler(crawlers[index])
                 } catch (e: Exception){
                     crawlers[index].join()
-                    crawlers[index] = CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger)
-                        .id(index)
-                        .host(queueName)
+                    crawlers[index] = createCrawler().id(index).host(queueName)
                     crawlers[index].start()
                     waitForCrawler(crawlers[index])
                 }
@@ -71,11 +67,15 @@ class CrawlingManager(
         crawlers.forEach { crawler -> crawler.join() }
     }
 
+    private fun createCrawler(): Crawler{
+        return Crawler(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger)
+    }
+
     private fun allCrawlersFinished(): Boolean{
         return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
     }
 
-    private fun waitForCrawler(crawler: CrawlerV2){
+    private fun waitForCrawler(crawler: Crawler){
         while (!crawler.isCrawling()) continue
     }
 }
