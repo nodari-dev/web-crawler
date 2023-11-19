@@ -5,16 +5,18 @@ import application.extractor.Extractor
 import application.interfaces.IFetcher
 import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
-import storage.interfaces.IFrontierV2
+import storage.interfaces.IFrontier
 import core.dto.URLInfo
 import mu.KLogger
+import storage.interfaces.IHostsStorage
 import storage.interfaces.IVisitedURLs
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
 class CrawlerV2(
-    private val frontier: IFrontierV2,
+    private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
+    private val hostsStorage: IHostsStorage,
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
     private val urlPacker: IURLPacker,
@@ -71,6 +73,13 @@ class CrawlerV2(
             if(html != null){
                 processHTML(html, urlInfo)
             }
+
+//            if(hostsStorage.doesHostExist(settings.host)){
+//                hostsStorage.isURLAllowed(settings.host, urlInfo.link)
+//            } else{
+//                val robots = fetcher.getPageHTML("https://" + settings.host + "/robots.txt")
+////                hostsStorage.updateHost()
+//            }
         }
     }
 

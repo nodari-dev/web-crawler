@@ -3,12 +3,12 @@ package storage.frontier
 import core.dto.URLInfo
 import infrastructure.repository.interfaces.IFrontierRepository
 import mu.KLogger
-import storage.interfaces.IFrontierV2
+import storage.interfaces.IFrontier
 
-class FrontierV2(
+class Frontier(
     private val frontierRepository: IFrontierRepository,
     private val logger: KLogger,
-): IFrontierV2 {
+): IFrontier {
 
     override fun update(host: String, urls: List<URLInfo>) {
         frontierRepository.update(host, urls)

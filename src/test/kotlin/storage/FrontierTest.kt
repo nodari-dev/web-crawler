@@ -1,20 +1,22 @@
 package storage
 
+import core.dto.URLInfo
 import infrastructure.repository.FrontierRepository
 import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import storage.frontier.FrontierV2
+import storage.frontier.Frontier
+import java.net.URL
 import kotlin.test.assertEquals
 
-class FrontierV2Test {
+class FrontierTest {
     private val frontierRepositoryMock = mock(FrontierRepository::class.java)
     private val logger = mock(KotlinLogging.logger("Frontier")::class.java)
-    private val frontier = FrontierV2(frontierRepositoryMock, logger)
+    private val frontier = Frontier(frontierRepositoryMock, logger)
 
     @Test
     fun `update works correct`(){
-        val list = listOf("list")
+        val list = listOf(URLInfo("some-url"))
         val host = "somehost"
         val newHost = "mew-host"
 

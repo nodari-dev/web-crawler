@@ -4,16 +4,22 @@ import application.crawler.entities.CrawlerSettings
 import application.interfaces.IFetcher
 import application.interfaces.IURLPacker
 import application.interfaces.IURLParser
+import mu.KotlinLogging
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
-import storage.interfaces.IFrontierV2
+import storage.interfaces.IFrontier
+import storage.interfaces.IVisitedURLs
 
 class CrawlerV2Test {
     private val config = CrawlerSettings(0, "host")
-    private val frontierMock = mock(IFrontierV2::class.java)
+    private val frontierMock = mock(IFrontier::class.java)
+    private val visitedURLsMock = mock(IVisitedURLs::class.java)
     private val fetcherMock = mock(IFetcher::class.java)
     private val urlParserMock = mock(IURLParser::class.java)
     private val urlPacker = mock(IURLPacker::class.java)
-//    private val crawler = CrawlerV2(config, frontierMock, fetcherMock, urlParserMock, urlPacker)
+    private val mockLogger = Mockito.mock(KotlinLogging.logger("Crawler")::class.java)
+    private val id = 0
+    private val crawler = CrawlerV2(frontierMock, visitedURLsMock, fetcherMock, urlParserMock, urlPacker, mockLogger).id(id)
 //
 //    @Test
 //    fun `returns status`(){

@@ -2,7 +2,7 @@ package storage.interfaces
 
 import core.dto.URLInfo
 
-interface IFrontierV2 {
+interface IFrontier {
     fun update(host: String, urls: List<URLInfo>)
 //    fun deleteQueue(host: String)
     fun pullFrom(host: String): URLInfo?

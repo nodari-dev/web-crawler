@@ -6,12 +6,14 @@ import application.fetcher.Fetcher
 import application.parser.urlparser.URLParser
 import modules.interfaces.ICrawlersManagerV2
 import mu.KotlinLogging
-import storage.interfaces.IFrontierV2
+import storage.interfaces.IFrontier
+import storage.interfaces.IHostsStorage
 import storage.interfaces.IVisitedURLs
 
 class CrawlingManager(
-    private val frontier: IFrontierV2,
+    private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
+    private val hostsStorage: IHostsStorage,
 ): ICrawlersManagerV2 {
     private val MAX_NUMBER_OF_CRAWLERS = 15
 
@@ -26,7 +28,7 @@ class CrawlingManager(
         idCounter
     }
     private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) {
-        CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker, crawlerLogger).id(setId())
+        CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, urlPacker, crawlerLogger).id(setId())
     }
 
     override fun run() {
@@ -56,7 +58,7 @@ class CrawlingManager(
                     waitForCrawler(crawlers[index])
                 } catch (e: Exception){
                     crawlers[index].join()
-                    crawlers[index] = CrawlerV2(frontier, visitedURLs, fetcher, urlParser, urlPacker, crawlerLogger)
+                    crawlers[index] = CrawlerV2(frontier, visitedURLs, hostsStorage, fetcher, urlParser, urlPacker, crawlerLogger)
                         .id(index)
                         .host(queueName)
                     crawlers[index].start()
