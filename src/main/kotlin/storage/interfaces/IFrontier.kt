@@ -9,4 +9,5 @@ interface IFrontier {
     fun assign(id: Int, host: String)
     fun unassign(id: Int, host: String)
     fun getAvailableQueue(): String?
+    fun getQueuesWithActiveCrawlers(): MutableList<List<String>>
 }

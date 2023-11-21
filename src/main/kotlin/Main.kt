@@ -1,19 +1,23 @@
 import application.parser.urlparser.URLParser
+import configuration.Configuration
 import core.dto.URLInfo
 import infrastructure.repository.FrontierRepository
 import infrastructure.repository.HostsRepository
 import infrastructure.repository.VisitedURLsRepository
-import modules.CrawlingManager
+import operators.CrawlingOperator
 import mu.KotlinLogging
+import operators.ApplicationStartupOperator
 import redis.clients.jedis.JedisPool
 import storage.Frontier
 import storage.HostsStorage
 import storage.VisitedURLs
 import java.util.concurrent.locks.ReentrantLock
 
-fun main() {
+fun main(args: Array<String>) {
+    ApplicationStartupOperator().setupArgs(args)
+
     val reentrantLock = ReentrantLock()
-    val jedis = JedisPool("localhost", 6379).resource
+    val jedis = JedisPool(Configuration.HOST, Configuration.PORT).resource
 
     val frontierRepository = FrontierRepository(reentrantLock, jedis)
     val frontierLogger = KotlinLogging.logger("Frontier")
@@ -30,6 +34,6 @@ fun main() {
     val host = URLParser().getHostname(urlInfo.link)
     frontier.update(host, listOf(urlInfo))
 
-    val crawlingManager = CrawlingManager(frontier, visitedURLs, hostsStorage)
-    crawlingManager.run()
+    val crawlingOperator = CrawlingOperator(frontier, visitedURLs, hostsStorage)
+    crawlingOperator.run()
 }

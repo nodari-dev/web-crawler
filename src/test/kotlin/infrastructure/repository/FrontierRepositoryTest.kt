@@ -1,10 +1,12 @@
 package infrastructure.repository
 
+import core.dto.URLInfo
 import infrastructure.repository.FrontierRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import redis.clients.jedis.JedisPool
+import java.net.URL
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.test.assertEquals
 
@@ -21,8 +23,8 @@ class FrontierRepositoryTest {
     @Test
     fun `get works correct with not empty queue`(){
         val host = "host"
-        val url = "url"
-        `when`(jedisMock.lpop("frontier:$host:urls")).thenReturn(url)
+        val url = URLInfo("url")
+        `when`(jedisMock.lpop("frontier:$host:urls")).thenReturn("url")
 
         val result = frontierRepository.get(host)
         assertEquals(url, result)
@@ -48,12 +50,12 @@ class FrontierRepositoryTest {
     @Test
     fun `update works correct`(){
         val host = "host"
-        val list = listOf("url1", "url2")
+        val list = listOf(URLInfo("url1"), URLInfo("url2"))
         frontierRepository.update(host ,list)
 
         verify(mutexMock).lock()
-        verify(jedisMock).rpush("frontier:$host:urls", list[0])
-        verify(jedisMock).rpush("frontier:$host:urls", list[1])
+        verify(jedisMock).rpush("frontier:$host:urls", list[0].link)
+        verify(jedisMock).rpush("frontier:$host:urls", list[1].link)
         verify(jedisMock).set("frontier:$host:available", "no")
         verify(jedisMock).close()
         verify(mutexMock).unlock()
@@ -109,11 +111,11 @@ class FrontierRepositoryTest {
         val host = "host"
         `when`(jedisMock.lrange("frontier:$host:crawlerIds", 0, -1)).thenReturn(mutableListOf("1"))
         `when`(jedisMock.lrange("frontier:$host:urls", 0, -1)).thenReturn(mutableListOf("url1", "url2"))
-        val list = listOf("url1")
+        val list = listOf(URLInfo("url1"))
         frontierRepository.update(host ,list)
 
         verify(mutexMock).lock()
-        verify(jedisMock).rpush("frontier:$host:urls", list[0])
+        verify(jedisMock).rpush("frontier:$host:urls", list[0].link)
         verify(jedisMock).set("frontier:$host:available", "yes")
         verify(jedisMock).close()
         verify(mutexMock).unlock()
@@ -124,11 +126,11 @@ class FrontierRepositoryTest {
         val host = "host"
         `when`(jedisMock.lrange("frontier:$host:crawlerIds", 0, -1)).thenReturn(mutableListOf("1", "2"))
         `when`(jedisMock.lrange("frontier:$host:urls", 0, -1)).thenReturn(mutableListOf("url1"))
-        val list = listOf("url1")
+        val list = listOf(URLInfo("url1"))
         frontierRepository.update(host ,list)
 
         verify(mutexMock).lock()
-        verify(jedisMock).rpush("frontier:$host:urls", list[0])
+        verify(jedisMock).rpush("frontier:$host:urls", list[0].link)
         verify(jedisMock).set("frontier:$host:available", "no")
         verify(jedisMock).close()
         verify(mutexMock).unlock()

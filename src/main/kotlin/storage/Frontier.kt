@@ -32,4 +32,8 @@ class Frontier(
     override fun getAvailableQueue(): String?{
         return frontierRepository.getAvailableQueue()
     }
+
+    override fun getQueuesWithActiveCrawlers(): MutableList<List<String>> {
+        return frontierRepository.getQueuesWithActiveCrawlers()
+    }
 }

@@ -1,25 +1,25 @@
 package application.crawler
 
-import application.crawler.entities.CrawlerSettings
-import application.interfaces.IFetcher
-import application.interfaces.IURLPacker
-import application.interfaces.IURLParser
+import application.interfaces.*
 import mu.KotlinLogging
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import storage.interfaces.IFrontier
+import storage.interfaces.IHostsStorage
 import storage.interfaces.IVisitedURLs
 
-class CrawlerV2Test {
-    private val config = CrawlerSettings(0, "host")
+class CrawlerTest {
     private val frontierMock = mock(IFrontier::class.java)
     private val visitedURLsMock = mock(IVisitedURLs::class.java)
+    private val hostsStorage = mock(IHostsStorage::class.java)
     private val fetcherMock = mock(IFetcher::class.java)
     private val urlParserMock = mock(IURLParser::class.java)
+    private val robotsParserMock = mock(IRobotsParser::class.java)
     private val urlPacker = mock(IURLPacker::class.java)
-    private val mockLogger = Mockito.mock(KotlinLogging.logger("Crawler")::class.java)
+    private val extractor = mock(IDataExtractor::class.java)
+    private val mockLogger =mock(KotlinLogging.logger("Crawler")::class.java)
     private val id = 0
-    private val crawler = Crawler(frontierMock, visitedURLsMock, fetcherMock, urlParserMock, urlPacker, mockLogger).id(id)
+    private val crawler = Crawler(frontierMock, visitedURLsMock, hostsStorage, fetcherMock, urlParserMock, robotsParserMock,urlPacker, extractor, mockLogger).id(id)
 //
 //    @Test
 //    fun `returns status`(){

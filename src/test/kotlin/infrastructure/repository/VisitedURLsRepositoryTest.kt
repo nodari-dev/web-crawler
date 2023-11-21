@@ -1,5 +1,6 @@
 package infrastructure.repository
 
+import core.dto.URLInfo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -21,11 +22,11 @@ class VisitedURLsRepositoryTest {
 
     @Test
     fun `returns only new urls`() {
-        val unfilteredURLs = listOf("newURL1", "existingURL", "existingURL2", "newURL2")
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[0])).thenReturn(null)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[1])).thenReturn(1)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[2])).thenReturn(2)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[3])).thenReturn(null)
+        val unfilteredURLs = listOf(URLInfo("newURL1"), URLInfo("existingURL"), URLInfo("existingURL2"), URLInfo("newURL2"))
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[0].link)).thenReturn(null)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[1].link)).thenReturn(1)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[2].link)).thenReturn(2)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[3].link)).thenReturn(null)
 
         val expectedResult = listOf(unfilteredURLs[0], unfilteredURLs[3])
         val result = visitedURLsRepository.getOnlyNewURLs(unfilteredURLs)

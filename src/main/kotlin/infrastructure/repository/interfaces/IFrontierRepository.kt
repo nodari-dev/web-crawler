@@ -9,4 +9,5 @@ interface IFrontierRepository {
     fun assignCrawler(id: Int, host: String)
     fun unassignCrawler(id: Int, host: String)
     fun getAvailableQueue(): String?
+    fun getQueuesWithActiveCrawlers(): MutableList<List<String>>
 }

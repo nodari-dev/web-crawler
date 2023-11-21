@@ -1,4 +1,4 @@
-package components.fetcher
+package application.fetcher
 
 import application.fetcher.Fetcher
 import mu.KotlinLogging

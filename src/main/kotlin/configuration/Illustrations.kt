@@ -1,4 +1,4 @@
-package core.configuration
+package configuration
 
 object Illustrations {
     const val CrawlerStarted = "" +

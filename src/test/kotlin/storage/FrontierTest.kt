@@ -30,11 +30,11 @@ class FrontierTest {
         val existingHost = "somehost"
         val newHost = "mew-host"
 
-        `when`(frontierRepositoryMock.get(existingHost)).thenReturn("url")
+        `when`(frontierRepositoryMock.get(existingHost)).thenReturn(URLInfo("url"))
         `when`(frontierRepositoryMock.get(newHost)).thenReturn(null)
 
         val resultWithURL = frontier.pullFrom(existingHost)
-        assertEquals("url", resultWithURL)
+        assertEquals(URLInfo("url"), resultWithURL)
 
         val resultWithNull = frontier.pullFrom(newHost)
         assertEquals(null, resultWithNull)

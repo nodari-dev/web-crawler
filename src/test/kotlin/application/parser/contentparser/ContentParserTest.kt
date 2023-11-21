@@ -1,4 +1,4 @@
-package components.parser.contentparser
+package application.parser.contentparser
 
 import application.parser.contentparser.ContentParser
 import org.junit.jupiter.api.Assertions

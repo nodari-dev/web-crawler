@@ -16,9 +16,9 @@ class URLPackerTest {
             URLInfo("https://host-two.com/child"),
             )
 
-        val expectedResult = mutableMapOf<String, MutableList<String>>(
-            urls[0].url to mutableListOf(urls[0].url, urls[1].url),
-            urls[2].url to mutableListOf(urls[2].url, urls[3].url)
+        val expectedResult = mutableMapOf(
+            "host-one.com" to mutableListOf(urls[0], urls[1]),
+            "host-two.com" to mutableListOf(urls[2], urls[3])
         )
         val result = urlPacker.pack(urls)
 

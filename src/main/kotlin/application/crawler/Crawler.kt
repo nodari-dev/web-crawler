@@ -1,14 +1,13 @@
 package application.crawler
 
 import application.crawler.entities.CrawlerSettings
-import application.extractor.Extractor
-import application.interfaces.IFetcher
-import application.interfaces.IRobotsParser
-import application.interfaces.IURLPacker
-import application.interfaces.IURLParser
+import application.interfaces.*
+import configuration.Configuration.TIME_BETWEEN_FETCHING
 import storage.interfaces.IFrontier
 import core.dto.URLInfo
 import mu.KLogger
+import org.jsoup.Jsoup
+import org.jsoup.safety.Safelist
 import storage.interfaces.IHostsStorage
 import storage.interfaces.IVisitedURLs
 import java.util.concurrent.atomic.AtomicBoolean
@@ -22,6 +21,7 @@ class Crawler(
     private val urlParser: IURLParser,
     private val robotsParser: IRobotsParser,
     private val urlPacker: IURLPacker,
+    private val extractor: IDataExtractor,
     private val logger: KLogger
 ): Thread() {
     private var crawling = AtomicBoolean(false)
@@ -29,6 +29,11 @@ class Crawler(
 
     fun id(newId: Int): Crawler {
         settings.id = newId
+        return this
+    }
+
+    fun recoveryMode(): Crawler {
+        settings.recoveryMode = true
         return this
     }
 
@@ -47,7 +52,7 @@ class Crawler(
 
         try{
             while (crawling.get()){
-                sleep(5000 + Random.nextLong(0, 5000))
+                sleep(TIME_BETWEEN_FETCHING + Random.nextLong(0, TIME_BETWEEN_FETCHING))
                 crawl()
             }
             logger.info("#${settings.id} Imaaa done")
@@ -57,14 +62,21 @@ class Crawler(
     }
 
     private fun initCrawler(){
-        frontier.assign(settings.id, settings.host)
+        if(!settings.recoveryMode){
+            frontier.assign(settings.id, settings.host)
+        }
         crawling.set(true)
-        logger.info("#${settings.id} Imaaa started")
+        if(settings.recoveryMode){
+            logger.info("#${settings.id} Imaaa started in recovery mode!")
+
+        } else{
+            logger.info("#${settings.id} Imaaa started")
+        }
     }
 
     private fun setupHost(){
         if(hostsStorage.doesHostExist(settings.host)){
-            val robots = fetcher.getPageHTML("https://" + settings.host + "/robots.txt")
+            val robots = fetcher.downloadSanitizedHTML("https://" + settings.host + "/robots.txt")
             if(robots != null){
                 val disallowedURLs = robotsParser.getRobotsDisallowed(robots)
                 hostsStorage.updateHost(settings.host, disallowedURLs)
@@ -86,7 +98,7 @@ class Crawler(
     private fun processURL(urlInfo: URLInfo){
         if(isURLInfoValid(urlInfo)){
             visitedURLs.update(urlInfo)
-            val html = fetcher.getPageHTML(urlInfo.link)
+            val html = fetcher.downloadSanitizedHTML(urlInfo.link)
             if(html != null){
                 processHTML(html, urlInfo)
             }
@@ -104,13 +116,24 @@ class Crawler(
     }
 
     private fun processHTML(html: String, urlInfo: URLInfo){
-        Extractor().extractSEODataToFile(html, urlInfo.link)
+        extractor.extractSEODataToFile(html, urlInfo.link)
 
         val urlsInfoList = urlParser.getURLs(html)
-        val urlsInfoListOnlyNew = visitedURLs.filterByNewOnly(urlsInfoList)
-        val packedURLs = urlPacker.pack(urlsInfoListOnlyNew)
+        val packedURLs = filterAndPackedURLs(urlsInfoList)
         packedURLs.forEach{pack ->
             frontier.update(pack.key, pack.value)
         }
+    }
+
+    private fun filterAndPackedURLs(urlsInfoList: List<URLInfo>): MutableMap<String, MutableList<URLInfo>> {
+        val urlsInfoListOnlyNew = visitedURLs.filterByNewOnly(urlsInfoList)
+        val filteredByDepthURLs = urlsInfoListOnlyNew.filter { urlInfo ->
+            urlInfo.link.length + 2 - urlInfo.link.replace(
+                "/",
+                ""
+            ).length < 50
+        }
+
+        return urlPacker.pack(filteredByDepthURLs)
     }
 }

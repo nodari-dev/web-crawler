@@ -9,11 +9,10 @@ import java.nio.file.Paths
 class ExtractorTest {
     private val extractor = Extractor()
 
-    private val tempDir = System.getProperty("java.io.tmpdir")
     private val url = "https://website.com/something"
     private val fileName = "website.com_something.txt"
 
-    private val filePath = Paths.get(tempDir, fileName);
+    private val filePath = Paths.get(fileName);
 
     @AfterEach
     fun `delete temp files`() {
@@ -31,7 +30,7 @@ class ExtractorTest {
             Keywords: {simple=3, html=3, example=2, description=1, world!=1, imagealt=1, meta=1, example.=1, hello=1, introduction=1, a=0, this=0, is=0}
         """.trimIndent()
 
-        extractor.extractSEODataToFile(MockedData.html, url, tempDir)
+        extractor.extractSEODataToFile(MockedData.html, url)
 
         val content = Files.readAllBytes(filePath)
         val fileContent = String(content)
@@ -40,7 +39,7 @@ class ExtractorTest {
 
     @Test
     fun `does not generate file if SEOData is null`() {
-        extractor.extractSEODataToFile("", url, tempDir)
+        extractor.extractSEODataToFile("", url)
         Assertions.assertEquals(Files.exists(filePath), false)
     }
 }

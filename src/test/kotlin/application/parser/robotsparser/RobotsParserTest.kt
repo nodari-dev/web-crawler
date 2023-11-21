@@ -1,4 +1,4 @@
-package components.parser.robotsparser
+package application.parser.robotsparser
 
 import application.parser.robotsparser.RobotsParser
 import core.dto.URLInfo
@@ -10,7 +10,7 @@ class RobotsParserTest {
 
     @Test
     fun `returns disallowed urls from robots txt`() {
-        val expectedResult = mutableListOf(core.dto.URLInfo("/test/"), URLInfo("/123"))
+        val expectedResult = mutableListOf(URLInfo("/test/"), URLInfo("/123"))
         val document = "Disallow: /test/ \n Disallow: /123"
 
         val result = robotsParser.getRobotsDisallowed(document)

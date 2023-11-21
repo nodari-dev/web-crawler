@@ -72,6 +72,28 @@ class FrontierRepository(
         }
     }
 
+    override fun getQueuesWithActiveCrawlers(): MutableList<List<String>> {
+        mutex.lock()
+        try{
+            jedis.use { jedis ->
+                val result = mutableListOf<List<String>>()
+                val queuesCrawlerInfo = jedis.keys("frontier:*:crawlerIds")
+                queuesCrawlerInfo.forEach{queuePath ->
+                    val crawlerIds = jedis.lrange(queuePath, 0, -1)
+                    if (crawlerIds.isNotEmpty()){
+                        val queueName = queuePath.split(":")[1]
+                        crawlerIds.forEach { id ->
+                            result.add(listOf(id, queueName))
+                        }
+                    }
+                }
+                return result
+            }
+        } finally {
+            mutex.unlock()
+        }
+    }
+
     override fun get(host: String): URLInfo? {
         mutex.lock()
         try{

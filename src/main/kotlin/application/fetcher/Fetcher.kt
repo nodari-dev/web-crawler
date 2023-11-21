@@ -5,23 +5,26 @@ import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import application.interfaces.IFetcher
-import mu.KLogger
 import mu.KotlinLogging
+import org.jsoup.safety.Safelist
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class Fetcher: IFetcher {
-    private val responseParser = ResponseParser()
     private val logger = KotlinLogging.logger("Fetcher")
 
-    override fun getPageHTML(url: String): String? {
+    override fun downloadSanitizedHTML(url: String): String? {
         val response = getResponse(url)
-        return responseParser.parseDocument(response)
+        val parsedResponse = response?.let { response.parse().toString().replace("\n", "") }
+        return parsedResponse?.let { Jsoup.clean(it, Safelist.basic()) }
     }
 
     private fun getResponse(url: String): Response? {
         return try {
-            Jsoup.connect(url).followRedirects(true).execute()
+            Jsoup.connect(url)
+                .followRedirects(true)
+                .userAgent("Mozilla/5.0 (compatible; CarrotBot/1)")
+                .execute()
         } catch (exception: Exception) {
             when (exception) {
                 is HttpStatusException,

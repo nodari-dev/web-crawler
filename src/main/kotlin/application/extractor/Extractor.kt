@@ -4,7 +4,7 @@ import application.htmlAnalyzer.HTMLAnalyzer
 import application.extractor.exceptions.SaveFileException
 import core.dto.SEOContent
 import application.interfaces.IDataExtractor
-import core.configuration.Configuration.SAVE_FILE_LOCATION
+import configuration.Configuration.SAVE_FILE_LOCATION
 import java.io.File
 import java.io.FileWriter
 
@@ -34,7 +34,6 @@ class Extractor : IDataExtractor {
                 }
             }
         }
-
     }
 
     private fun generateFileName(url: String): String {

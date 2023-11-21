@@ -2,6 +2,7 @@ package application.parser
 
 import application.parser.GlobalPatterns.NESTED_TAGS
 import application.interfaces.IParserUtils
+import core.dto.URLInfo
 import java.util.regex.Pattern
 
 class ParserUtils : IParserUtils {
@@ -40,8 +41,8 @@ class ParserUtils : IParserUtils {
         return matcher.replaceAll("")
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<core.dto.URLInfo> {
-        return list.map { element -> core.dto.URLInfo(element) }
+    override fun transformToFormattedURLs(list: List<String>): List<URLInfo> {
+        return list.map { element -> URLInfo(element) }
     }
 
     override fun isExisting(html: String, pattern: Pattern): Boolean {

@@ -1,7 +1,5 @@
 package application.interfaces
 
-import mu.KLogger
-
 interface IFetcher {
-    fun getPageHTML(url: String): String?
+    fun downloadSanitizedHTML(url: String): String?
 }

@@ -1,4 +1,4 @@
-package components.htmlAnalyzer
+package application.htmlAnalyzer
 
 import application.extractor.MockedData
 import application.htmlAnalyzer.HTMLAnalyzer

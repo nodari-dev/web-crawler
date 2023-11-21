@@ -1,27 +1,28 @@
-package modules
+package operators
 
 import application.crawler.Crawler
 import application.crawler.URLPacker
+import application.extractor.Extractor
 import application.fetcher.Fetcher
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
-import modules.interfaces.ICrawlersManagerV2
+import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
+import operators.interfaces.ICrawlingOperator
 import mu.KotlinLogging
 import storage.interfaces.IFrontier
 import storage.interfaces.IHostsStorage
 import storage.interfaces.IVisitedURLs
 
-class CrawlingManager(
+class CrawlingOperator(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
     private val hostsStorage: IHostsStorage,
-): ICrawlersManagerV2 {
-    private val MAX_NUMBER_OF_CRAWLERS = 15
-
+): ICrawlingOperator {
     private val fetcher = Fetcher()
     private val urlParser = URLParser()
     private val robotsParser = RobotsParser()
     private val urlPacker = URLPacker()
+    private val extractor = Extractor()
     private val crawlerLogger = KotlinLogging.logger("Crawler")
 
     private var idCounter = -1
@@ -30,17 +31,24 @@ class CrawlingManager(
         idCounter
     }
     private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) { createCrawler().id(setId()) }
+    private val crawlingStartupActions = CrawlingStartupActions(crawlers, frontier)
 
     override fun run() {
         // Note: deez nuts work btw
-        // Initialize crawling
-        val startingQueue = frontier.getAvailableQueue()
-        val startingCrawler = crawlers[0]
-        if(startingQueue != null){
-            startingCrawler.host(startingQueue).start()
-            waitForCrawler(startingCrawler)
+        val recoveredFrontierData = frontier.getQueuesWithActiveCrawlers()
+        if(recoveredFrontierData.isNotEmpty()){
+            crawlingStartupActions.runRecoveryMode(recoveredFrontierData)
+        } else{
+            crawlingStartupActions.runStartingMode()
         }
 
+        runDefaultCrawling()
+    }
+
+    private fun allCrawlersFinished(): Boolean{
+        return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
+    }
+    private fun runDefaultCrawling() {
         var index = 1
         while (!allCrawlersFinished()){
             if (crawlers[index].isCrawling()){
@@ -68,11 +76,17 @@ class CrawlingManager(
     }
 
     private fun createCrawler(): Crawler{
-        return Crawler(frontier, visitedURLs, hostsStorage, fetcher, urlParser, robotsParser, urlPacker, crawlerLogger)
-    }
-
-    private fun allCrawlersFinished(): Boolean{
-        return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
+        return Crawler(
+            frontier,
+            visitedURLs,
+            hostsStorage,
+            fetcher,
+            urlParser,
+            robotsParser,
+            urlPacker,
+            extractor,
+            crawlerLogger
+        )
     }
 
     private fun waitForCrawler(crawler: Crawler){

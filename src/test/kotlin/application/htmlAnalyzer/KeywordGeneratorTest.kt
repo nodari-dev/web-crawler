@@ -1,4 +1,4 @@
-package components.htmlAnalyzer
+package application.htmlAnalyzer
 
 import application.htmlAnalyzer.KeywordGenerator
 import org.junit.jupiter.api.Assertions
