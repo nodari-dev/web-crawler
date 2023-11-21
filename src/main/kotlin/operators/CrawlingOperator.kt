@@ -42,13 +42,16 @@ class CrawlingOperator(
             crawlingStartupActions.runStartingMode()
         }
 
-        runDefaultCrawling()
+        if(MAX_NUMBER_OF_CRAWLERS > 1){
+            runMultipleCrawlers()
+        }
+        crawlers.forEach { crawler -> crawler.join() }
     }
 
     private fun allCrawlersFinished(): Boolean{
         return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
     }
-    private fun runDefaultCrawling() {
+    private fun runMultipleCrawlers() {
         var index = 1
         while (!allCrawlersFinished()){
             if (crawlers[index].isCrawling()){
@@ -72,7 +75,6 @@ class CrawlingOperator(
                 }
             }
         }
-        crawlers.forEach { crawler -> crawler.join() }
     }
 
     private fun createCrawler(): Crawler{

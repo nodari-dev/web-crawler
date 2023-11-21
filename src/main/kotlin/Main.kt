@@ -16,17 +16,17 @@ import java.util.concurrent.locks.ReentrantLock
 fun main(args: Array<String>) {
     ApplicationStartupOperator().setupArgs(args)
 
-    val reentrantLock = ReentrantLock()
+    val lock = ReentrantLock()
     val jedis = JedisPool(Configuration.HOST, Configuration.PORT).resource
 
-    val frontierRepository = FrontierRepository(reentrantLock, jedis)
+    val frontierRepository = FrontierRepository(lock, jedis)
     val frontierLogger = KotlinLogging.logger("Frontier")
     val frontier = Frontier(frontierRepository, frontierLogger)
 
-    val visitedURLsRepository = VisitedURLsRepository(reentrantLock, jedis)
+    val visitedURLsRepository = VisitedURLsRepository(lock, jedis)
     val visitedURLs = VisitedURLs(visitedURLsRepository)
 
-    val hostsRepository = HostsRepository(reentrantLock, jedis)
+    val hostsRepository = HostsRepository(lock, jedis)
     val hostsLogger = KotlinLogging.logger("Hosts")
     val hostsStorage = HostsStorage(hostsRepository, hostsLogger)
 
