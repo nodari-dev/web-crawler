@@ -2,7 +2,6 @@ package application.crawler
 
 import application.interfaces.*
 import mu.KotlinLogging
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import storage.interfaces.IFrontier
 import storage.interfaces.IHostsStorage
@@ -16,7 +15,7 @@ class CrawlerTest {
     private val urlParserMock = mock(IURLParser::class.java)
     private val robotsParserMock = mock(IRobotsParser::class.java)
     private val urlPacker = mock(IURLPacker::class.java)
-    private val extractor = mock(IDataExtractor::class.java)
+    private val extractor = mock(IDBExtractor::class.java)
     private val mockLogger =mock(KotlinLogging.logger("Crawler")::class.java)
     private val id = 0
     private val crawler = Crawler(frontierMock, visitedURLsMock, hostsStorage, fetcherMock, urlParserMock, robotsParserMock,urlPacker, extractor, mockLogger).id(id)

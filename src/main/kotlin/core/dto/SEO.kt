@@ -1,6 +1,6 @@
 package core.dto
 
-data class SEOContent(
+data class SEO(
     val title: String?,
     val description: String?,
     val url: String,

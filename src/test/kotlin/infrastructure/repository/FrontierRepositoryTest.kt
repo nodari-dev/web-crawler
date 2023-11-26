@@ -1,12 +1,10 @@
 package infrastructure.repository
 
 import core.dto.URLInfo
-import infrastructure.repository.FrontierRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import redis.clients.jedis.JedisPool
-import java.net.URL
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.test.assertEquals
 
@@ -62,7 +60,7 @@ class FrontierRepositoryTest {
     }
 
     @Test
-    fun `assignCrawler work correct`(){
+    fun `assignCrawler works correct`(){
         val host = "host"
         val crawlerId = 1
 
@@ -75,7 +73,7 @@ class FrontierRepositoryTest {
     }
 
     @Test
-    fun `unassignCrawler work correct`(){
+    fun `unassignCrawler works correct`(){
         val host = "host"
         val crawlerId = 1
 
@@ -88,7 +86,20 @@ class FrontierRepositoryTest {
     }
 
     @Test
-    fun `getAvailableQueue work correct`(){
+    fun `unassignAllCrawler works correct`(){
+        `when`(jedisMock.keys("frontier:*:crawlerIds"))
+            .thenReturn(mutableSetOf("frontier:host:crawlerIds", "frontier:host2:crawlerIds"))
+
+        frontierRepository.unassignAllCrawlers()
+        verify(mutexMock).lock()
+        verify(jedisMock).del("frontier:host:crawlerIds")
+        verify(jedisMock).del("frontier:host2:crawlerIds")
+        verify(jedisMock).close()
+        verify(mutexMock).unlock()
+    }
+
+    @Test
+    fun `getAvailableQueue works correct`(){
         val availableHost = "frontier:host.com:available"
         val unavailableHost = "frontier:anotherhost.com:available"
         `when`(jedisMock.keys("frontier:*:available")).thenReturn(

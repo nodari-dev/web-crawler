@@ -6,7 +6,6 @@ import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import application.interfaces.IFetcher
 import mu.KotlinLogging
-import org.jsoup.safety.Safelist
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -15,8 +14,7 @@ class Fetcher: IFetcher {
 
     override fun downloadSanitizedHTML(url: String): String? {
         val response = getResponse(url)
-        val parsedResponse = response?.let { response.parse().toString().replace("\n", "") }
-        return parsedResponse?.let { Jsoup.clean(it, Safelist.basic()) }
+        return response?.let { response.parse().toString().replace("\n", "") }
     }
 
     private fun getResponse(url: String): Response? {

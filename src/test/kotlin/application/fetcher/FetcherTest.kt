@@ -13,14 +13,14 @@ class FetcherTest {
     @Test
     fun `returns page html`() {
         val url = "https://example.com"
-        val document = fetcher.getPageHTML(url)
+        val document = fetcher.downloadSanitizedHTML(url)
         Assertions.assertNotNull(document)
     }
 
     @Test
     fun `returns null if fetching failed`(){
         val url = "someStupidURL"
-        val document = fetcher.getPageHTML(url)
+        val document = fetcher.downloadSanitizedHTML(url)
         Assertions.assertEquals(null, document)
     }
 }

@@ -4,6 +4,8 @@ import application.crawler.Crawler
 import application.crawler.URLPacker
 import application.extractor.Extractor
 import application.fetcher.Fetcher
+import application.htmlAnalyzer.SEOAnalyzer
+import application.interfaces.ISubscriber
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
 import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
@@ -17,11 +19,12 @@ class CrawlingOperator(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
     private val hostsStorage: IHostsStorage,
-): ICrawlingOperator {
+): ICrawlingOperator, ISubscriber {
     private val fetcher = Fetcher()
     private val urlParser = URLParser()
     private val robotsParser = RobotsParser()
     private val urlPacker = URLPacker()
+    private val seoAnalyzer = SEOAnalyzer()
     private val extractor = Extractor()
     private val crawlerLogger = KotlinLogging.logger("Crawler")
 
@@ -31,28 +34,33 @@ class CrawlingOperator(
         idCounter
     }
     private val crawlers = Array(MAX_NUMBER_OF_CRAWLERS) { createCrawler().id(setId()) }
-    private val crawlingStartupActions = CrawlingStartupActions(crawlers, frontier)
+
+    init {
+        frontier.subscribe(this)
+    }
 
     override fun run() {
+        startCrawling()
+    }
+
+    override fun trigger() {
+        if(allCrawlersFinished()){
+            startCrawling()
+        }
+    }
+
+    private fun startCrawling(){
         // Note: deez nuts work btw
-        val recoveredFrontierData = frontier.getQueuesWithActiveCrawlers()
-        if(recoveredFrontierData.isNotEmpty()){
-            crawlingStartupActions.runRecoveryMode(recoveredFrontierData)
-        } else{
-            crawlingStartupActions.runStartingMode()
+        val startingQueue = frontier.getAvailableQueue()
+        if(startingQueue != null){
+            manipulateCrawler(0, startingQueue)
+            monitorAndManipulateCrawlers()
+            crawlers.forEach { crawler -> crawler.join() }
         }
-
-        if(MAX_NUMBER_OF_CRAWLERS > 1){
-            runMultipleCrawlers()
-        }
-        crawlers.forEach { crawler -> crawler.join() }
     }
 
-    private fun allCrawlersFinished(): Boolean{
-        return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
-    }
-    private fun runMultipleCrawlers() {
-        var index = 1
+    private fun monitorAndManipulateCrawlers() {
+        var index = 0
         while (!allCrawlersFinished()){
             if (crawlers[index].isCrawling()){
                 index +=1
@@ -65,8 +73,7 @@ class CrawlingOperator(
             val queueName = frontier.getAvailableQueue()
             if(queueName != null) {
                 try {
-                    crawlers[index].host(queueName).start()
-                    waitForCrawler(crawlers[index])
+                    manipulateCrawler(index, queueName)
                 } catch (e: Exception){
                     crawlers[index].join()
                     crawlers[index] = createCrawler().id(index).host(queueName)
@@ -75,6 +82,21 @@ class CrawlingOperator(
                 }
             }
         }
+    }
+
+    private fun manipulateCrawler(index: Int, host: String){
+        if(crawlers[index].state.name == "TERMINATED") {
+            crawlers[index] = createCrawler().id(index).host(host)
+            crawlers[index].start()
+        } else{
+            crawlers[index].host(host)
+            crawlers[index].start()
+        }
+        waitForCrawler(crawlers[index])
+    }
+
+    private fun allCrawlersFinished(): Boolean{
+        return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
     }
 
     private fun createCrawler(): Crawler{
@@ -86,6 +108,7 @@ class CrawlingOperator(
             urlParser,
             robotsParser,
             urlPacker,
+            seoAnalyzer,
             extractor,
             crawlerLogger
         )

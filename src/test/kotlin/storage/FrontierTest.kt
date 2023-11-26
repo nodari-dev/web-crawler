@@ -13,6 +13,11 @@ class FrontierTest {
     private val frontier = Frontier(frontierRepositoryMock, logger)
 
     @Test
+    fun `unassigns all crawlers from queues on init`(){
+        verify(frontierRepositoryMock).unassignAllCrawlers()
+    }
+
+    @Test
     fun `update works correct`(){
         val list = listOf(URLInfo("some-url"))
         val host = "somehost"
@@ -39,17 +44,7 @@ class FrontierTest {
         val resultWithNull = frontier.pullFrom(newHost)
         assertEquals(null, resultWithNull)
     }
-//
-//    @Test
-//    fun `deletes queue`(){
-//        val existingHost = "somehost"
-//
-//        frontier.deleteQueue(existingHost)
-//        verify(frontierRepositoryMock).delete(existingHost)
-//        verify(logger).info ("removed queue with host: $existingHost")
-//
-//    }
-//
+
     @Test
     fun `assigns crawler to queue`(){
         val host = "somehost"

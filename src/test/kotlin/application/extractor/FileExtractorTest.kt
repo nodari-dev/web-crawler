@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class ExtractorTest {
-    private val extractor = Extractor()
+class FileExtractorTest {
+    private val fileExtractor = FileExtractor()
 
     private val url = "https://website.com/something"
     private val fileName = "website.com_something.txt"
@@ -30,7 +30,7 @@ class ExtractorTest {
             Keywords: {simple=3, html=3, example=2, description=1, world!=1, imagealt=1, meta=1, example.=1, hello=1, introduction=1, a=0, this=0, is=0}
         """.trimIndent()
 
-        extractor.extractSEODataToFile(MockedData.html, url)
+        fileExtractor.extractSEOData(MockedData.html, url)
 
         val content = Files.readAllBytes(filePath)
         val fileContent = String(content)
@@ -39,7 +39,7 @@ class ExtractorTest {
 
     @Test
     fun `does not generate file if SEOData is null`() {
-        extractor.extractSEODataToFile("", url)
+        fileExtractor.extractSEOData("", url)
         Assertions.assertEquals(Files.exists(filePath), false)
     }
 }

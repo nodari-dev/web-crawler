@@ -1,23 +1,24 @@
 package application.htmlAnalyzer
 
-import core.dto.SEOContent
-import application.interfaces.ISEODataAnalyzer
+import core.dto.SEO
+import application.interfaces.ISEOAnalyzer
 import application.parser.seoparser.SEOParser
+import core.dto.URLInfo
 
-class HTMLAnalyzer : ISEODataAnalyzer {
+class SEOAnalyzer : ISEOAnalyzer {
     private val seoParser = SEOParser()
     private val keywordGenerator = KeywordGenerator()
 
-    override fun generateSEOData(html: String, url: String): SEOContent?{
+    override fun generateSEO(html: String, urlInfo: URLInfo): SEO?{
         val sentences = generateSentences(html)
         val keywords = keywordGenerator.generateKeywords(sentences)
-        return processSEOData(SEOContent(prepareTitle(html), prepareDescription(html), url, keywords))
+        return processSEOData(SEO(prepareTitle(html), prepareDescription(html), urlInfo.link, keywords))
     }
 
-    private fun processSEOData(seoContent: SEOContent): SEOContent? {
-        return if (seoContent.keywords.isEmpty()) {
+    private fun processSEOData(seo: SEO): SEO? {
+        return if (seo.keywords.isEmpty()) {
             null
-        } else seoContent
+        } else seo
     }
 
     private fun prepareTitle(html: String): String?{

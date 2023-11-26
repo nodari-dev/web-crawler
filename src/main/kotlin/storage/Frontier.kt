@@ -1,5 +1,6 @@
 package storage
 
+import application.interfaces.ISubscriber
 import core.dto.URLInfo
 import infrastructure.repository.interfaces.IFrontierRepository
 import mu.KLogger
@@ -9,9 +10,15 @@ class Frontier(
     private val frontierRepository: IFrontierRepository,
     private val logger: KLogger,
 ): IFrontier {
+    private val subscribers = mutableListOf<ISubscriber>()
+
+    init {
+        frontierRepository.unassignAllCrawlers()
+    }
 
     override fun update(host: String, urls: List<URLInfo>) {
         frontierRepository.update(host, urls)
+        subscribers.forEach { subscriber -> subscriber.trigger() }
         logger.info("new data for host: $host")
     }
 
@@ -33,7 +40,7 @@ class Frontier(
         return frontierRepository.getAvailableQueue()
     }
 
-    override fun getQueuesWithActiveCrawlers(): MutableList<List<String>> {
-        return frontierRepository.getQueuesWithActiveCrawlers()
+    override fun subscribe(subscriber: ISubscriber) {
+        subscribers.add(subscriber)
     }
 }
