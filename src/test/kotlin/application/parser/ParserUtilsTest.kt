@@ -1,6 +1,5 @@
 package application.parser
 
-import application.parser.ParserUtils
 import core.dto.URLInfo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -68,7 +67,7 @@ class ParserUtilsTest {
     fun `transforms list of string to list of FormattedURLs`(){
         val list = listOf("url1", "url2")
         val expectedResult = listOf(URLInfo(list[0]), URLInfo(list[1]))
-        val result = parserUtils.transformToFormattedURLs(list)
+        val result = parserUtils.toURLInfo(list)
 
         Assertions.assertEquals(expectedResult, result)
     }

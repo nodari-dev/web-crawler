@@ -1,5 +1,5 @@
 package application.interfaces
 
 interface IKeywordGenerator {
-    fun generateKeywords(sentences: List<String>): Map<String, Int>
+    fun generateKeywords(sentences: List<String>): String
 }

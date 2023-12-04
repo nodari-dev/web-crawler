@@ -1,7 +1,7 @@
 package application.interfaces
 
-import core.dto.URLInfo
+import core.dto.RobotsData
 
 interface IRobotsParser {
-    fun getRobotsDisallowed(document: String): List<URLInfo>
+    fun getRobotsData(document: String): RobotsData
 }

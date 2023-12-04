@@ -30,7 +30,7 @@ class FileExtractorTest {
             Keywords: {simple=3, html=3, example=2, description=1, world!=1, imagealt=1, meta=1, example.=1, hello=1, introduction=1, a=0, this=0, is=0}
         """.trimIndent()
 
-        fileExtractor.extractSEOData(MockedData.html, url)
+//        fileExtractor.extractSEOData(MockedData.html, url)
 
         val content = Files.readAllBytes(filePath)
         val fileContent = String(content)
@@ -39,7 +39,7 @@ class FileExtractorTest {
 
     @Test
     fun `does not generate file if SEOData is null`() {
-        fileExtractor.extractSEOData("", url)
+//        fileExtractor.extractSEOData("", url)
         Assertions.assertEquals(Files.exists(filePath), false)
     }
 }

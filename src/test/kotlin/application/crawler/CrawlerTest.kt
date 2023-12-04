@@ -4,13 +4,13 @@ import application.interfaces.*
 import mu.KotlinLogging
 import org.mockito.Mockito.mock
 import storage.interfaces.IFrontier
-import storage.interfaces.IHostsStorage
+import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
 
 class CrawlerTest {
     private val frontierMock = mock(IFrontier::class.java)
     private val visitedURLsMock = mock(IVisitedURLs::class.java)
-    private val hostsStorage = mock(IHostsStorage::class.java)
+    private val hostsStorage = mock(IRobotsStorage::class.java)
     private val fetcherMock = mock(IFetcher::class.java)
     private val urlParserMock = mock(IURLParser::class.java)
     private val robotsParserMock = mock(IRobotsParser::class.java)
@@ -18,7 +18,7 @@ class CrawlerTest {
     private val extractor = mock(IDBExtractor::class.java)
     private val mockLogger =mock(KotlinLogging.logger("Crawler")::class.java)
     private val id = 0
-    private val crawler = Crawler(frontierMock, visitedURLsMock, hostsStorage, fetcherMock, urlParserMock, robotsParserMock,urlPacker, extractor, mockLogger).id(id)
+//    private val crawler = Crawler(frontierMock, visitedURLsMock, hostsStorage, fetcherMock, urlParserMock, robotsParserMock,urlPacker, extractor, mockLogger).id(id)
 //
 //    @Test
 //    fun `returns status`(){

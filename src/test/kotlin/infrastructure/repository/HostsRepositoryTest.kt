@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class HostsRepositoryTest{
     private val jedisMock = Mockito.mock(JedisPool("localhost", 6379).resource::class.java)
     private val mutexMock = Mockito.mock(ReentrantLock::class.java)
-    private val hostsRepository = HostsRepository(mutexMock, jedisMock)
+    private val hostsRepository = RobotsRepository(mutexMock, jedisMock)
 
     @Test
     fun `update works correct`(){

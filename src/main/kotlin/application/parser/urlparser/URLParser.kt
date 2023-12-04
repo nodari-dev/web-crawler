@@ -15,7 +15,7 @@ class URLParser: IURLParser {
     override fun getURLs(document: String): List<URLInfo> {
         val urls = parserUtils.parseValues(document, A_TAG, A_TAG_GROUP_INDEX)
         val allowedURLs = getAllowedURLs(urls)
-        return parserUtils.transformToFormattedURLs(allowedURLs)
+        return parserUtils.toURLInfo(allowedURLs)
     }
 
     private fun getAllowedURLs(urls: List<String>): List<String>{

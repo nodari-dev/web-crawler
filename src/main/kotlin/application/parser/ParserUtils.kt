@@ -41,7 +41,7 @@ class ParserUtils : IParserUtils {
         return matcher.replaceAll("")
     }
 
-    override fun transformToFormattedURLs(list: List<String>): List<URLInfo> {
+    override fun toURLInfo(list: List<String>): List<URLInfo> {
         return list.map { element -> URLInfo(element) }
     }
 

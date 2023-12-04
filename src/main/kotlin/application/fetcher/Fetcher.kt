@@ -12,7 +12,7 @@ import java.net.UnknownHostException
 class Fetcher: IFetcher {
     private val logger = KotlinLogging.logger("Fetcher")
 
-    override fun downloadSanitizedHTML(url: String): String? {
+    override fun downloadHTML(url: String): String? {
         val response = getResponse(url)
         return response?.let { response.parse().toString().replace("\n", "") }
     }

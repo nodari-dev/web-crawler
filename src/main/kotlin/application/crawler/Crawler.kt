@@ -2,11 +2,12 @@ package application.crawler
 
 import application.crawler.entities.CrawlerSettings
 import application.interfaces.*
-import configuration.Configuration.TIME_BETWEEN_FETCHING
+import configuration.Configuration.CRAWLING_DELAY
+import core.dto.RobotsData
 import storage.interfaces.IFrontier
 import core.dto.URLInfo
 import mu.KLogger
-import storage.interfaces.IHostsStorage
+import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
@@ -14,7 +15,7 @@ import kotlin.random.Random
 class Crawler(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
-    private val hostsStorage: IHostsStorage,
+    private val robotsStorage: IRobotsStorage,
     private val fetcher: IFetcher,
     private val urlParser: IURLParser,
     private val robotsParser: IRobotsParser,
@@ -42,11 +43,11 @@ class Crawler(
 
     override fun run() {
         initCrawler()
-        setupHost()
+        processRobots()
 
         try{
             while (crawling.get()){
-                sleep(TIME_BETWEEN_FETCHING + Random.nextLong(0, TIME_BETWEEN_FETCHING))
+                sleep(CRAWLING_DELAY + Random.nextLong(0, CRAWLING_DELAY))
                 crawl()
             }
         } catch (e: InterruptedException){
@@ -60,13 +61,25 @@ class Crawler(
         logger.info("#${settings.id} Imaaa started")
     }
 
-    private fun setupHost(){
-        if(hostsStorage.doesHostExist(settings.host)){
-            val robots = fetcher.downloadSanitizedHTML("https://" + settings.host + "/robots.txt")
-            if(robots != null){
-                val disallowedURLs = robotsParser.getRobotsDisallowed(robots)
-                hostsStorage.updateHost(settings.host, disallowedURLs)
-            }
+    private fun processRobots(){
+        val robots = robotsStorage.get(settings.host)
+        if(robots == null){
+            processNewRobots()
+        } else{
+            settings.setNewDelay(robots.crawlDelay)
+            settings.bannedURLs = robots.bannedURLs
+        }
+    }
+
+    private fun processNewRobots(){
+        val fetchedRobots = fetcher.downloadHTML("http://" + settings.host + "/robots.txt")
+        if(fetchedRobots == null){
+            robotsStorage.update(settings.host, RobotsData(emptyList()))
+        } else{
+            val robotsData = robotsParser.getRobotsData(fetchedRobots)
+            robotsStorage.update(settings.host, robotsData)
+            settings.setNewDelay(robotsData.crawlDelay)
+            settings.bannedURLs = robotsData.bannedURLs
         }
     }
 
@@ -82,14 +95,14 @@ class Crawler(
     private fun killCrawler(){
         frontier.unassign(settings.id, settings.host)
         crawling.set(false)
-        settings.host = ""
+        settings.toDefaults()
         logger.info("#${settings.id} Imaaa done")
     }
 
     private fun processURL(urlInfo: URLInfo){
         if(isURLInfoValid(urlInfo)){
             visitedURLs.update(urlInfo)
-            val html = fetcher.downloadSanitizedHTML(urlInfo.link)
+            val html = fetcher.downloadHTML(urlInfo.link)
             if(html != null){
                 processHTML(html, urlInfo)
             }
@@ -101,7 +114,7 @@ class Crawler(
             return false
         }
 
-        val isAllowed = hostsStorage.isURLAllowed(settings.host, urlInfo)
+        val isAllowed = settings.bannedURLs.none { bannedUrl -> urlInfo.link.contains(bannedUrl.link) }
         val isNew = visitedURLs.isValid(urlInfo.hash)
         return isAllowed && isNew
     }

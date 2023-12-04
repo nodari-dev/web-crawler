@@ -2,9 +2,9 @@ package operators
 
 import application.crawler.Crawler
 import application.crawler.URLPacker
-import application.extractor.Extractor
 import application.fetcher.Fetcher
 import application.htmlAnalyzer.SEOAnalyzer
+import application.interfaces.IExtractor
 import application.interfaces.ISubscriber
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
@@ -12,20 +12,20 @@ import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
 import operators.interfaces.ICrawlingOperator
 import mu.KotlinLogging
 import storage.interfaces.IFrontier
-import storage.interfaces.IHostsStorage
+import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
 
 class CrawlingOperator(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
-    private val hostsStorage: IHostsStorage,
+    private val hostsStorage: IRobotsStorage,
+    private val extractor: IExtractor,
 ): ICrawlingOperator, ISubscriber {
     private val fetcher = Fetcher()
     private val urlParser = URLParser()
     private val robotsParser = RobotsParser()
     private val urlPacker = URLPacker()
     private val seoAnalyzer = SEOAnalyzer()
-    private val extractor = Extractor()
     private val crawlerLogger = KotlinLogging.logger("Crawler")
 
     private var idCounter = -1

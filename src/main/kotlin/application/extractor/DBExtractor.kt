@@ -2,10 +2,10 @@ package application.extractor
 
 import application.interfaces.IDBExtractor
 import core.dto.SEO
-import core.dto.URLInfo
+import infrastructure.repository.SEORepository
 
-class DBExtractor: IDBExtractor {
-    override fun execute(seo: SEO, urlInfo: URLInfo) {
-        println("extract to db -> $seo")
+class DBExtractor(private val SEORepository: SEORepository): IDBExtractor {
+    override fun execute(seo: SEO) {
+        SEORepository.put(seo)
     }
 }

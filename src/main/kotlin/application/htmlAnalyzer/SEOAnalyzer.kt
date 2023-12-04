@@ -12,7 +12,9 @@ class SEOAnalyzer : ISEOAnalyzer {
     override fun generateSEO(html: String, urlInfo: URLInfo): SEO?{
         val sentences = generateSentences(html)
         val keywords = keywordGenerator.generateKeywords(sentences)
-        return processSEOData(SEO(prepareTitle(html), prepareDescription(html), urlInfo.link, keywords))
+        return processSEOData(
+            SEO(prepareTitle(html), prepareDescription(html), urlInfo.link, keywords)
+            )
     }
 
     private fun processSEOData(seo: SEO): SEO? {

@@ -1,7 +1,7 @@
-import operators.ApplicationStartupOperator
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import operators.ApplicationStartupOperator
 import server.serverModule
 
 fun main(args: Array<String>) {

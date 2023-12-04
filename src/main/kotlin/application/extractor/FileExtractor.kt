@@ -10,13 +10,14 @@ import java.io.FileWriter
 
 class FileExtractor : IDBExtractor {
 
-    override fun execute(seo: SEO, urlInfo: URLInfo) {
+    override fun execute(seo: SEO) {
+        println("to file")
         val path = File(SAVE_FILE_LOCATION)
         if (!path.exists()) {
             path.mkdirs();
         }
 
-        val fileName = generateFileName(urlInfo.link)
+        val fileName = generateFileName(seo.url)
         val file = File("$SAVE_FILE_LOCATION/$fileName.txt")
         val fileContent = generateFileContent(seo)
         try {

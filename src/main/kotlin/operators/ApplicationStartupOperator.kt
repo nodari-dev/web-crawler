@@ -10,7 +10,7 @@ class ApplicationStartupOperator {
                 "-p" -> Configuration.PORT = args[index + 1].toInt()
                 "-cn"-> Configuration.MAX_NUMBER_OF_CRAWLERS = args[index + 1].toInt()
                 "-localsave"-> Configuration.SAVE_FILE_LOCATION = args[index + 1]
-                "-timeout"-> Configuration.TIME_BETWEEN_FETCHING = args[index + 1].toLong()
+                "-timeout"-> Configuration.CRAWLING_DELAY = args[index + 1].toLong()
             }
         }
     }

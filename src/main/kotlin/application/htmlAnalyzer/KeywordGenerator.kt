@@ -8,22 +8,22 @@ class KeywordGenerator : IKeywordGenerator {
     private val contentParser = ContentParser()
     private val logger = KotlinLogging.logger("KeywordGenerator")
 
-    override fun generateKeywords(sentences: List<String>): Map<String, Int> {
+    override fun generateKeywords(sentences: List<String>): String {
         return when (sentences.isEmpty()) {
             true -> processEmptySentences()
             else -> processSentences(sentences)
         }
     }
 
-    private fun processEmptySentences(): Map<String, Int> {
+    private fun processEmptySentences():  String {
         logger.error("no content to generate keywords from")
-        return emptyMap()
+        return ""
     }
 
-    private fun processSentences(sentences: List<String>): Map<String, Int> {
+    private fun processSentences(sentences: List<String>): String {
         val keywords = HashMap<String, Int>()
         for (sentence in sentences) {
-            val words = sentence.split(" ")
+            val words = sentence.replace("/", "").split(" ")
             for (word in words) {
                 if (canProcessWord(word)) {
                     val formattedWord = word.trim().lowercase()
@@ -44,7 +44,8 @@ class KeywordGenerator : IKeywordGenerator {
         return if (contentParser.isCommonContent(word)) 0 else 1
     }
 
-    private fun getSortedKeywordsByFrequency(keywords: Map<String, Int>): Map<String, Int> {
-        return keywords.entries.sortedByDescending { keyword -> keyword.value }.associate { it.toPair() }
+    private fun getSortedKeywordsByFrequency(keywords: Map<String, Int>): String  {
+        val sortedMap = keywords.entries.sortedBy {  keyword -> keyword.value }.associate { it.toPair() }
+        return sortedMap.entries.map { entry -> entry.key }.joinToString(",")
     }
 }

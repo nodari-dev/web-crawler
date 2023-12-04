@@ -1,5 +1,5 @@
 package application.interfaces
 
 interface IFetcher {
-    fun downloadSanitizedHTML(url: String): String?
+    fun downloadHTML(url: String): String?
 }
