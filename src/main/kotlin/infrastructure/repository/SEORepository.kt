@@ -14,7 +14,7 @@ class SEORepository(private val mutex: ReentrantLock, private val connection: Co
 
     override fun put(seo: SEO) {
         val sql = """INSERT OR REPLACE INTO seo values (?, ?, ?, ?)"""
-//        mutex.lock()
+        mutex.lock()
         try{
             connection?.prepareStatement(sql).use { preparedStatement ->
                 preparedStatement?.setString(1, seo.title)
@@ -28,13 +28,13 @@ class SEORepository(private val mutex: ReentrantLock, private val connection: Co
             println(e)
         }
         finally {
-//            mutex.unlock()
+            mutex.unlock()
         }
     }
 
-    override fun search(requestedString: String): MutableList<SEO> {
-        val sql = """SELECT * FROM seo WHERE title LIKE ? OR description LIKE ? OR keywords LIKE ?"""
-//        mutex.lock()
+    override fun  search(requestedString: String): MutableList<SEO> {
+        val sql = """SELECT * FROM seo WHERE title LIKE ? OR description LIKE ? OR keywords LIKE ?;"""
+        mutex.lock()
         val results = mutableListOf<SEO>()
         try{
             requestedString.split(" ").forEach{
@@ -64,7 +64,7 @@ class SEORepository(private val mutex: ReentrantLock, private val connection: Co
             println(e)
         }
         finally {
-//            mutex.unlock()
+            mutex.unlock()
         }
         return results
     }

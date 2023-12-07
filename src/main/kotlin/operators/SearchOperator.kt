@@ -1,12 +1,12 @@
 package operators
 
 import core.dto.SEO
+import core.dto.SearchResult
 import infrastructure.repository.interfaces.ISEORepository
 
-class SearchOperator(private val sqliteRepository: ISEORepository){
-    fun searchAndSortByPriority(requestString: String): List<SEO>{
-        val foundResults = sqliteRepository.search(requestString.lowercase())
-
+class SearchOperator(private val seoRepository: ISEORepository){
+    fun searchAndSortByPriority(requestString: String, page: Int, size: Int): SearchResult{
+        val foundResults = seoRepository.search(requestString.lowercase())
         val keywordsFromRequest = requestString.split(" ")
         val scoredResults = mutableListOf<SEO>()
 
@@ -29,6 +29,29 @@ class SearchOperator(private val sqliteRepository: ISEORepository){
             scoredResults.add(result)
         }
 
-        return scoredResults.sortedWith(compareByDescending<SEO>{it.matchedAllKeywords}.thenByDescending { it.score })
+        val sortedResults = scoredResults
+            .sortedWith(compareByDescending<SEO>{it.matchedAllKeywords}
+            .thenByDescending { it.score })
+            .toSet()
+            .toList()
+        return if (sortedResults.size < 0 || size <= 0 || page <= 0){
+            SearchResult(emptyList(), 0)
+        } else{
+            paginateResults(sortedResults, page, size)
+        }
+    }
+
+    private fun paginateResults(results: List<SEO>, page: Int, size: Int): SearchResult{
+        val total = results.size
+
+        val startIndex = (page - 1) * size
+        val endIndex = minOf(startIndex + size, total)
+
+        if(startIndex >= total){
+            return SearchResult(emptyList(), 0)
+        }
+
+        val maxPages = (total + size - 1) / size
+        return SearchResult(results.subList(startIndex, endIndex), maxPages)
     }
 }

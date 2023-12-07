@@ -15,18 +15,13 @@ class VisitedURLsRepositoryTest {
 
     private val visitedURLs = "visitedURLs"
 
-    @AfterEach
-    fun cleanup(){
-        visitedURLsRepository.clear()
-    }
-
     @Test
     fun `returns only new urls`() {
         val unfilteredURLs = listOf(URLInfo("newURL1"), URLInfo("existingURL"), URLInfo("existingURL2"), URLInfo("newURL2"))
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[0].link)).thenReturn(null)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[1].link)).thenReturn(1)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[2].link)).thenReturn(2)
-        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[3].link)).thenReturn(null)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[0].hash)).thenReturn(null)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[1].hash)).thenReturn(1)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[2].hash)).thenReturn(2)
+        `when`(jedisMock.lpos(visitedURLs, unfilteredURLs[3].hash)).thenReturn(null)
 
         val expectedResult = listOf(unfilteredURLs[0], unfilteredURLs[3])
         val result = visitedURLsRepository.getOnlyNewURLs(unfilteredURLs)

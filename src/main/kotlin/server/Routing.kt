@@ -8,8 +8,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.cors.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import operators.SearchOperator
 import operators.requestOperator.RequestsOperator
 
@@ -26,17 +24,23 @@ fun Application.routing(requestsOperator: RequestsOperator, searchOperator: Sear
         route("/crawling") {
             post("request"){
                 val request = call.receiveText()
-                call.respond(HttpStatusCode.OK)
-                requestsOperator.handleRequest(request)
+                if(request.isEmpty()){
+                    call.respond(HttpStatusCode.BadRequest)
+                } else{
+                    requestsOperator.handleRequest(request)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
         route("/search"){
             get("request"){
-                val query = call.request.queryParameters["q"]
-                if(query == null){
-                    call.respond("Damn man you are a teapot")
+                val searchQuery = call.request.queryParameters["q"]
+                val page = call.request.queryParameters["page"]
+                val size = call.request.queryParameters["size"]
+                if(searchQuery.isNullOrEmpty() || page == null || size == null){
+                    call.respond("Damn man you're a teapot")
                 } else{
-                    call.respond(searchOperator.searchAndSortByPriority(query))
+                    call.respond(searchOperator.searchAndSortByPriority(searchQuery, page.toInt(), size.toInt()))
                 }
             }
         }

@@ -1,4 +1,4 @@
-package application.crawler.entities
+package application.crawler
 
 import configuration.Configuration.CRAWLING_DELAY
 import core.dto.URLInfo
@@ -6,15 +6,15 @@ import core.dto.URLInfo
 class CrawlerSettings(
     var id: Int = 0,
     var host: String = "",
-    var delay: Long = CRAWLING_DELAY,
-    var bannedURLs: List<URLInfo> = emptyList()
+    var bannedURLs: List<URLInfo> = emptyList(),
+    private var delay: Long = CRAWLING_DELAY,
 ){
 
     fun setNewDelay(newDelay: Long) {
         delay = if(newDelay.toInt() == -1) CRAWLING_DELAY else newDelay * 100
     }
 
-    fun delay(): Long{
+    fun getDelay(): Long{
         return delay
     }
 

@@ -1,8 +1,7 @@
 package server
 
-import application.extractor.Extractor
-import configuration.Configuration.HOST
-import configuration.Configuration.PORT
+import configuration.Configuration.IN_MEMORY_DB_HOST
+import configuration.Configuration.IN_MEMORY_DB_PORT
 import infrastructure.gateways.SQLiteGateway
 import infrastructure.repository.FrontierRepository
 import infrastructure.repository.RobotsRepository
@@ -22,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.serverModule() {
-    val jedis = JedisPool(HOST, PORT).resource
+    val jedis = JedisPool(IN_MEMORY_DB_HOST, IN_MEMORY_DB_PORT).resource
     val lock = ReentrantLock()
 
     val frontierRepository = FrontierRepository(lock, jedis)
@@ -40,9 +39,7 @@ fun Application.serverModule() {
     val robotsStorage = RobotsStorage(robotsRepository, robotsLogger)
 
     val seoRepository = SEORepository(databaseLock, databaseConnection)
-    val extractor = Extractor(seoRepository)
-
-    val crawlingOperator = CrawlingOperator(frontier, visitedURLs, robotsStorage, extractor)
+    val crawlingOperator = CrawlingOperator(frontier, visitedURLs, robotsStorage, seoRepository)
     val requestsOperator = RequestsOperator(frontier)
     val searchOperator = SearchOperator(seoRepository)
 

@@ -1,4 +1,6 @@
-package application.extractor
+package application.htmlAnalyzer
+
+import core.dto.URLInfo
 
 object MockedData {
     const val title = "Simple HTML Example"
@@ -55,33 +57,5 @@ object MockedData {
         </html>
     """
 
-    const val url = "https://example.com"
-
-    fun getKeyWords(): Map<String, Int> {
-        val keywords = HashMap<String, Int>()
-        keywords["simple"] = 3
-        keywords["html"] = 3
-        keywords["example"] = 2
-        keywords["hello"] = 1
-        keywords["description"] = 1
-        keywords["world!"] = 1
-        keywords["imagealt"] = 1
-        keywords["meta"] = 1
-        keywords["example."] = 1
-        keywords["introduction"] = 1
-        keywords["a"] = 0
-        keywords["this"] = 0
-        keywords["is"] = 0
-
-        return keywords.entries.sortedByDescending { keyword -> keyword.value }.associate { it.toPair() }
-    }
-
-    fun getOgKeyWords(): HashMap<String, Int> {
-        val keywords = HashMap<String, Int>()
-        keywords["ogsimple"] = 1
-        keywords["html"] = 1
-        keywords["example"] = 1
-
-        return keywords
-    }
+    val url = URLInfo("https://example.com")
 }

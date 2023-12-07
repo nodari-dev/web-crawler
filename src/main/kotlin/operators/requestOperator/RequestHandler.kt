@@ -9,7 +9,6 @@ class RequestHandler(
     private val urlParser: IURLParser
 ): Thread(){
     private lateinit var requestedURL: String
-    private var isAlive = true
 
     fun requestedURL(url: String): RequestHandler {
         requestedURL = url
@@ -17,11 +16,8 @@ class RequestHandler(
     }
 
     override fun run() {
-        while(isAlive){
-            val urlInfo = URLInfo(requestedURL)
-            val host = urlParser.getHostname(urlInfo.link)
-            frontier.update(host, listOf(urlInfo))
-            isAlive = false
-        }
+        val urlInfo = URLInfo(requestedURL)
+        val host = urlParser.getHostname(urlInfo.link)
+        frontier.update(host, listOf(urlInfo))
     }
 }

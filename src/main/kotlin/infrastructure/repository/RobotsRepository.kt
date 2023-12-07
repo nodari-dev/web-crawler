@@ -2,7 +2,6 @@ package infrastructure.repository
 
 import core.dto.RobotsData
 import core.dto.URLInfo
-import infrastructure.gateways.interfaces.IDatabaseGateway
 import infrastructure.repository.interfaces.IRobotsRepository
 import java.sql.Connection
 import java.sql.SQLException

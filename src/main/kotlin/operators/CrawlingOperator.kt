@@ -4,11 +4,11 @@ import application.crawler.Crawler
 import application.crawler.URLPacker
 import application.fetcher.Fetcher
 import application.htmlAnalyzer.SEOAnalyzer
-import application.interfaces.IExtractor
 import application.interfaces.ISubscriber
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
 import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
+import infrastructure.repository.interfaces.ISEORepository
 import operators.interfaces.ICrawlingOperator
 import mu.KotlinLogging
 import storage.interfaces.IFrontier
@@ -19,7 +19,7 @@ class CrawlingOperator(
     private val frontier: IFrontier,
     private val visitedURLs: IVisitedURLs,
     private val hostsStorage: IRobotsStorage,
-    private val extractor: IExtractor,
+    private val seoRepository: ISEORepository,
 ): ICrawlingOperator, ISubscriber {
     private val fetcher = Fetcher()
     private val urlParser = URLParser()
@@ -96,7 +96,7 @@ class CrawlingOperator(
     }
 
     private fun allCrawlersFinished(): Boolean{
-        return crawlers.all{crawlerV2 -> !crawlerV2.isCrawling()}
+        return crawlers.all{crawler -> !crawler.isCrawling()}
     }
 
     private fun createCrawler(): Crawler{
@@ -109,7 +109,7 @@ class CrawlingOperator(
             robotsParser,
             urlPacker,
             seoAnalyzer,
-            extractor,
+            seoRepository,
             crawlerLogger
         )
     }

@@ -1,16 +1,14 @@
 package application.crawler
 
-import application.crawler.entities.CrawlerSettings
 import application.interfaces.*
-import configuration.Configuration.CRAWLING_DELAY
 import core.dto.RobotsData
 import storage.interfaces.IFrontier
 import core.dto.URLInfo
+import infrastructure.repository.interfaces.ISEORepository
 import mu.KLogger
 import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.random.Random
 
 class Crawler(
     private val frontier: IFrontier,
@@ -21,7 +19,7 @@ class Crawler(
     private val robotsParser: IRobotsParser,
     private val urlPacker: IURLPacker,
     private val seoAnalyzer: ISEOAnalyzer,
-    private val extractor: IExtractor,
+    private val seoRepository: ISEORepository,
     private val logger: KLogger
 ): Thread() {
     private var crawling = AtomicBoolean(false)
@@ -47,8 +45,8 @@ class Crawler(
 
         try{
             while (crawling.get()){
-                sleep(CRAWLING_DELAY + Random.nextLong(0, CRAWLING_DELAY))
                 crawl()
+                sleep(settings.getDelay())
             }
         } catch (e: InterruptedException){
             e.printStackTrace()
@@ -73,6 +71,7 @@ class Crawler(
 
     private fun processNewRobots(){
         val fetchedRobots = fetcher.downloadHTML("http://" + settings.host + "/robots.txt")
+        println("${settings.host} HOST JERE")
         if(fetchedRobots == null){
             robotsStorage.update(settings.host, RobotsData(emptyList()))
         } else{
@@ -122,17 +121,17 @@ class Crawler(
     private fun processHTML(html: String, urlInfo: URLInfo){
         val seo = seoAnalyzer.generateSEO(html, urlInfo)
         if(seo != null){
-            extractor.extractSEOData(seo, urlInfo)
+            seoRepository.put(seo)
         }
 
         val urlsInfoList = urlParser.getURLs(html)
-        val packedURLs = filterAndPackedURLs(urlsInfoList)
+        val packedURLs = filterAndPackURLs(urlsInfoList)
         packedURLs.forEach{pack ->
             frontier.update(pack.key, pack.value)
         }
     }
 
-    private fun filterAndPackedURLs(urlsInfoList: List<URLInfo>): MutableMap<String, MutableList<URLInfo>> {
+    private fun filterAndPackURLs(urlsInfoList: List<URLInfo>): MutableMap<String, MutableList<URLInfo>> {
         val uniqueURLs = urlsInfoList.toSet().toList()
         val urlsInfoListOnlyNew = visitedURLs.filterByNewOnly(uniqueURLs)
         val filteredByDepthURLs = urlsInfoListOnlyNew.filter { urlInfo ->

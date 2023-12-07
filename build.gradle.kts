@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.9.10"
-//    id("io.ktor.plugin") version "2.3.6"
-//    id("app.cash.sqldelight") version "2.0.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
     application
 }
@@ -24,6 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVer")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVer")
     implementation("io.ktor:ktor-server-cors:$ktorVer")
+    implementation("io.ktor:ktor-server-cio:$ktorVer")
     implementation("io.ktor:ktor-gson:1.6.4")
     implementation("org.xerial:sqlite-jdbc:3.44.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
