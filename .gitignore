@@ -12,7 +12,10 @@ build/
 *.ipr
 out/
 !**/src/main/**/out/
-!**/src/test/**/out/
+
+src/main/resources/prod.db
+src/main/rresources/prod.db-shm
+src/main/rresources/prod.db-wal
 
 ### Eclipse ###
 .apt_generated
