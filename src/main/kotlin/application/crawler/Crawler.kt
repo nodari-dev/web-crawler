@@ -73,7 +73,6 @@ class Crawler(
 
     private fun processNewRobots(){
         val fetchedRobots = fetcher.downloadHTML("http://" + settings.host + "/robots.txt")
-        println("${settings.host} HOST JERE")
         if(fetchedRobots == null){
             robotsStorage.update(settings.host, RobotsData(emptyList()))
         } else{
