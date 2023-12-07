@@ -1,12 +1,14 @@
 package infrastructure.repository
 
-import core.dto.RobotsData
-import core.dto.URLInfo
+import java.sql.Connection
+import java.util.concurrent.locks.ReentrantLock
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import java.sql.Connection
-import java.util.concurrent.locks.ReentrantLock
+
+import core.dto.RobotsData
+import core.dto.URLInfo
+
 
 class RobotsRepositoryTest{
     private val connectionMock = Mockito.mock(Connection::class.java)

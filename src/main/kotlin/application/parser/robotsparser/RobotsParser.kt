@@ -1,12 +1,12 @@
 package application.parser.robotsparser
 
+import core.dto.RobotsData
 import application.interfaces.IRobotsParser
 import application.parser.ParserUtils
 import application.parser.robotsparser.RobotsPatterns.CRAWL_DELAY
 import application.parser.robotsparser.RobotsPatterns.CRAWL_DELAY_GROUP_INDEX
 import application.parser.robotsparser.RobotsPatterns.DISALLOW_KEYWORD
 import application.parser.robotsparser.RobotsPatterns.DISALLOW_KEYWORD_GROUP_INDEX
-import core.dto.RobotsData
 
 class RobotsParser: IRobotsParser {
     private val parserUtils = ParserUtils()

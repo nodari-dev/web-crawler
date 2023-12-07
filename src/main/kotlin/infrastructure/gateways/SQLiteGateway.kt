@@ -1,9 +1,10 @@
 package infrastructure.gateways;
 
-import infrastructure.gateways.interfaces.IDatabaseGateway
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+
+import infrastructure.gateways.interfaces.IDatabaseGateway
 
 class SQLiteGateway: IDatabaseGateway {
     override fun connect(): Connection? {

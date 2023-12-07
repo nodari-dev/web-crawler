@@ -1,22 +1,22 @@
 package application.crawler
 
+import kotlin.test.assertEquals
+import mu.KotlinLogging
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito.*
+
+import core.dto.RobotsData
+import core.dto.SEO
+import core.dto.URLInfo
+import configuration.Configuration.CRAWLING_DELAY
 import application.htmlAnalyzer.SEOAnalyzer
 import application.interfaces.*
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
-import configuration.Configuration.CRAWLING_DELAY
-import core.dto.RobotsData
-import core.dto.SEO
-import core.dto.URLInfo
-import infrastructure.repository.interfaces.ISEORepository
-import mu.KotlinLogging
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import storage.interfaces.IFrontier
 import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
-import kotlin.test.assertEquals
+import infrastructure.repository.interfaces.ISEORepository
 
 class CrawlerTest {
     private val frontier = mock(IFrontier::class.java)

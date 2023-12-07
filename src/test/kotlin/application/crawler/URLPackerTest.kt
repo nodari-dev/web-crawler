@@ -1,8 +1,9 @@
 package application.crawler
 
-import core.dto.URLInfo
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+
+import core.dto.URLInfo
 
 class URLPackerTest {
     private val urlPacker = URLPacker()

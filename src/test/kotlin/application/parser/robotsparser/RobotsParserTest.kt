@@ -1,9 +1,10 @@
 package application.parser.robotsparser
 
-import core.dto.RobotsData
-import core.dto.URLInfo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+
+import core.dto.RobotsData
+import core.dto.URLInfo
 
 class RobotsParserTest {
     private val robotsParser = RobotsParser()

@@ -1,9 +1,10 @@
 package infrastructure.repository
 
+import java.util.concurrent.locks.ReentrantLock
+import redis.clients.jedis.Jedis
+
 import core.dto.URLInfo
 import infrastructure.repository.interfaces.IVisitedURLsRepository
-import redis.clients.jedis.Jedis
-import java.util.concurrent.locks.ReentrantLock
 
 class VisitedURLsRepository(
     private val mutex: ReentrantLock,

@@ -1,7 +1,7 @@
 package operators.requestOperator
 
-import application.interfaces.IURLParser
 import core.dto.URLInfo
+import application.interfaces.IURLParser
 import storage.interfaces.IFrontier
 
 class RequestHandler(

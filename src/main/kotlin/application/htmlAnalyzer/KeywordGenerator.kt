@@ -1,8 +1,9 @@
 package application.htmlAnalyzer
 
+import mu.KotlinLogging
+
 import application.parser.contentparser.ContentParser
 import application.interfaces.IKeywordGenerator
-import mu.KotlinLogging
 
 class KeywordGenerator : IKeywordGenerator {
     private val contentParser = ContentParser()

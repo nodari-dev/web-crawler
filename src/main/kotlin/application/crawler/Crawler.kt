@@ -1,14 +1,16 @@
 package application.crawler
 
-import application.interfaces.*
-import core.dto.RobotsData
-import storage.interfaces.IFrontier
-import core.dto.URLInfo
-import infrastructure.repository.interfaces.ISEORepository
 import mu.KLogger
+import java.util.concurrent.atomic.AtomicBoolean
+
+import core.dto.RobotsData
+import core.dto.URLInfo
+import application.interfaces.*
+import storage.interfaces.IFrontier
 import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
-import java.util.concurrent.atomic.AtomicBoolean
+import infrastructure.repository.interfaces.ISEORepository
+
 
 class Crawler(
     private val frontier: IFrontier,

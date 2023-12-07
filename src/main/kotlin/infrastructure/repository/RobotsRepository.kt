@@ -1,11 +1,12 @@
 package infrastructure.repository
 
-import core.dto.RobotsData
-import core.dto.URLInfo
-import infrastructure.repository.interfaces.IRobotsRepository
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.concurrent.locks.ReentrantLock
+
+import core.dto.RobotsData
+import core.dto.URLInfo
+import infrastructure.repository.interfaces.IRobotsRepository
 
 class RobotsRepository(
     private val mutex: ReentrantLock,

@@ -1,12 +1,13 @@
 package operators
 
-import core.dto.SEO
-import core.dto.SearchResult
-import infrastructure.repository.interfaces.ISEORepository
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import kotlin.test.assertEquals
+
+import core.dto.SEO
+import core.dto.SearchResult
+import infrastructure.repository.interfaces.ISEORepository
 
 class SearchOperatorTest {
     private val sqliteRepositoryMock = mock(ISEORepository::class.java)

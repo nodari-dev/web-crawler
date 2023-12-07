@@ -1,13 +1,15 @@
 package application.fetcher
 
-import application.fetcher.exceptions.FetchingFailedException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import org.jsoup.Connection.Response
 import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
-import application.interfaces.IFetcher
 import mu.KotlinLogging
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
+
+import application.fetcher.exceptions.FetchingFailedException
+import application.interfaces.IFetcher
+
 
 class Fetcher: IFetcher {
     private val logger = KotlinLogging.logger("Fetcher")

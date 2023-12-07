@@ -1,9 +1,9 @@
 package application.parser.urlparser
 
-import application.parser.urlparser.URLParser
-import core.dto.URLInfo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+
+import core.dto.URLInfo
 
 class URLParserTest {
     private val urlParser = URLParser()

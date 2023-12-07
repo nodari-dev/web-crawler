@@ -1,10 +1,11 @@
 package storage
 
-import core.dto.URLInfo
-import infrastructure.repository.interfaces.IVisitedURLsRepository
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import kotlin.test.assertEquals
+
+import core.dto.URLInfo
+import infrastructure.repository.interfaces.IVisitedURLsRepository
 
 class VisitedURLsTest {
     private val visitedURLsRepositoryMock = mock(IVisitedURLsRepository::class.java)

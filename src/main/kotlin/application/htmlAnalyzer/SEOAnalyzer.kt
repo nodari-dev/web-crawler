@@ -1,9 +1,9 @@
 package application.htmlAnalyzer
 
 import core.dto.SEO
+import core.dto.URLInfo
 import application.interfaces.ISEOAnalyzer
 import application.parser.seoparser.SEOParser
-import core.dto.URLInfo
 
 class SEOAnalyzer : ISEOAnalyzer {
     private val seoParser = SEOParser()

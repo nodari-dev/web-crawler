@@ -1,7 +1,7 @@
 package application.crawler
 
-import configuration.Configuration.CRAWLING_DELAY
 import core.dto.URLInfo
+import configuration.Configuration.CRAWLING_DELAY
 
 class CrawlerSettings(
     var id: Int = 0,

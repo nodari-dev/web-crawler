@@ -1,7 +1,7 @@
 package storage.interfaces
 
-import application.interfaces.ISubscriber
 import core.dto.URLInfo
+import application.interfaces.ISubscriber
 
 interface IFrontier {
     fun update(host: String, urls: List<URLInfo>)

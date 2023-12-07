@@ -1,9 +1,10 @@
 package application.htmlAnalyzer
 
-import core.dto.SEO
-import core.dto.URLInfo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+
+import core.dto.SEO
+import core.dto.URLInfo
 
 class SEODataAnalyzerTest {
     private val SEOAnalyzer = SEOAnalyzer()

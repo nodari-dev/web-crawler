@@ -1,8 +1,9 @@
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.cio.*
+
 import operators.ApplicationStartupOperator
 import server.serverModule
-import io.ktor.server.cio.*
 
 fun main(args: Array<String>) {
     ApplicationStartupOperator().setupArgs(args)

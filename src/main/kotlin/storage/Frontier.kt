@@ -1,10 +1,11 @@
 package storage
 
-import application.interfaces.ISubscriber
-import core.dto.URLInfo
-import infrastructure.repository.interfaces.IFrontierRepository
 import mu.KLogger
+
+import core.dto.URLInfo
+import application.interfaces.ISubscriber
 import storage.interfaces.IFrontier
+import infrastructure.repository.interfaces.IFrontierRepository
 
 class Frontier(
     private val frontierRepository: IFrontierRepository,

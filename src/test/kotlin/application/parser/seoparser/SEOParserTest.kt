@@ -1,6 +1,5 @@
 package application.parser.seoparser
 
-import application.parser.seoparser.SEOParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

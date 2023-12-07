@@ -1,12 +1,13 @@
 package infrastructure.repository
 
-import core.dto.URLInfo
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import redis.clients.jedis.JedisPool
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.test.assertEquals
+
+import core.dto.URLInfo
 
 class FrontierRepositoryTest {
     private val jedisMock = mock(JedisPool("localhost", 6379).resource::class.java)

@@ -1,8 +1,8 @@
 package storage
 
 import core.dto.URLInfo
-import infrastructure.repository.interfaces.IVisitedURLsRepository
 import storage.interfaces.IVisitedURLs
+import infrastructure.repository.interfaces.IVisitedURLsRepository
 
 class VisitedURLs(
     private val visitedURLsRepository: IVisitedURLsRepository

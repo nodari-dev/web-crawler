@@ -1,14 +1,11 @@
 package infrastructure.repository
 
-import core.dto.SEO
-import infrastructure.gateways.interfaces.IDatabaseGateway
-import infrastructure.repository.interfaces.ISEORepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.concurrent.locks.ReentrantLock
+
+import core.dto.SEO
+import infrastructure.repository.interfaces.ISEORepository
 
 class SEORepository(private val mutex: ReentrantLock, private val connection: Connection?): ISEORepository{
 

@@ -1,22 +1,23 @@
 package server
 
+import java.util.concurrent.locks.ReentrantLock
+import mu.KotlinLogging
+import redis.clients.jedis.JedisPool
+import io.ktor.server.application.*
+
 import configuration.Configuration.IN_MEMORY_DB_HOST
 import configuration.Configuration.IN_MEMORY_DB_PORT
+import storage.Frontier
+import storage.RobotsStorage
+import storage.VisitedURLs
+import operators.CrawlingOperator
+import operators.SearchOperator
+import operators.requestOperator.RequestsOperator
 import infrastructure.gateways.SQLiteGateway
 import infrastructure.repository.FrontierRepository
 import infrastructure.repository.RobotsRepository
 import infrastructure.repository.SEORepository
 import infrastructure.repository.VisitedURLsRepository
-import io.ktor.server.application.*
-import mu.KotlinLogging
-import operators.CrawlingOperator
-import operators.SearchOperator
-import operators.requestOperator.RequestsOperator
-import redis.clients.jedis.JedisPool
-import storage.Frontier
-import storage.RobotsStorage
-import storage.VisitedURLs
-import java.util.concurrent.locks.ReentrantLock
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

@@ -1,8 +1,9 @@
 package application.crawler
 
-import configuration.Configuration
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+
+import configuration.Configuration
 
 class CrawlerSettingsTest{
     private val crawlerSettings = CrawlerSettings()

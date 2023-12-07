@@ -1,9 +1,10 @@
 package application.parser
 
+import java.util.regex.Pattern
+
+import core.dto.URLInfo
 import application.parser.GlobalPatterns.NESTED_TAGS
 import application.interfaces.IParserUtils
-import core.dto.URLInfo
-import java.util.regex.Pattern
 
 class ParserUtils : IParserUtils {
 

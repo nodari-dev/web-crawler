@@ -1,7 +1,7 @@
 package application.interfaces
 
-import core.dto.URLInfo
 import java.util.regex.Pattern
+import core.dto.URLInfo
 
 interface IParserUtils {
     fun parseSingleValue(html: String, pattern: Pattern, groupIndex: Int): String?

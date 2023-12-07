@@ -1,5 +1,8 @@
 package operators
 
+import mu.KotlinLogging
+
+import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
 import application.crawler.Crawler
 import application.crawler.URLPacker
 import application.fetcher.Fetcher
@@ -7,13 +10,11 @@ import application.htmlAnalyzer.SEOAnalyzer
 import application.interfaces.ISubscriber
 import application.parser.robotsparser.RobotsParser
 import application.parser.urlparser.URLParser
-import configuration.Configuration.MAX_NUMBER_OF_CRAWLERS
-import infrastructure.repository.interfaces.ISEORepository
 import operators.interfaces.ICrawlingOperator
-import mu.KotlinLogging
 import storage.interfaces.IFrontier
 import storage.interfaces.IRobotsStorage
 import storage.interfaces.IVisitedURLs
+import infrastructure.repository.interfaces.ISEORepository
 
 class CrawlingOperator(
     private val frontier: IFrontier,

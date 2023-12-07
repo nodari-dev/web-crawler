@@ -1,8 +1,8 @@
 package application.crawler
 
+import core.dto.URLInfo
 import application.interfaces.IURLPacker
 import application.parser.urlparser.URLParser
-import core.dto.URLInfo
 
 class URLPacker: IURLPacker {
     private val urlParser = URLParser()
