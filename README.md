@@ -1,6 +1,7 @@
 # Web crawler
 
 ## Table of Contents
+### After revisiting this repo in 1 year, I've realized that I'm a dumbass. Program stores all data in redis and only last results in db, meaning that the crash is inevitable because will will run out of RAM
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
